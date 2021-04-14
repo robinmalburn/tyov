@@ -1,8 +1,29 @@
 <template>
   <CardComponent>
-    <div class="text-right">
-      <RemoveCrossComponent @remove="$emit('remove-memory', memory)" />
+    <div class="flex border-b mb-2">
+      <HeadingComponent class="flex-1" level="6">
+        {{ memory.description }}
+      </HeadingComponent>
+      <div class="flex-initial text-right">
+        <RemoveCrossComponent @remove="$emit('remove-memory', memory)" />
+      </div>
     </div>
+    
+    <ul class="my-3">
+      <li
+          v-for="(event, idx) in memory.events"
+          :key="`event-${idx}`"
+      >
+          <CardComponent>
+            <div class="flex">
+              <span :class="{'flex-1': true, 'line-through': memory.forgotten, 'text-gray-400': memory.forgotten}">{{event}}</span>
+              <div class="text-right flex-inital">
+                <RemoveCrossComponent @remove="$emit('remove-event', {memory, idx})" />
+              </div>
+            </div>
+          </CardComponent>
+      </li>
+    </ul>
     
     <FormToggleComponent 
       @save="add"
@@ -23,18 +44,7 @@
         />
       </template>
     </FormToggleComponent>
-    
-    <ul class="my-3">
-        <li
-            v-for="(event, idx) in memory.events"
-            :key="`event-${idx}`"
-        >
-            <span :class="{'line-through': memory.forgotten, 'text-gray-400': memory.forgotten}">{{event}}</span>
-            <RemoveCrossComponent 
-                @remove="$emit('remove-event', {memory, idx})"
-            />
-        </li>
-    </ul>
+  
 
     <div class="my-2 grid grid-rows gap-2" v-show="!memory.forgotten || canAddMemories">
       <ButtonComponent
@@ -73,11 +83,12 @@
 </template>
 
 <script>
-import CardComponent from './CardComponent';
-import ButtonComponent from './ButtonComponent';
-import FormToggleComponent from './FormToggleComponent';
-import RemoveCrossComponent from './RemoveCrossComponent';
-import { mapGetters } from 'vuex';
+import CardComponent from 'Components/CardComponent';
+import ButtonComponent from 'Components/ButtonComponent';
+import FormToggleComponent from 'Components/FormToggleComponent';
+import HeadingComponent from 'Components/HeadingComponent';
+import RemoveCrossComponent from 'Components/RemoveCrossComponent';
+import { mapMutations, mapActions, mapGetters } from 'vuex';
 
 export default {
   name: 'MemoryComponent',
@@ -102,19 +113,27 @@ export default {
     ButtonComponent,
     CardComponent,
     FormToggleComponent,
+    HeadingComponent,
     RemoveCrossComponent,
   },
   computed: {
     ...mapGetters('resources', ['hasDiary', 'isDiaryFull']),
   },
   methods: {
+    ...mapMutations('notifications', {
+      hideNotification: 'hide'
+    }),
+    ...mapActions('notifications', ['showNotification']),
     add(){
-      if (this.newEvent !== '') {
-        this.$emit('add-event', {memory: this.memory, event: this.newEvent});
-        this.toggleControls();
+      if (this.newEvent === '') {
+        this.showNotification({message: 'You must provide a description', type: 'warning'});
+        return;
       }
+      this.$emit('add-event', {memory: this.memory, event: this.newEvent});
+      this.toggleControls();
     },
     toggleControls() {
+      this.hideNotification();
       this.showControls = !this.showControls;
       this.newEvent = '';
     },

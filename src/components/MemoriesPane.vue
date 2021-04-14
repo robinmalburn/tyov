@@ -2,14 +2,26 @@
   <CardComponent id="memories">
     <HeadingComponent level="2">Memories</HeadingComponent>
 
-    <ButtonComponent
-      class="w-full"
+    <FormToggleComponent 
       type="primary"
-      @click="addMemory"
+      @save="addMemory"
+      @toggle="toggleControls"
+      :showControls="showControls"
       v-if="canAdd"
     >
-      Add Memory?
-    </ButtonComponent>
+      <template #button>
+        Add a new Memory?
+      </template>
+      <template #form>
+        <input 
+          type="text"
+          placeholder="Description"
+          class="shadow appearance-none border rounded w-full py-1 px-2 m-1 text-gray-700 leading-tight focus:outline-none focus:ring-2 ring-gray-200"
+          v-model="newMemory.description"
+          @keyup.enter="addMemory"
+        />
+      </template>
+    </FormToggleComponent>
     <div v-else>
       You must choose to forget a memory to add more.
     </div>
@@ -103,19 +115,30 @@
 </template>
 
 <script>
-import CardComponent from './CardComponent';
-import ButtonComponent from './ButtonComponent';
-import HeadingComponent from './HeadingComponent';
-import MemoryComponent from './MemoryComponent';
-  import SlideDownPanelComponent from 'Components/SlideDownPanelComponent';
+import CardComponent from 'Components/CardComponent';
+import HeadingComponent from 'Components/HeadingComponent';
+import FormToggleComponent from 'Components/FormToggleComponent';
+import MemoryComponent from 'Components/MemoryComponent';
+import SlideDownPanelComponent from 'Components/SlideDownPanelComponent';
 
-import { mapMutations, mapState, mapGetters } from 'vuex';
+import { mapActions, mapMutations, mapState, mapGetters } from 'vuex';
 
 export default {
   name: 'MemoriesPane',
+  data() {
+    return {
+      showControls: false,
+      newMemory: {
+        description: '',
+        events: [],
+        forgotten: false,
+        diarised: false,
+      },
+    }
+  },
   components: {
-      ButtonComponent,
       CardComponent,
+      FormToggleComponent,
       HeadingComponent,
       MemoryComponent,
       SlideDownPanelComponent,
@@ -126,6 +149,10 @@ export default {
     ...mapGetters('resources', ['diary', 'hasDiary', 'lostDiaries']),
   },
   methods: {
+    ...mapMutations('notifications', {
+      hideNotification: 'hide'
+    }),
+    ...mapActions('notifications', ['showNotification']),
     ...mapMutations('memories', [
       'add',
       'remove',
@@ -140,11 +167,13 @@ export default {
       'removeMemoryFromDiary',
     ]),
     addMemory() {
-      this.add({
-          events:[],
-          forgotten: false,
-          diarised: false,
-      });
+      if (this.newMemory.description === '') {
+        this.showNotification({message: 'You must provide a description.', type:'warning'});
+        return;
+      }
+
+      this.add(this.newMemory);
+      this.toggleControls();
     },
     removeEvent({memory, idx}){
       memory.events.splice(idx, 1);
@@ -165,7 +194,17 @@ export default {
       const idx = this.diary.memories.indexOf(memory);
       this.removeMemoryFromDiary({diary: this.diary, idx});
       this.undiarise(memory);
-    }
-  }
+    },
+    toggleControls() {
+      this.newMemory = {
+        description: '',
+        events: [],
+        forgotten: false,
+        diarised: false,
+      };
+
+      this.showControls = !this.showControls;
+    },
+  },
 }
 </script>
