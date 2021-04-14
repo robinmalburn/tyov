@@ -2,6 +2,7 @@
     <div>
         <ButtonComponent
           class="w-full"
+          :type="type"
           v-if="!showControls"
           @click="$emit('toggle', showControls)"
         >
@@ -36,6 +37,11 @@ export default {
     showControls: {
       type: Boolean,
       default: false
+    },
+    type: {
+      type: String,
+      default: 'default',
+      validator: (value) => ['default', 'primary', 'secondary'].includes(value),
     }
   },
   components: {
