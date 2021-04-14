@@ -7,6 +7,7 @@ module.exports = {
             .alias
             .set('Components', path.resolve(__dirname, 'src', 'components'))
             .set('Stores', path.resolve(__dirname, 'src', 'store'))
-            .set('Libs', path.resolve(__dirname, 'src', 'lib'));
+            .set('Libs', path.resolve(__dirname, 'src', 'lib'))
+            .set('Migrations', path.resolve(__dirname, 'src', 'migrations'));
     },
 }

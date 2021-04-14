@@ -30,22 +30,33 @@
       </template>
     </FormToggleComponent>
 
-    <ul class="my-3">
-        <li
-            class="cursor-pointer select-none"
-            v-for="(skill, idx) in skills" :key="`skill-${idx}`"
-        >
-          <span @click="toggle(idx)">
-            <span>{{skill.name}}</span>
-            <span v-if="skill.checked">
-             (x)
-            </span>
+    <transition-group
+      class="my-2"
+      tag="ul"
+      enter-active-class="transition-all duration-100 ease-out"
+      leave-active-class="transition-all duration-100 ease-in"
+      enter-class="opacity-0"
+      enter-to-class="opacity-100"
+      leave-class="opacity-100"
+      leave-to-class="opacity-0"
+      move-class="transition-transform duration-500 ease-in-out"
+    >
+      <li
+          class="cursor-pointer select-none"
+          v-for="skill in skills"
+          :key="`skill-${skill.id}`"
+      >
+        <span @click="toggle(skill)">
+          <span>{{skill.name}}</span>
+          <span v-if="skill.checked">
+            (x)
           </span>
-          <RemoveCrossComponent 
-            @remove="remove(idx)"
-          />
-        </li>
-    </ul>
+        </span>
+        <RemoveCrossComponent 
+          @remove="remove(skill)"
+        />
+      </li>
+    </transition-group>
   </CardComponent>
 </template>
 
@@ -54,7 +65,8 @@ import RemoveCrossComponent from 'Components/RemoveCrossComponent';
 import CardComponent from 'Components/CardComponent';
 import HeadingComponent from 'Components/HeadingComponent';
 import FormToggleComponent from 'Components/FormToggleComponent';
-import { mapMutations, mapState, mapActions } from 'vuex';
+import { mapMutations, mapGetters, mapActions } from 'vuex';
+import uuid from 'Libs/uuid';
 
 
 export default {
@@ -75,7 +87,7 @@ export default {
     RemoveCrossComponent,
   },
   computed: {
-    ...mapState('skills', ['skills']),
+    ...mapGetters('skills', ['skills']),
   },
   methods: {
     ...mapMutations('notifications', {
@@ -93,7 +105,11 @@ export default {
         return;
       }
 
-      this.addSkill(this.newSkill);
+      this.addSkill({
+        id: uuid('skill'),
+        ...this.newSkill
+      });
+
       this.toggleControls();
     },
     toggleControls() {

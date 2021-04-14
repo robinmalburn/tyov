@@ -1,3 +1,7 @@
+import migrator from 'Migrations';
+
+export const SIGNATURE = 1;
+
 export const getStateFromStore = (store) => {
     return {
         d6: store.state.actions.d6,
@@ -11,6 +15,7 @@ export const getStateFromStore = (store) => {
         resources: store.state.resources.resources,
         diaries: store.state.resources.diaries,
         skills: store.state.skills.skills,
+        __SIGNATURE__: SIGNATURE,
     };
 };
 
@@ -63,6 +68,8 @@ export const restoreState = (store, data) => {
         ...data,
     };
 
+    data = migrator.migrate(data);
+
     store.commit('actions/saveRoll', data.lastRoll ?? '?');
 
     store.commit('actions/setD6', data.d6 ?? NaN);
@@ -86,6 +93,8 @@ export const restoreState = (store, data) => {
 }
 
 /**
+ * Serializes the data for saving.
+ * 
  * @param {Object} data Data to serialise
  * @returns string
  * @see https://developer.mozilla.org/en-US/docs/Web/API/WindowOrWorkerGlobalScope/btoa
@@ -110,6 +119,8 @@ export const serialize = (data) => {
 };
 
 /**
+ * Desirailizes the data for consumption.
+ * 
  * @param {String} data Data to deserialise
  * @returns Object
  * @see https://developer.mozilla.org/en-US/docs/Web/API/WindowOrWorkerGlobalScope/btoa
