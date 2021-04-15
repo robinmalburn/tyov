@@ -20,14 +20,24 @@
       </template>
     </FormToggleComponent>
     
-    <ul class="my-3">
-        <li v-for="(mark, idx) in marks" :key="`mark-${idx}`">
-            <span>{{mark}}</span>
-            <RemoveCrossComponent 
-              @remove="remove(idx)"
-            />
-        </li>
-    </ul>
+    <transition-group
+      class="my-2"
+      tag="ul"
+      enter-active-class="transition-all duration-100 ease-out"
+      leave-active-class="transition-all duration-100 ease-in"
+      enter-class="opacity-0"
+      enter-to-class="opacity-100"
+      leave-class="opacity-100"
+      leave-to-class="opacity-0"
+      move-class="transition-transform duration-500 ease-in-out"
+    >
+      <li v-for="mark in marks" :key="`mark-${mark.id}`">
+          <span>{{mark.description}}</span>
+          <RemoveCrossComponent 
+            @remove="remove(mark)"
+          />
+      </li>
+    </transition-group>
   </CardComponent>
 </template>
 
@@ -37,7 +47,7 @@ import CardComponent from 'Components/CardComponent';
 import HeadingComponent from 'Components/HeadingComponent';
 import FormToggleComponent from 'Components/FormToggleComponent';
 import { mapMutations, mapState, mapActions } from 'vuex';
-
+import uuid from 'Libs/uuid';
 
 export default{
   name: 'MarksPane',
@@ -71,7 +81,11 @@ export default{
         return;
       }
       
-      this.addMark(this.newMark);
+      this.addMark({
+        id: uuid('mark'),
+        description: this.newMark
+      });
+
       this.toggleControls();
     },
     toggleControls() {

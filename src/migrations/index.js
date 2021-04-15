@@ -1,10 +1,38 @@
-import addSkillsId from 'Migrations/addSkillsId';
+import addSkillsIdMigration from 'Migrations/20210414-addSkillsIdMigration';
+import addMarkDescriptionIdMigration from 'Migrations/20210415-addMarkDescriptionIdMigration';
 
 class Migrator {
     migrations = [];
 
     migrate(data) {
-        this.migrations.forEach(migration => {
+        const migrations = [...this.migrations];
+        migrations.sort((a, b) => {
+            // If neither has a required signature, leave their position unchanged.
+            if (!a.requiredSignature && !b.requiredSignature) {
+                return 0;
+            }
+
+            // If A has no required signature or has a later required signature, move A higher in order than B.
+            if (
+                (!a.requiredSignature && b.requiredSignature)
+                 || (a.requiredSignature && b.requiredSignature && a.requiredSignature > b.requiredSignature)
+             ) {
+                return 1;
+            }
+
+            // If B has no required signature or A has an earlier required signature, move A lower in order than B.
+            if (
+                (a.requiredSignature && !b.requiredSignature)
+                || (a.requiredSignature && b.requiredSignature && a.requiredSignature < b.requiredSignature)
+             ) {
+                    return -1
+                }
+
+            // Leave anything else in place.
+            return 0;
+        });
+
+        migrations.forEach(migration => {
             if (!migration.requiredSignature || !data.__SIGNATURE__ || data.__SIGNATURE__ < migration.requiredSignature) {
                 console.info(`Running Migration: ${migration.description}`);
                 data = migration.migrate(data);
@@ -31,6 +59,9 @@ class Migrator {
 
 const migrator = new Migrator();
 
-migrator.register(addSkillsId);
+migrator.register(
+    addSkillsIdMigration,
+    addMarkDescriptionIdMigration,
+);
 
 export default migrator;

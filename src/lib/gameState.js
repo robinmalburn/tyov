@@ -87,6 +87,7 @@ export const restoreState = (store, data) => {
     store.commit('memories/set', Array.isArray(data.memories) ? data.memories : []);
 
     store.commit('resources/setResources', Array.isArray(data.resources) ? data.resources : []);
+
     store.commit('resources/setDiaries', Array.isArray(data.diaries) ? data.diaries : []);
 
     store.commit('skills/set', Array.isArray(data.skills) ? data.skills : []);
