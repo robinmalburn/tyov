@@ -46,7 +46,7 @@
     </FormToggleComponent>
   
 
-    <div class="my-2 grid grid-rows gap-2" v-show="!memory.forgotten || canAddMemories">
+    <div class="my-2 grid grid-rows gap-2" v-show="(!memory.forgotten || memory.forgotten && memory.diarised) || canAddMemories">
       <ButtonComponent
         class="w-full"
         @click="$emit('toggle-memory', memory)"
@@ -73,7 +73,7 @@
         <ButtonComponent 
           class="w-full"
           @click="$emit('undiarise-memory', memory)"
-          v-else-if="memory.diarised"
+          v-else-if="memory.diarised && canAddMemories"
         >
           Recover from Diary
         </ButtonComponent>
