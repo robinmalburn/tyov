@@ -33,6 +33,7 @@ export default {
   },
   render: function(createElement, context) {
       const extraClasses = context.data.class || {};
+
       if (context.data.staticClass) {
           extraClasses[context.data.staticClass] = true;
       }
@@ -40,6 +41,7 @@ export default {
       return createElement(
           `h${context.props.level}`,
           {
+              ...context.data,
               class: {
                 'font-semibold': true,
                 'leading-loose' : true, 
