@@ -46,33 +46,44 @@
       </template>
     </FormToggleComponent>
     
-    <ul class="my-3">
-        <li
-            v-for="(character, idx) in characters"
-            :key="`character-${idx}`"
+    <transition-group
+      class="my-2"
+      tag="ul"
+      enter-active-class="transition-all duration-100 ease-out"
+      leave-active-class="transition-all duration-100 ease-in"
+      enter-class="opacity-0"
+      enter-to-class="opacity-100"
+      leave-class="opacity-100"
+      leave-to-class="opacity-0"
+      move-class="transition-transform duration-500 ease-in-out"
+    >
+      <li
+        v-for="character in characters"
+        :key="`character-${character.id}`"
         >
-            <CardComponent>
-                <div class="text-center">
-                    <span
-                        :class="{
-                            'line-through': character.dead,
-                            'text-red-700': character.immortal,
-                            'font-bold': character.immortal,
-                            'cursor-pointer': true,
-                            'select-none': true,
-                        }"
-                        @click="toggle(idx)"
-                    >
-                        {{character.name}}
-                    </span>
-                    <RemoveCrossComponent 
-                      @remove="remove(idx)"
-                    />
-                </div>
-                <div>{{character.bio}}</div>
-            </CardComponent>
+          <CardComponent :class="{'bg-red-50': character.immortal}">
+            <div class="flex border-b mb-2">
+              <HeadingComponent
+                :class="{
+                  'flex-1': true,
+                  'line-through': character.dead,
+                  'cursor-pointer': true,
+                  'select-none': true,
+                }"
+                level="6"
+                @click="toggle(character)"
+              >
+                {{ character.name }}
+                <span v-if="character.immortal">(Immortal)</span>
+              </HeadingComponent>
+              <div class="flex-initial text-right">
+                <RemoveCrossComponent @remove="remove(character)" />
+            </div>
+          </div>
+          <div>{{character.bio}}</div>
+          </CardComponent>
         </li>
-    </ul>
+    </transition-group>
   </CardComponent>
 </template>
 
@@ -81,7 +92,9 @@ import CardComponent from 'Components/CardComponent';
 import HeadingComponent from 'Components/HeadingComponent';
 import FormToggleComponent from 'Components/FormToggleComponent';
 import RemoveCrossComponent from 'Components/RemoveCrossComponent';
-import { mapMutations, mapActions, mapState } from 'vuex';
+import { mapMutations, mapActions, mapGetters, } from 'vuex';
+import uuid from 'Libs/uuid';
+
 
 export default {
   name: 'CharactersPane',
@@ -103,7 +116,7 @@ export default {
       RemoveCrossComponent,
   },
   computed: {
-    ...mapState('characters', ['characters']),
+    ...mapGetters('characters', ['characters']),
   },
   methods: {
     ...mapMutations('notifications', {
@@ -115,11 +128,11 @@ export default {
       remove: 'remove',
       toggleCharacter: 'toggle',
     }),
-    toggle(idx) {
-        if (this.characters[idx].immortal) {
+    toggle(character) {
+        if (character.immortal) {
             return;
         }
-        this.toggleCharacter(idx);
+        this.toggleCharacter(character);
       },
       add(){
       if (this.newCharacter.name === '' || this.newCharacter.bio === '') {
@@ -127,7 +140,10 @@ export default {
         return;
       }
       
-      this.addCharacter(this.newCharacter);
+      this.addCharacter({
+        id: uuid('character'),
+        ...this.newCharacter
+      });
       this.toggleControls();
     },
     toggleControls() {
