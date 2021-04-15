@@ -35,8 +35,8 @@
         leave-to-class="opacity-0 scale-40"
     >
       <MemoryComponent
-        v-for="(memory, idx) in activeMemories"
-        :key="`memory-${idx}`"
+        v-for="memory in activeMemories"
+        :key="`memory-${memory.id}`"
         :memory="memory"
         :can-add-memories="canAdd"
         @add-event="addEvent"
@@ -62,8 +62,8 @@
                 leave-to-class="opacity-0 scale-40"
             >
                 <MemoryComponent
-                    v-for="(memory, idx) in diary.memories"
-                    :key="`diary-${idx}`"
+                    v-for="memory in diary.memories"
+                    :key="`diary-${memory.id}`"
                     :memory="memory"
                     :can-add-memories="canAdd"
                     @add-event="addEvent"
@@ -94,8 +94,8 @@
                 leave-to-class="opacity-0 scale-40"
             >
                 <MemoryComponent
-                    v-for="(memory, idx) in forgottenMemories"
-                    :key="`memory-${idx}`"
+                    v-for="memory in forgottenMemories"
+                    :key="`memory-${memory.id}`"
                     :memory="memory"
                     :can-add-memories="canAdd"
                     @add-event="addEvent"
@@ -120,8 +120,8 @@ import HeadingComponent from 'Components/HeadingComponent';
 import FormToggleComponent from 'Components/FormToggleComponent';
 import MemoryComponent from 'Components/MemoryComponent';
 import SlideDownPanelComponent from 'Components/SlideDownPanelComponent';
-
 import { mapActions, mapMutations, mapState, mapGetters } from 'vuex';
+import uuid from 'Libs/uuid';
 
 export default {
   name: 'MemoriesPane',
@@ -172,27 +172,25 @@ export default {
         return;
       }
 
-      this.add(this.newMemory);
+      this.add({
+        id: uuid('memory'),
+        ...this.newMemory
+      });
       this.toggleControls();
-    },
-    removeEvent({memory, idx}){
-      memory.events.splice(idx, 1);
     },
     removeMemory(memory){
       if (memory.diarised) {
         this.undiariseMemory(memory);
       }
 
-      const idx = this.memories.indexOf(memory);
-      this.remove(idx);
+      this.remove(memory);
     },
     diariseMemory(memory) {
       this.addMemoryToDiary({diary: this.diary, memory});
       this.diarise(memory);
     },
     undiariseMemory(memory) {
-      const idx = this.diary.memories.indexOf(memory);
-      this.removeMemoryFromDiary({diary: this.diary, idx});
+      this.removeMemoryFromDiary({diary: this.diary, memory});
       this.undiarise(memory);
     },
     toggleControls() {
@@ -207,4 +205,4 @@ export default {
     },
   },
 }
-</script>
+</script>a

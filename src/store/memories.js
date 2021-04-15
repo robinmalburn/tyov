@@ -21,10 +21,16 @@ const getters = {
 const mutations = {
     add: (state, memory) => state.memories.push(memory),
     set: (state, memories) => state.memories = memories,
-    remove: (state, idx) => state.memories.splice(idx, 1),
+    remove: (state, memory) => {
+        const idx = state.memories.indexOf(memory);
+        state.memories.splice(idx, 1);
+    },
     toggle: (state, memory) => Vue.set(memory, 'forgotten', !memory.forgotten),
     addEvent: (state, {memory, event}) => memory.events.push(event),
-    removetEvent: (state, {memory, idx}) => memory.events.splice(idx, 0),
+    removeEvent: (state, {memory, event}) => {
+        const idx = memory.events.indexOf(event);
+        memory.events.splice(idx, 1);
+    },
     diarise: (state, memory) => Vue.set(memory, 'diarised', true),
     undiarise: (state, memory) => Vue.set(memory, 'diarised', false),
 }

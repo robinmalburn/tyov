@@ -1,7 +1,7 @@
 <template>
   <CardComponent>
     <div class="flex border-b mb-2">
-      <HeadingComponent class="flex-1" level="6">
+      <HeadingComponent :class="{'flex-1': true, 'line-through': memory.forgotten}" level="6">
         {{ memory.description }}
       </HeadingComponent>
       <div class="flex-initial text-right">
@@ -11,14 +11,14 @@
     
     <ul class="my-3">
       <li
-          v-for="(event, idx) in memory.events"
-          :key="`event-${idx}`"
+          v-for="event in memory.events"
+          :key="`event-${event.id}`"
       >
           <CardComponent>
             <div class="flex">
-              <span :class="{'flex-1': true, 'line-through': memory.forgotten, 'text-gray-400': memory.forgotten}">{{event}}</span>
+              <span :class="{'flex-1': true, 'line-through': memory.forgotten, 'text-gray-400': memory.forgotten}">{{event.description}}</span>
               <div class="text-right flex-inital">
-                <RemoveCrossComponent @remove="$emit('remove-event', {memory, idx})" />
+                <RemoveCrossComponent @remove="$emit('remove-event', {memory, event})" />
               </div>
             </div>
           </CardComponent>
@@ -39,7 +39,7 @@
           type="text"
           placeholder="Description"
           class="shadow appearance-none border rounded w-full py-1 px-2 m-1 text-gray-700 leading-tight focus:outline-none focus:ring-2 ring-gray-200"
-          v-model="newEvent"
+          v-model="newEvent.description"
           @keyup.enter="add"
         />
       </template>
@@ -89,6 +89,7 @@ import FormToggleComponent from 'Components/FormToggleComponent';
 import HeadingComponent from 'Components/HeadingComponent';
 import RemoveCrossComponent from 'Components/RemoveCrossComponent';
 import { mapMutations, mapActions, mapGetters } from 'vuex';
+import uuid from 'Libs/uuid';
 
 export default {
   name: 'MemoryComponent',
@@ -106,7 +107,9 @@ export default {
   data: function() {
       return {
           showControls: false,
-          newEvent:  '',
+          newEvent:  {
+            description: ''
+          },
       }
   },
   components: {
@@ -125,17 +128,24 @@ export default {
     }),
     ...mapActions('notifications', ['showNotification']),
     add(){
-      if (this.newEvent === '') {
+      if (this.newEvent.description === '') {
         this.showNotification({message: 'You must provide a description', type: 'warning'});
         return;
       }
-      this.$emit('add-event', {memory: this.memory, event: this.newEvent});
+      const event = {
+        id: uuid('event'),
+        ...this.newEvent
+      };
+
+      this.$emit('add-event', {memory: this.memory, event});
       this.toggleControls();
     },
     toggleControls() {
       this.hideNotification();
       this.showControls = !this.showControls;
-      this.newEvent = '';
+      this.newEvent = {
+        description: ''
+      };
     },
   }
 }

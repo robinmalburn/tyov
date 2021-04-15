@@ -50,7 +50,10 @@ const mutations = {
     toggleResource: (state, resource) => Vue.set(resource, 'lost', !resource.lost),
     addDiary: (state, diary) => state.diaries.push(diary),
     addMemoryToDiary: (state, {diary, memory}) => diary.memories.push(memory),
-    removeMemoryFromDiary: (state, {diary, idx}) => diary.memories.splice(idx, 1),
+    removeMemoryFromDiary: (state, {diary, memory}) => {
+        const idx = diary.memories.indexOf(memory);
+        diary.memories.splice(idx, 1);
+    },
     setDiaries: (state, diaries) => state.diaries = diaries,
     removeDiary: (state, diary) => {
         const idx = state.diaries.indexOf(diary);
