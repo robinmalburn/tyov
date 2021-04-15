@@ -1,5 +1,6 @@
 import addSkillsIdMigration from 'Migrations/20210414-addSkillsIdMigration';
 import addMarkDescriptionIdMigration from 'Migrations/20210415-addMarkDescriptionIdMigration';
+import addResourcesIdMigration from 'Migrations/20210415-addResourcesIdMigration';
 
 class Migrator {
     migrations = [];
@@ -62,6 +63,7 @@ const migrator = new Migrator();
 migrator.register(
     addSkillsIdMigration,
     addMarkDescriptionIdMigration,
+    addResourcesIdMigration,
 );
 
 export default migrator;

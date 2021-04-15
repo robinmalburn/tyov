@@ -71,33 +71,53 @@
       </template>
     </FormToggleComponent>
 
-    <ul class="my-3">
-        <li
-            class="cursor-pointer select-none"
-            v-for="(resource, idx) in resources" :key="`resource-${idx}`"
-        >
-            <span @click="toggleResource(idx)">
-                <span :class="{'line-through': resource.lost}">{{resource.name}}</span>
-                <span v-if="resource.stationary"> (stationary)</span>
-            </span>
-            <RemoveCrossComponent 
-                @remove="removeResource(idx)"
-            />
-        </li>
-
-        <li
-            class="cursor-pointer select-none"
-            v-for="(diary, idx) in diaries" :key="`diary-${idx}`"
-        >
-            <span @click="validatedToggleDiary(idx)">
-                <span :class="{'line-through': diary.lost}">{{diary.name}}</span>
-                <span class="italic"> (diary - {{ memories(diary) }} of 4 memories)</span>
-            </span>
-            <RemoveCrossComponent 
-                @remove="removeDiary(idx)"
-            />
-        </li>
-    </ul>
+    <transition-group
+      class="my-2 pb-2"
+      tag="ul"
+      enter-active-class="transition-all duration-100 ease-out"
+      leave-active-class="transition-all duration-100 ease-in"
+      enter-class="opacity-0"
+      enter-to-class="opacity-100"
+      leave-class="opacity-100"
+      leave-to-class="opacity-0"
+      move-class="transition-transform duration-500 ease-in-out"
+    >
+      <li
+        class="cursor-pointer select-none"
+        v-for="resource in resources"
+        :key="`resource-${resource.id}`"
+      >
+        <span @click="toggleResource(resource)">
+          <span :class="{'line-through': resource.lost}">{{resource.name}}</span>
+          <span v-if="resource.stationary"> (stationary)</span>
+        </span>
+        <RemoveCrossComponent @remove="removeResource(resource)" />
+      </li>
+    </transition-group>
+    <transition-group
+      class="my-2 border-t pt-2"
+      tag="ul"
+      enter-active-class="transition-all duration-100 ease-out"
+      leave-active-class="transition-all duration-100 ease-in"
+      enter-class="opacity-0"
+      enter-to-class="opacity-100"
+      leave-class="opacity-100"
+      leave-to-class="opacity-0"
+      move-class="transition-transform duration-500 ease-in-out"
+      v-show="diaries.length > 0"
+    >
+      <li
+        class="cursor-pointer select-none"
+        v-for="diary in diaries" 
+        :key="`diary-${diary.id}`"
+      >
+        <span @click="validatedToggleDiary(diary)">
+          <span :class="{'line-through': diary.lost}">{{diary.name}}</span>
+            <span class="italic"> (diary - {{ memories(diary) }} of 4 memories)</span>
+        </span>
+        <RemoveCrossComponent @remove="removeDiary(diary)"/>
+      </li>
+    </transition-group>
   </CardComponent>
 </template>
 <HeadingComponent level="2">Marks</HeadingComponent>
@@ -107,9 +127,8 @@ import CardComponent from 'Components/CardComponent';
 import HeadingComponent from 'Components/HeadingComponent';
 import FormToggleComponent from 'Components/FormToggleComponent';
 import RemoveCrossComponent from 'Components/RemoveCrossComponent';
-import { mapMutations, mapActions, mapState, mapGetters } from 'vuex';
-
-
+import { mapMutations, mapActions, mapGetters } from 'vuex';
+import uuid from 'Libs/uuid';
 
 export default {
   name: 'ResourcesPane',
@@ -136,8 +155,7 @@ export default {
       RemoveCrossComponent,
   },
   computed: {
-    ...mapState('resources', ['resources', 'diaries']),
-    ...mapGetters('resources', ['hasDiary']),
+    ...mapGetters('resources', ['hasDiary', 'diaries', 'resources']),
     memories() {
       return (diary) => {
         return diary.memories.reduce((carry, memory) => {
@@ -169,23 +187,26 @@ export default {
         return;
       }
 
-      this.addResource(this.newResource);
+      this.addResource({
+        id: uuid('resource'),
+        ...this.newResource
+      });
       this.toggleResourceControls();
     },
-    validatedToggleDiary(idx) {
+    validatedToggleDiary(diary) {
       this.hideNotification();
 
       if (this.hasDiary) {
-        if (this.diaries[idx].lost ) {
+        if (diary.lost ) {
           this.showNotification({message: 'You may only have one active diary.', type: 'warning'});
           return;
-        } else if (this.memories(this.diaries[idx]) > 0) {
+        } else if (this.memories(diary) > 0) {
           this.showNotification({message: 'Please cross out existing memories before losing the diary.', type: 'warning'});
           return;
         }
       }
 
-      this.toggleDiary(idx);
+      this.toggleDiary(diary);
     },
     validatedAddDiary() {
       if (this.newDiary.name === '') {
@@ -196,7 +217,10 @@ export default {
         return;
       }
 
-      this.addDiary(this.newDiary);
+      this.addDiary({
+        id: uuid('diary'),
+        ...this.newDiary
+      });
       this.toggleDiaryControls();
     },
     toggleResourceControls() {
