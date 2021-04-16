@@ -67,28 +67,47 @@
             v-for="(prompt) in prompts"
             :key="`prompt-key-${prompt.page}`"
           >
-              <span class="mr-4">
-                <span 
-                  class="cursor-pointer mx-2" 
-                  :class="{'mr-4':prompt.count === 1}"
-                  @click="incrementPrompt(prompt)"
-                  v-show="prompt.count < 3"
-                >
-                  +
-                </span>
-                <span 
-                  class="cursor-pointer select-none"
-                  :class="{'ml-8':prompt.count >= 3}"
-                  @click="decrementPrompt(prompt)"
-                  v-show="prompt.count > 1"
-                >
-                  -
-                </span>
-              </span>
-              <span :class="{'text-red-700': prompt.page === currentPrompt.page, 'select-none': true}">
-                <span class="px-2">{{prompt.page}}:</span> 
-                <span v-html="tally(prompt.count)"/>
-              </span>
+              <div class="flex">
+                <div class="flex-initial w-6 text-center">
+                  <span
+                    class="cursor-pointer select-none"
+                    title="Set as current propt"
+                    @click="makePromptCurrent(prompt)"
+                    v-html="'&rarr;'"
+                    v-show="prompt.page !== currentPrompt.page"
+                  />
+                </div>
+                <div class="flex-initial w-6 text-center">
+                  <span 
+                    class="cursor-pointer select-none" 
+                    title="Increment visits"
+                    @click="incrementPrompt(prompt)"
+                    v-show="prompt.count < 3"
+                  >
+                    +
+                  </span>
+                </div>
+                <div class="flex-initial w-6 text-center">
+                  <span 
+                    class="cursor-pointer select-none" 
+                    title="Decrement visits"
+                    @click="decrementPrompt(prompt)"
+                    v-show="prompt.count > 1"
+                  >
+                    -
+                  </span>
+                </div>
+                <div class="flex-initial">
+                  <span 
+                    class="select-none"
+                    :class="{'text-red-700': prompt.page === currentPrompt.page}"
+                  >
+                    <span class="px-2">{{prompt.page}}:</span> 
+                    <span v-html="tally(prompt.count)"/>
+                  </span>
+                </div>
+              </div>
+
 
           </li>
       </ol>
