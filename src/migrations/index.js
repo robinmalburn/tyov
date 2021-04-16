@@ -1,10 +1,4 @@
 import { SIGNATURE } from 'Libs/gameState';
-import addSkillsIdMigration from 'Migrations/20210414-addSkillsIdMigration';
-import addMarkDescriptionIdMigration from 'Migrations/20210415-addMarkDescriptionIdMigration';
-import addResourcesIdMigration from 'Migrations/20210415-addResourcesIdMigration';
-import addCharactersIdMigration from 'Migrations/20210415-addCharactersIdMigration';
-import addMemoryIdEventDescriptionMigration from 'Migrations/20210415-addMemoryIdEventDescriptionMigration';
-import addPromptIdMigration from 'Migrations/20210416-addPromptIdMigration';
 
 class Migrator {
     migrations = [];
@@ -14,7 +8,13 @@ class Migrator {
             return data;
         }
 
-        const migrations = [...this.migrations];
+        const migrations = [];
+
+        this.migrations.forEach(async cb => {
+            const module = await cb()
+            migrations.push(module.default);
+        });
+
         migrations.sort((a, b) => {
             // If neither has a required signature, leave their position unchanged.
             if (!a.requiredSignature && !b.requiredSignature) {
@@ -74,12 +74,12 @@ class Migrator {
 const migrator = new Migrator();
 
 migrator.register(
-    addSkillsIdMigration,
-    addMarkDescriptionIdMigration,
-    addResourcesIdMigration,
-    addCharactersIdMigration,
-    addMemoryIdEventDescriptionMigration,
-    addPromptIdMigration,
+    async () => import('Migrations/20210414-addSkillsIdMigration'),
+    async () => import('Migrations/20210415-addMarkDescriptionIdMigration'),
+    async () => import('Migrations/20210415-addResourcesIdMigration'),
+    async () => import('Migrations/20210415-addCharactersIdMigration'),
+    async () => import('Migrations/20210415-addMemoryIdEventDescriptionMigration'),
+    async () => import('Migrations/20210416-addPromptIdMigration'),
 );
 
 export default migrator;
