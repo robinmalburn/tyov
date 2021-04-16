@@ -1,5 +1,7 @@
 import { randomRange } from 'Libs/random';
 import { defaultGameState } from 'Libs/gameState';
+import Vue from 'vue';
+import uuid from 'Libs/uuid';
 
 const state = {
     ...defaultGameState('actions'),
@@ -28,10 +30,11 @@ const mutations = {
     setD10: (state, value) => state.d10 = value,
     rollD10: (state) => state.d10 = randomRange(1, 10),
     saveRoll: (state, roll) => state.lastRoll = roll,
-    makePrompt: (state, prompt) => state.prompts.push({page: prompt, name: `p${prompt}`, count: 0}),
+    makePrompt: (state, prompt) => state.prompts.push({id: uuid('prompt'), page: prompt, count: 0}),
     addPrompt: (state, prompt) => state.prompts.push(prompt),
     setPrompts: (state, prompts) => state.prompts = prompts,
-    incrementPrompt: (state, prompt) => state.prompts[prompt].count += 1,
+    incrementPrompt: (state, prompt) => Vue.set(prompt, 'count', prompt.count + 1),
+    decrementPrompt: (state, prompt) => Vue.set(prompt, 'count', prompt.count - 1),
     setCurrentPromptIdx: (state, idx) => state.currentPromptIdx = idx,
 }
 
@@ -52,7 +55,7 @@ const actions = {
         var promptIdx = state.currentPromptIdx;
 
         const promptFound = state.prompts.some((prompt, idx) => {
-            if (prompt.page === newPrompt) {
+            if (parseInt(prompt.page, 10) === newPrompt) {
                 promptIdx = idx;
                 if (prompt.count === 3) {
                     promptIdx += 1;
@@ -66,13 +69,24 @@ const actions = {
             promptIdx = state.prompts.length;
         }
 
-        if (!state.prompts[promptIdx]) {
-            commit ('makePrompt', newPrompt);
+        var prompt = state.prompts[promptIdx];
+        if (!prompt) {
+           prompt = {
+               id: uuid('propt'),
+               page: newPrompt,
+               count: 0
+           };
+
+           commit('addPrompt', prompt)
         }
 
-        commit('incrementPrompt', promptIdx);
+        commit('incrementPrompt', prompt);
         commit('setCurrentPromptIdx', promptIdx);
     },
+    makePromptCurrent({commit, state}, prompt) {
+        const idx = state.prompts.indexOf(prompt);
+        commit('setCurrentPromptIdx', idx);
+    }
 }
 
 export default {

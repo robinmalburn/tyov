@@ -1,13 +1,19 @@
+import { SIGNATURE } from 'Libs/gameState';
 import addSkillsIdMigration from 'Migrations/20210414-addSkillsIdMigration';
 import addMarkDescriptionIdMigration from 'Migrations/20210415-addMarkDescriptionIdMigration';
 import addResourcesIdMigration from 'Migrations/20210415-addResourcesIdMigration';
 import addCharactersIdMigration from 'Migrations/20210415-addCharactersIdMigration';
 import addMemoryIdEventDescriptionMigration from 'Migrations/20210415-addMemoryIdEventDescriptionMigration';
+import addPromptIdMigration from 'Migrations/20210416-addPromptIdMigration';
 
 class Migrator {
     migrations = [];
 
     migrate(data) {
+        if (data.__SIGNATURE__ === SIGNATURE) {
+            return data;
+        }
+
         const migrations = [...this.migrations];
         migrations.sort((a, b) => {
             // If neither has a required signature, leave their position unchanged.
@@ -36,7 +42,12 @@ class Migrator {
         });
 
         migrations.forEach(migration => {
-            if (!migration.requiredSignature || !data.__SIGNATURE__ || data.__SIGNATURE__ < migration.requiredSignature) {
+            if (!migration.requiredSignature) {
+                console.warn(`Skipping migration with missing signature.  Description: ${migration.description}`)
+                return;
+            }
+
+            if (!data.__SIGNATURE__ || data.__SIGNATURE__ < migration.requiredSignature) {
                 console.info(`Running Migration: ${migration.description}`);
                 data = migration.migrate(data);
             }
@@ -68,6 +79,7 @@ migrator.register(
     addResourcesIdMigration,
     addCharactersIdMigration,
     addMemoryIdEventDescriptionMigration,
+    addPromptIdMigration,
 );
 
 export default migrator;
