@@ -18,6 +18,17 @@ const getters = {
 const mutations = {
     add: (state, skill) => state.skills.push(skill),
     set: (state, skills) => state.skills = skills,
+    update: (state, updated) => {
+        let foundIdx;
+        state.skills.some((skill, idx) => {
+            if (skill.id === updated.id) {
+                foundIdx = idx;
+                return true;
+            }
+        });
+
+        Vue.set(state.skills, foundIdx, updated);
+    },
     remove: (state, skill) => {
         const idx = state.skills.indexOf(skill);
         state.skills.splice(idx, 1)

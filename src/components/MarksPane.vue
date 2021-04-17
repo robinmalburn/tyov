@@ -22,7 +22,7 @@
 
     <FormComponent
       class="my-2"
-      @save="updateMark"
+      @save="validatedUpdateMark"
       @cancel="toggleEditingControls"
       @remove="removeMark"
       v-show="showEditingControls"
@@ -49,7 +49,7 @@
         placeholder="Description"
         class="shadow appearance-none border rounded w-full py-1 px-2 m-1 text-gray-700 leading-tight focus:outline-none focus:ring-2 ring-gray-200"
         v-model="editMark.description"
-        @keyup.enter="updateMark"
+        @keyup.enter="validatedUpdateMark"
       />
     </FormComponent>
     
@@ -151,7 +151,7 @@ export default{
       this.editMark = {...mark};
       this.showEditingControls = true;
     },
-    updateMark() {
+    validatedUpdateMark() {
       if (this.editMark.description === '') {
         this.showNotification({message: 'You must provide a description', type:'warning'});
         return;
