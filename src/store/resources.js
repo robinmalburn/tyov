@@ -43,6 +43,17 @@ const getters = {
 const mutations = {
     addResource: (state, resource) => state.resources.push(resource),
     setResources: (state, resources) => state.resources = resources,
+    updateResource: (state, updated) => { 
+        let foundIdx;
+        state.resources.some((resource, idx) => {
+            if (resource.id === updated.id) {
+                foundIdx = idx;
+                return true;
+            }
+        });
+
+        Vue.set(state.resources, foundIdx, updated);
+    },
     removeResource: (state, resource) => {
         const idx = state.resources.indexOf(resource);
         state.resources.splice(idx, 1);
@@ -50,6 +61,17 @@ const mutations = {
     toggleResource: (state, resource) => Vue.set(resource, 'lost', !resource.lost),
     addDiary: (state, diary) => state.diaries.push(diary),
     addMemoryToDiary: (state, {diary, memory}) => diary.memories.push(memory),
+    updateDiary: (state, updated) => { 
+        let foundIdx;
+        state.diaries.some((diary, idx) => {
+            if (diary.id === updated.id) {
+                foundIdx = idx;
+                return true;
+            }
+        });
+
+        Vue.set(state.diaries, foundIdx, updated);
+    },
     removeMemoryFromDiary: (state, {diary, memory}) => {
         const idx = diary.memories.indexOf(memory);
         diary.memories.splice(idx, 1);
