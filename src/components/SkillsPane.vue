@@ -85,13 +85,16 @@
       move-class="transition-transform duration-500 ease-in-out"
     >
       <li
-          class="cursor-pointer select-none"
+          class="select-none"
           v-for="skill in skills"
           :key="`skill-${skill.id}`"
       >
         <div class="grid grid-cols-6">
           <span class="col-span-5">
-            <span @click="validatedToggleSkill(skill)">
+            <span 
+              class="cursor-pointer hover:text-gray-400"
+              @click="validatedToggleSkill(skill)"
+            >
               <span>{{skill.name}}</span>
               <span v-if="skill.checked">
                 (x)

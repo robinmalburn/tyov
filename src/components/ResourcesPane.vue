@@ -179,13 +179,16 @@
       move-class="transition-transform duration-500 ease-in-out"
     >
       <li
-        class="cursor-pointer select-none"
+        class="select-none"
         v-for="resource in resources"
         :key="`resource-${resource.id}`"
       >
         <div class="grid grid-cols-6">
           <span class="col-span-5">
-            <span @click="validatedToggleResource(resource)">
+            <span
+              class="cursor-pointer hover:text-gray-400"
+              @click="validatedToggleResource(resource)"
+            >
               <span :class="{'line-through': resource.lost}">{{resource.name}}</span>
               <span v-if="resource.stationary"> (stationary)</span>
             </span>
@@ -212,13 +215,16 @@
       v-show="diaries.length > 0"
     >
       <li
-        class="cursor-pointer select-none"
+        class="select-none"
         v-for="diary in diaries" 
         :key="`diary-${diary.id}`"
       >
         <div class="grid grid-cols-6">
           <span class="col-span-5">
-            <span @click="validatedToggleDiary(diary)">
+            <span
+              class="cursor-pointer hover:text-gray-400"
+              @click="validatedToggleDiary(diary)"
+            >
               <span :class="{'line-through': diary.lost}">{{diary.name}}</span>
               <span class="italic"> (diary - {{ memories(diary) }} of 4 memories)</span>
             </span>
