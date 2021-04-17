@@ -89,23 +89,22 @@
           v-for="skill in skills"
           :key="`skill-${skill.id}`"
       >
-
-            <div class="grid grid-cols-6">
-              <span class="col-span-5">
-                <span @click="validatedToggleSkill(skill)">
-                  <span>{{skill.name}}</span>
-                  <span v-if="skill.checked">
-                    (x)
-                  </span>
-                </span>
+        <div class="grid grid-cols-6">
+          <span class="col-span-5">
+            <span @click="validatedToggleSkill(skill)">
+              <span>{{skill.name}}</span>
+              <span v-if="skill.checked">
+                (x)
               </span>
-              <span 
-                  class="cursor-pointer select-none flex-initial text-right mx-2 hover:text-gray-400"
-                  @click="edit(skill)"
-                >
-                Edit
-              </span>
-          </div>
+            </span>
+          </span>
+          <span 
+              class="cursor-pointer select-none flex-initial text-right mx-2 hover:text-gray-400"
+              @click="edit(skill)"
+            >
+            Edit
+          </span>
+      </div>
       </li>
     </transition-group>
   </CardComponent>
@@ -171,7 +170,9 @@ export default {
       this.showEditingControls = true;
     },
     validatedToggleSkill(skill) {
-      if (this.editSkill && this.editSkill.id === skill.id) {
+      this.hideNotification();
+
+      if (this.editSkill.id === skill.id) {
         this.showNotification({message: 'You cannot change this skill whilst it is being edited.', type:'warning'});
         return;
       }
