@@ -9,27 +9,19 @@
             <slot name="button" />
         </ButtonComponent>
         <div v-else>
-          <slot name="form" />
-          <div class="my-1 grid gap-1 grid-cols-2">
-            <ButtonComponent 
-              class="w-full"
-              @click="$emit('save')"
-            >
-              Save
-            </ButtonComponent>
-            <ButtonComponent 
-              class="w-full"
-              @click="$emit('toggle', showControls)"
-            >
-              Cancel
-            </ButtonComponent>
-          </div>
+          <FormComponent
+            @save="$emit('save')"
+            @cancel="$emit('toggle', showControls)"
+          >
+            <slot name="form" />
+          </FormComponent>
         </div>
     </div>
 </template>
 
 <script>
-import ButtonComponent from './ButtonComponent';
+import ButtonComponent from 'Components/ButtonComponent';
+import FormComponent from 'Components/FormComponent';
 
 export default {
   name: 'FormToggleComponent',
@@ -46,6 +38,7 @@ export default {
   },
   components: {
     ButtonComponent,
+    FormComponent,
   },
 }
 </script>

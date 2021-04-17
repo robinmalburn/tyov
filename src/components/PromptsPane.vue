@@ -70,7 +70,7 @@
               <div class="flex">
                 <div class="flex-initial w-6 text-center">
                   <span
-                    class="cursor-pointer select-none"
+                    class="cursor-pointer select-none hover:text-gray-400"
                     title="Set as current propt"
                     @click="makePromptCurrent(prompt)"
                     v-html="'&rarr;'"
@@ -79,7 +79,7 @@
                 </div>
                 <div class="flex-initial w-6 text-center">
                   <span 
-                    class="cursor-pointer select-none" 
+                    class="cursor-pointer select-none hover:text-gray-400" 
                     title="Increment visits"
                     @click="incrementPrompt(prompt)"
                     v-show="prompt.count < 3"
@@ -89,7 +89,7 @@
                 </div>
                 <div class="flex-initial w-6 text-center">
                   <span 
-                    class="cursor-pointer select-none" 
+                    class="cursor-pointer select-none hover:text-gray-400" 
                     title="Decrement visits"
                     @click="decrementPrompt(prompt)"
                     v-show="prompt.count > 1"

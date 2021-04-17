@@ -1,6 +1,6 @@
 <template>
     <span 
-        class="cursor-pointer select-none mx-1"
+        class="cursor-pointer select-none mx-1 hover:text-gray-400"
         title="Remove item"
         @click="$emit('remove')"
         v-html="'&times;'"
