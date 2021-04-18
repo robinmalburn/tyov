@@ -17,9 +17,11 @@ const getters = {
         return `${getters.die} (+${state.d10}, -${state.d6})`;
     },
     prompts: (state) => {
-        const prompts = [...state.prompts.values()];
+        const prompts = [...state.prompts];
 
-        return prompts.sort((a, b) => a.page > b.page ? -1 : 1);
+        prompts.sort((a, b) => a.page > b.page ? -1 : 1);
+
+        return prompts;
     },
     currentPrompt: (state) => state.prompts[state.currentPromptIdx] ?? {},
 };
@@ -33,6 +35,10 @@ const mutations = {
     makePrompt: (state, prompt) => state.prompts.push({id: uuid('prompt'), page: prompt, count: 0}),
     addPrompt: (state, prompt) => state.prompts.push(prompt),
     setPrompts: (state, prompts) => state.prompts = prompts,
+    removePrompt: (state, prompt) => {
+        const idx = state.prompts.indexOf(prompt);
+        state.prompts.splice(idx, 1);
+    },
     incrementPrompt: (state, prompt) => Vue.set(prompt, 'count', prompt.count + 1),
     decrementPrompt: (state, prompt) => Vue.set(prompt, 'count', prompt.count - 1),
     setCurrentPromptIdx: (state, idx) => state.currentPromptIdx = idx,
@@ -55,7 +61,7 @@ const actions = {
         var promptIdx = state.currentPromptIdx;
 
         const promptFound = state.prompts.some((prompt, idx) => {
-            if (parseInt(prompt.page, 10) === newPrompt) {
+            if (prompt.page === newPrompt) {
                 promptIdx = idx;
                 if (prompt.count === 3) {
                     promptIdx += 1;
@@ -72,7 +78,7 @@ const actions = {
         var prompt = state.prompts[promptIdx];
         if (!prompt) {
            prompt = {
-               id: uuid('propt'),
+               id: uuid('prompt'),
                page: newPrompt,
                count: 0
            };
@@ -86,7 +92,14 @@ const actions = {
     makePromptCurrent({commit, state}, prompt) {
         const idx = state.prompts.indexOf(prompt);
         commit('setCurrentPromptIdx', idx);
-    }
+    },
+    removePrompt({commit, getters, state}, prompt) {
+        let currentPrompt = getters.currentPrompt;
+
+        commit('removePrompt', prompt);
+
+        commit('setCurrentPromptIdx', state.prompts.indexOf(currentPrompt));
+    },
 }
 
 export default {

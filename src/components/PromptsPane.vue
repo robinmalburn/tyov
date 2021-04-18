@@ -65,15 +65,24 @@
           <li
             class="select-none"
             v-for="(prompt) in prompts"
-            :key="`prompt-key-${prompt.page}`"
+            :key="`prompt-key-${prompt.id}`"
           >
               <div class="flex">
                 <div class="flex-initial w-6 text-center">
                   <span
                     class="cursor-pointer select-none hover:text-gray-400"
-                    title="Set as current propt"
+                    title="Set as current prompt"
                     @click="makePromptCurrent(prompt)"
                     v-html="'&rarr;'"
+                    v-show="prompt.page !== currentPrompt.page"
+                  />
+                </div>
+                <div class="flex-initial w-6 text-center">
+                  <span
+                    class="cursor-pointer select-none hover:text-gray-400"
+                    title="Remove prompt"
+                    @click="removePrompt(prompt)"
+                    v-html="'&times;'"
                     v-show="prompt.page !== currentPrompt.page"
                   />
                 </div>
@@ -82,20 +91,18 @@
                     class="cursor-pointer select-none hover:text-gray-400" 
                     title="Increment visits"
                     @click="incrementPrompt(prompt)"
+                    v-html="'&plus;'"
                     v-show="prompt.count < 3"
-                  >
-                    +
-                  </span>
+                  />
                 </div>
                 <div class="flex-initial w-6 text-center">
                   <span 
                     class="cursor-pointer select-none hover:text-gray-400" 
                     title="Decrement visits"
                     @click="decrementPrompt(prompt)"
+                    v-html="'&minus;'"
                     v-show="prompt.count > 1"
-                  >
-                    -
-                  </span>
+                  />
                 </div>
                 <div class="flex-initial">
                   <span 
@@ -107,8 +114,6 @@
                   </span>
                 </div>
               </div>
-
-
           </li>
       </ol>
     </div>
@@ -170,7 +175,7 @@ export default {
         prompts.sort((a, b) => a.page > b.page ? 1 : -1);
 
         prompts.some((prompt) => {
-          let page = parseInt(prompt.page, 10)
+          let page = prompt.page;
           if (page > unused) {
             return true;
           }
@@ -185,14 +190,14 @@ export default {
   },
   methods: {
     ...mapMutations('actions', ['addPrompt', 'incrementPrompt', 'decrementPrompt']),
-    ...mapActions('actions', ['makePromptCurrent']),
+    ...mapActions('actions', ['makePromptCurrent', 'removePrompt']),
     ...mapMutations('notifications', {
       hideNotification: 'hide'
     }),
     ...mapActions('notifications', ['showNotification']),
     addValidatedPrompt() {
       const promptExists = this.prompts.some((prompt) => {
-        return parseInt(prompt.page,10) === parseInt(this.newPrompt.page, 10);
+        return prompt.page === this.newPrompt.page;
       });
 
       if (promptExists) {
@@ -204,6 +209,8 @@ export default {
         id: uuid('prompt'),
         ...this.newPrompt,
       };
+
+      prompt.page = parseInt(prompt.page, 10);
 
       this.addPrompt(prompt);
 
