@@ -35,7 +35,7 @@
           <a 
             class="hover:text-gray-400"
             href="https://thousandyearoldvampire.com/"
-            v-html="'Thousand Year Old Vampire Copyright &copy; Tim Tim Hutchings'"
+            v-html="'Thousand Year Old Vampire Copyright &copy; Tim Hutchings'"
           />
         </li>
       </ul>
