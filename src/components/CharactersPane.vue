@@ -3,7 +3,7 @@
     <HeadingComponent level="2">Characters</HeadingComponent>
 
     <FormToggleComponent 
-      @save="add"
+      @save="validatedAdd"
       @toggle="toggleControls"
       :showControls="showControls"
     >
@@ -16,7 +16,7 @@
           placeholder="Name"
           class="shadow appearance-none border rounded w-full py-1 px-2 m-1 text-gray-700 leading-tight focus:outline-none focus:ring-2 ring-gray-200"
           v-model="newCharacter.name"
-          @keyup.enter="add"
+          @keyup.enter="validatedAdd"
         />
         <textarea 
             placeholder="Bio"
@@ -45,6 +45,65 @@
         </label>
       </template>
     </FormToggleComponent>
+
+    <FormComponent
+      class="my-2"
+      ref="editForm"
+      @save="validatedUpdate"
+      @cancel="toggleEditingControls"
+      @remove="validatedRemove"
+      v-show="showEditingControls"
+      :buttons="[
+        {
+            type: 'default',
+            event: 'save',
+            label: 'Save',
+        },
+        {
+            type: 'default',
+            event: 'cancel',
+            label: 'Cancel',
+        },
+        {
+            type: 'default',
+            event: 'remove',
+            label: 'Remove',
+        },
+      ]"
+    >
+      <input 
+          type="text"
+          placeholder="Name"
+          class="shadow appearance-none border rounded w-full py-1 px-2 m-1 text-gray-700 leading-tight focus:outline-none focus:ring-2 ring-gray-200"
+          v-model="editCharacter.name"
+          @keyup.enter="add"
+        />
+        <textarea 
+            placeholder="Bio"
+            class="shadow appearance-none border rounded w-full py-1 px-2 m-1 text-gray-700 leading-tight focus:outline-none focus:ring-2 ring-gray-200 resize-none"
+            v-model="editCharacter.bio"
+        />
+        <label>
+          <input
+              type="checkbox"
+              class="shadow border rounded py-2 px-2 m-1 text-gray-700 leading-tight focus:outline-none focus:ring-2 ring-gray-200"
+              v-model="editCharacter.immortal"
+              :true-value="true"
+              :false-value="false"
+          />
+          Immortal?
+        </label>
+        <label>
+          <input
+              type="checkbox"
+              class="shadow border rounded py-2 px-2 m-1 text-gray-700 leading-tight focus:outline-none focus:ring-2 ring-gray-200"
+              v-model="editCharacter.dead"
+              :true-value="true"
+              :false-value="false"
+          />
+          Dead?
+        </label>
+    </FormComponent>
     
     <transition-group
       class="my-2"
@@ -71,13 +130,18 @@
                   'select-none': true,
                 }"
                 level="6"
-                @click="toggle(character)"
+                @click="validatedToggle(character)"
               >
                 {{ character.name }}
                 <span v-if="character.immortal">(Immortal)</span>
               </HeadingComponent>
               <div class="flex-initial text-right">
-                <RemoveCrossComponent @remove="remove(character)" />
+                <span 
+                  class="cursor-pointer select-none flex-initial text-right mx-2 hover:text-gray-400"
+                  @click="startEdit(character)"
+                >
+                Edit
+              </span>
             </div>
           </div>
           <div>{{character.bio}}</div>
@@ -90,17 +154,18 @@
 <script>
 import CardComponent from 'Components/CardComponent';
 import HeadingComponent from 'Components/HeadingComponent';
+import FormComponent from 'Components/FormComponent';
 import FormToggleComponent from 'Components/FormToggleComponent';
-import RemoveCrossComponent from 'Components/RemoveCrossComponent';
 import { mapMutations, mapActions, mapGetters, } from 'vuex';
 import uuid from 'Libs/uuid';
-
 
 export default {
   name: 'CharactersPane',
   data: function() {
       return {
           showControls: false,
+          showEditingControls: false,
+          editCharacter: {},
           newCharacter: {
             name: '',
             dead: false,
@@ -111,9 +176,9 @@ export default {
   },
   components: {
       CardComponent,
+      FormComponent,
       FormToggleComponent,
       HeadingComponent,
-      RemoveCrossComponent,
   },
   computed: {
     ...mapGetters('characters', ['characters']),
@@ -123,28 +188,67 @@ export default {
       hideNotification: 'hide'
     }),
     ...mapActions('notifications', ['showNotification']),
-    ...mapMutations('characters', {
-      addCharacter: 'add',
-      remove: 'remove',
-      toggleCharacter: 'toggle',
-    }),
-    toggle(character) {
-        if (character.immortal) {
-            return;
+    ...mapMutations('characters', [
+        'add',
+        'update',
+        'remove',
+        'toggle',
+      ]),
+      validatedToggle(character) {
+        this.hideNotification();
+
+        if (this.editCharacter.id === character.id) {
+          this.showNotification({message: 'You cannot change this character whilst it is being edited.', type:'warning'});
+          return;
         }
-        this.toggleCharacter(character);
+        this.toggle(character);
+        this.toggleEditingControls();
       },
-      add(){
+      validatedAdd(){
       if (this.newCharacter.name === '' || this.newCharacter.bio === '') {
         this.showNotification({message:'You must provide a name & bio.', type:'warning'});
         return;
       }
       
-      this.addCharacter({
+      this.add({
         id: uuid('character'),
         ...this.newCharacter
       });
+
       this.toggleControls();
+    },
+    validatedRemove() {
+      let toRemove;
+      
+      this.characters.some(character => {
+        if (character.id === this.editCharacter.id) {
+          toRemove = character;
+          return true;
+        }
+      });
+
+      this.remove(toRemove);
+      this.toggleEditingControls();
+    },
+    validatedUpdate() {
+      if (this.editCharacter.name === '' || this.editCharacter.bio === '') {
+        this.showNotification({message:'You must provide a name & bio.', type:'warning'});
+        return;
+      }
+
+      this.update(this.editCharacter);
+      
+      this.toggleEditingControls();
+    },
+    startEdit(character) {
+      this.editCharacter = {...character};
+      this.showEditingControls = true;
+
+      // Scroll the edit form in the next tick to allow the dom to be updated.
+      this.$nextTick(() => {
+        const rect = this.$refs.editForm.$el.getBoundingClientRect();
+        window.scrollTo({top: rect.y + window.scrollY, behavior: 'smooth'});
+      });
     },
     toggleControls() {
       this.hideNotification();
@@ -155,6 +259,12 @@ export default {
             dead: false,
             immortal: false,
           };
+    },
+    toggleEditingControls()
+    {
+      this.hideNotification();
+      this.showEditingControls = !this.showEditingControls;
+      this.editCharacter = {};
     },
   }
 }

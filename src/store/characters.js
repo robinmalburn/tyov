@@ -21,6 +21,20 @@ const getters = {
 
 const mutations = {
     add: (state, character) => state.characters.push(character),
+    update: (state, update) => {
+        let foundIdx;
+        
+        state.characters.some((character, idx) => {
+            if (character.id === update.id) {
+                foundIdx = idx;
+                return true;
+            }
+        });
+
+        console.log({foundIdx, update});
+
+        Vue.set(state.characters, foundIdx, update);
+    },
     set: (state, characters) => state.characters = characters,
     remove: (state, character) => {
         const idx = state.characters.indexOf(character);
