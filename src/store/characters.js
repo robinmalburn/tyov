@@ -31,8 +31,6 @@ const mutations = {
             }
         });
 
-        console.log({foundIdx, update});
-
         Vue.set(state.characters, foundIdx, update);
     },
     set: (state, characters) => state.characters = characters,

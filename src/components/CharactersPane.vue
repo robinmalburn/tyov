@@ -123,21 +123,23 @@
           <CardComponent :class="{'bg-red-50': character.immortal}">
             <div class="flex border-b mb-2">
               <HeadingComponent
-                :class="{
-                  'flex-1': true,
-                  'line-through': character.dead,
-                  'cursor-pointer': true,
-                  'select-none': true,
-                }"
                 level="6"
-                @click="validatedToggle(character)"
+                class="select-none flex-1"
               >
-                {{ character.name }}
-                <span v-if="character.immortal">(Immortal)</span>
+                <div
+                  :class="{
+                    'line-through': character.dead,
+                    'cursor-pointer': true,
+                  }"
+                  @click="validatedToggle(character)"
+                >
+                  {{ character.name }}
+                  <span v-if="character.immortal">(Immortal)</span>
+                </div>
               </HeadingComponent>
               <div class="flex-initial text-right">
                 <span 
-                  class="cursor-pointer select-none flex-initial text-right mx-2 hover:text-gray-400"
+                  class="cursor-pointer mx-2 hover:text-gray-400"
                   @click="startEdit(character)"
                 >
                 Edit
@@ -201,8 +203,8 @@ export default {
           this.showNotification({message: 'You cannot change this character whilst it is being edited.', type:'warning'});
           return;
         }
+        
         this.toggle(character);
-        this.toggleEditingControls();
       },
       validatedAdd(){
       if (this.newCharacter.name === '' || this.newCharacter.bio === '') {
