@@ -1,4 +1,5 @@
 import { defaultGameState } from 'Libs/gameState';
+import { findById } from 'Libs/uuid';
 import Vue from 'vue';
 
 const state = {
@@ -19,19 +20,12 @@ const mutations = {
     add: (state, skill) => state.skills.push(skill),
     set: (state, skills) => state.skills = skills,
     update: (state, updated) => {
-        let foundIdx;
-        state.skills.some((skill, idx) => {
-            if (skill.id === updated.id) {
-                foundIdx = idx;
-                return true;
-            }
-        });
-
-        Vue.set(state.skills, foundIdx, updated);
+        const found = findById(state.skills, updated.id);
+        Vue.set(state.skills, found.idx, updated);
     },
     remove: (state, skill) => {
-        const idx = state.skills.indexOf(skill);
-        state.skills.splice(idx, 1)
+        const found = findById(state.skills, skill.id);
+        state.skills.splice(found.idx, 1)
     },
     toggle: (state, skill) => Vue.set(skill, 'checked', !skill.checked),
 };

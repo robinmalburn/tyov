@@ -1,4 +1,6 @@
 import { defaultGameState } from 'Libs/gameState';
+import { findById } from 'Libs/uuid';
+
 import Vue from 'vue';
 
 const state = {
@@ -8,20 +10,13 @@ const state = {
 const mutations = {
     add: (state, mark) => state.marks.push(mark),
     update: (state, updated) => { 
-        let foundIdx;
-        state.marks.some((mark, idx) => {
-            if (mark.id === updated.id) {
-                foundIdx = idx;
-                return true;
-            }
-        });
-
-        Vue.set(state.marks, foundIdx, updated);
+        const found = findById(state.marks, updated.id);
+        Vue.set(state.marks, found.idx, updated);
     },
     set: (state, marks) => state.marks = marks,
     remove: (state, mark) => {
-        const idx = state.marks.indexOf(mark);
-        state.marks.splice(idx, 1)
+        const found = findById(state.marks, mark.id);
+        state.marks.splice(found.idx, 1)
     },
 }
 

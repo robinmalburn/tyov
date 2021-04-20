@@ -2,9 +2,9 @@
   <CardComponent id="marks">
     <HeadingComponent level="2">Marks</HeadingComponent>
     <FormToggleComponent 
-      @save="add"
-      @toggle="toggleControls"
-      :showControls="showControls"
+      @save="validatedAddMark"
+      @toggle="toggleAddingControls"
+      :show-controls="showAddingControls"
     >
       <template #button>
         Add a new Mark?
@@ -15,7 +15,7 @@
           placeholder="Description"
           class="shadow appearance-none border rounded w-full py-1 px-2 m-1 text-gray-700 leading-tight focus:outline-none focus:ring-2 ring-gray-200"
           v-model="newMark"
-          @keyup.enter="add"
+          @keyup.enter="validatedAddMark"
         />
       </template>
     </FormToggleComponent>
@@ -23,8 +23,8 @@
     <FormComponent
       class="my-2"
       @save="validatedUpdateMark"
-      @cancel="toggleEditingControls"
-      @remove="removeMark"
+      @cancel="closeEditingControls"
+      @remove="validatedRemoveMark"
       v-show="showEditingControls"
       :buttons="[
         {
@@ -73,7 +73,7 @@
             <span class="col-span-5">{{mark.description}}</span>
             <span 
               class="cursor-pointer select-none flex-initial text-right mx-2 hover:text-gray-400"
-              @click="edit(mark)"
+              @click="startEdit(mark)"
             >
               Edit
             </span>
@@ -98,7 +98,7 @@ export default{
       return {
         newMark: '',
         editMark: {},
-        showControls: false,
+        showAddingControls: false,
         showEditingControls: false,
       }
   },
@@ -116,25 +116,25 @@ export default{
       hideNotification: 'hide'
     }),
     ...mapActions('notifications', ['showNotification']),
-    ...mapMutations('marks', {
-      addMark: 'add',
-      update: 'update',
-      remove: 'remove'
-    }),
-    add() {
+    ...mapMutations('marks', [
+      'add',
+      'update',
+      'remove'
+    ]),
+    validatedAddMark() {
       if (this.newMark === '') {
         this.showNotification({message: 'You must provide a description', type:'warning'});
         return;
       }
       
-      this.addMark({
+      this.add({
         id: uuid('mark'),
         description: this.newMark
       });
 
-      this.toggleControls();
+      this.toggleAddingControls();
     },
-    removeMark() {
+    validatedRemoveMark() {
       let markToRemove;
 
       this.marks.some(mark => {
@@ -145,11 +145,8 @@ export default{
       });
 
       this.remove(markToRemove);
-      this.toggleEditingControls();
-    },
-    edit(mark) {
-      this.editMark = {...mark};
-      this.showEditingControls = true;
+
+      this.closeEditingControls();
     },
     validatedUpdateMark() {
       if (this.editMark.description === '') {
@@ -158,16 +155,20 @@ export default{
       }
 
       this.update(this.editMark);
-      this.toggleEditingControls();
+      this.closeEditingControls();
     },
-    toggleEditingControls() {
+    startEdit(mark) {
+      this.editMark = {...mark};
+      this.showEditingControls = true;
+    },
+    closeEditingControls() {
       this.hideNotification();
-      this.showEditingControls = !this.showEditingControls;
+      this.showEditingControls = false;
       this.editMark = {};
     },
-    toggleControls() {
+    toggleAddingControls() {
       this.hideNotification();
-      this.showControls = !this.showControls;
+      this.showAddingControls = !this.showAddingControls;
       this.newMark = '';
     },
   }

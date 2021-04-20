@@ -1,4 +1,5 @@
 import { defaultGameState } from 'Libs/gameState';
+import { findById } from 'Libs/uuid';
 import Vue from 'vue';
 
 const state = {
@@ -44,42 +45,28 @@ const mutations = {
     addResource: (state, resource) => state.resources.push(resource),
     setResources: (state, resources) => state.resources = resources,
     updateResource: (state, updated) => { 
-        let foundIdx;
-        state.resources.some((resource, idx) => {
-            if (resource.id === updated.id) {
-                foundIdx = idx;
-                return true;
-            }
-        });
-
-        Vue.set(state.resources, foundIdx, updated);
+        const found = findById(state.resources, updated.id);
+        Vue.set(state.resources, found.idx, updated);
     },
     removeResource: (state, resource) => {
-        const idx = state.resources.indexOf(resource);
-        state.resources.splice(idx, 1);
+        const found = findById(state.resources, resource.id);
+        state.resources.splice(found.idx, 1);
     },
     toggleResource: (state, resource) => Vue.set(resource, 'lost', !resource.lost),
     addDiary: (state, diary) => state.diaries.push(diary),
     addMemoryToDiary: (state, {diary, memory}) => diary.memories.push(memory),
     updateDiary: (state, updated) => { 
-        let foundIdx;
-        state.diaries.some((diary, idx) => {
-            if (diary.id === updated.id) {
-                foundIdx = idx;
-                return true;
-            }
-        });
-
-        Vue.set(state.diaries, foundIdx, updated);
+        const found = findById(state.diaries, updated.id);
+        Vue.set(state.diaries, found.idx, updated);
     },
     removeMemoryFromDiary: (state, {diary, memory}) => {
-        const idx = diary.memories.indexOf(memory);
-        diary.memories.splice(idx, 1);
+        const found = findById(diary.memories, memory.id);
+        diary.memories.splice(found.idx, 1);
     },
     setDiaries: (state, diaries) => state.diaries = diaries,
     removeDiary: (state, diary) => {
-        const idx = state.diaries.indexOf(diary);
-        state.diaries.splice(idx, 1);
+        const found = findById(state.diaries, diary.id);
+        state.diaries.splice(found.idx, 1);
     },
     toggleDiary: (state, diary) => Vue.set(diary, 'lost', !diary.lost),
 }

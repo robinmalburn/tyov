@@ -4,8 +4,8 @@
 
     <FormToggleComponent 
       @save="validatedAdd"
-      @toggle="toggleControls"
-      :showControls="showControls"
+      @toggle="toggleAddingControls"
+      :show-controls="showAddingControls"
     >
       <template #button>
         Add a new Character?
@@ -50,7 +50,7 @@
       class="my-2"
       ref="editForm"
       @save="validatedUpdate"
-      @cancel="toggleEditingControls"
+      @cancel="closeEditingControls"
       @remove="validatedRemove"
       v-show="showEditingControls"
       :buttons="[
@@ -165,7 +165,7 @@ export default {
   name: 'CharactersPane',
   data: function() {
       return {
-          showControls: false,
+          showAddingControls: false,
           showEditingControls: false,
           editCharacter: {},
           newCharacter: {
@@ -217,7 +217,7 @@ export default {
         ...this.newCharacter
       });
 
-      this.toggleControls();
+      this.toggleAddingControls();
     },
     validatedRemove() {
       let toRemove;
@@ -230,7 +230,7 @@ export default {
       });
 
       this.remove(toRemove);
-      this.toggleEditingControls();
+      this.closeEditingControls();
     },
     validatedUpdate() {
       if (this.editCharacter.name === '' || this.editCharacter.bio === '') {
@@ -240,7 +240,7 @@ export default {
 
       this.update(this.editCharacter);
       
-      this.toggleEditingControls();
+      this.closeEditingControls();
     },
     startEdit(character) {
       this.editCharacter = {...character};
@@ -252,9 +252,9 @@ export default {
         window.scrollTo({top: rect.y + window.scrollY, behavior: 'smooth'});
       });
     },
-    toggleControls() {
+    toggleAddingControls() {
       this.hideNotification();
-      this.showControls = !this.showControls;
+      this.showAddingControls = !this.showAddingControls;
       this.newCharacter = {
             name: '',
             bio: '',
@@ -262,7 +262,7 @@ export default {
             immortal: false,
           };
     },
-    toggleEditingControls()
+    closeEditingControls()
     {
       this.hideNotification();
       this.showEditingControls = !this.showEditingControls;

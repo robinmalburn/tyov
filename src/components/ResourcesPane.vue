@@ -4,8 +4,8 @@
     <FormToggleComponent 
       class="my-2"
       @save="validatedAddResource"
-      @toggle="toggleResourceControls"
-      :showControls="showControls"
+      @toggle="toggleAddingResourceControls"
+      :show-controls="showAddingResourceControls"
     >
       <template #button>
         Add a new Resource?
@@ -43,8 +43,8 @@
 
     <FormToggleComponent 
       @save="validatedAddDiary"
-      @toggle="toggleDiaryControls"
-      :showControls="showDiary"
+      @toggle="toggleAddingDiaryControls"
+      :show-controls="showAddingDiaryControls"
       v-if="!hasDiary"
     >
       <template #button>
@@ -74,7 +74,7 @@
     <FormComponent
       class="my-2"
       @save="validatedUpdateResource"
-      @cancel="toggleEditingResourceControls"
+      @cancel="closeEditingResourceControls"
       @remove="validatedRemoveResource"
       v-show="showEditingResourceControls"
       :buttons="[
@@ -127,7 +127,7 @@
     <FormComponent
       class="my-2"
       @save="validatedUpdateDiary"
-      @cancel="toggleEditingDiaryControls"
+      @cancel="closeEditingDiaryControls"
       @remove="validatedRemoveDiary"
       v-show="showEditingDiaryControls"
       :buttons="[
@@ -254,8 +254,8 @@ export default {
   name: 'ResourcesPane',
   data: function() {
       return {
-          showControls: false,
-          showDiary: false,
+          showAddingResourceControls: false,
+          showAddingDiaryControls: false,
           showEditingResourceControls: false,
           showEditingDiaryControls: false,
           newResource: {
@@ -317,7 +317,7 @@ export default {
         id: uuid('resource'),
         ...this.newResource
       });
-      this.toggleResourceControls();
+      this.toggleAddingResourceControls();
     },
     validatedToggleResource(resource) {
       this.hideNotification();
@@ -362,7 +362,7 @@ export default {
         id: uuid('diary'),
         ...this.newDiary
       });
-      this.toggleDiaryControls();
+      this.toggleAddingDiaryControls();
     },
     validatedUpdateResource() {
       if (this.editResource.name === '') {
@@ -372,7 +372,7 @@ export default {
 
       this.updateResource(this.editResource);
 
-      this.toggleEditingResourceControls();
+      this.closeEditingResourceControls();
     },
     validatedUpdateDiary(){
       if (this.editDiary.name === '') {
@@ -385,7 +385,7 @@ export default {
 
       this.updateDiary(this.editDiary);
 
-      this.toggleEditingDiaryControls();
+      this.closeEditingDiaryControls();
     },
     validatedRemoveResource() {
       let resourceToRemove;
@@ -398,7 +398,7 @@ export default {
       });
 
       this.removeResource(resourceToRemove);
-      this.toggleEditingResourceControls();
+      this.closeEditingResourceControls();
     },
     validatedRemoveDiary() {
       let diaryToRemove;
@@ -411,7 +411,7 @@ export default {
       });
 
       this.removeDiary(diaryToRemove);
-      this.toggleEditingDiaryControls();
+      this.closeEditingDiaryControls();
     },
     startEditResource(resource){
       this.editResource = {...resource};
@@ -421,32 +421,32 @@ export default {
       this.editDiary = {...diary};
       this.showEditingDiaryControls = true;
     },
-    toggleResourceControls() {
+    toggleAddingResourceControls() {
       this.hideNotification();
-      this.showControls = !this.showControls;
+      this.showAddingResourceControls = !this.showAddingResourceControls;
       this.newResource = {
           name: '',
           lost: false,
           stationary: false,
         };
     },
-    toggleDiaryControls() {
+    toggleAddingDiaryControls() {
       this.hideNotification();
-      this.showDiary = !this.showDiary;
+      this.showAddingDiaryControls = !this.showAddingDiaryControls;
       this.newDiary = {
         name: '',
         lost: false,
         memories: [],
       }
     },
-    toggleEditingResourceControls() {
+    closeEditingResourceControls() {
       this.hideNotification();
-      this.showEditingResourceControls = !this.showEditingResourceControls;
+      this.showEditingResourceControls = false;
       this.editResource = {};
     },
-    toggleEditingDiaryControls() {
+    closeEditingDiaryControls() {
       this.hideNotification();
-      this.showEditingDiaryControls = !this.showEditingDiaryControls;
+      this.showEditingDiaryControls = false;
       this.editDiary = {};
     },
   }

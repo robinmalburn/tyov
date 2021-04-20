@@ -2,9 +2,9 @@
   <CardComponent id="skills">
     <HeadingComponent level="2">Skills</HeadingComponent>
     <FormToggleComponent 
-      @save="add"
-      @toggle="toggleControls"
-      :showControls="showControls"
+      @save="validatedAddSkill"
+      @toggle="toggleAddingControls"
+      :show-controls="showAddingControls"
     >
       <template #button>
         Add a new Skill?
@@ -15,7 +15,7 @@
           placeholder="Description"
           class="shadow appearance-none border rounded w-full py-1 px-2 m-1 text-gray-700 leading-tight focus:outline-none focus:ring-2 ring-gray-200"
           v-model="newSkill.name"
-          @keyup.enter="add"
+          @keyup.enter="validatedAddSkill"
         />
         <label>
           <input
@@ -33,8 +33,8 @@
     <FormComponent
       class="my-2"
       @save="validatedUpdateSkill"
-      @cancel="toggleEditingControls"
-      @remove="removeSkill"
+      @cancel="closeEditingControls"
+      @remove="validatedRemoveSkill"
       v-show="showEditingControls"
       :buttons="[
         {
@@ -103,7 +103,7 @@
           </span>
           <span 
               class="cursor-pointer select-none flex-initial text-right mx-2 hover:text-gray-400"
-              @click="edit(skill)"
+              @click="startEdit(skill)"
             >
             Edit
           </span>
@@ -126,7 +126,7 @@ export default {
   name: 'SkillsPane',
   data: function() {
       return {
-          showControls: false,
+          showAddingControls: false,
           showEditingControls: false,
           newSkill: {
               name: '',
@@ -149,26 +149,26 @@ export default {
       hideNotification: 'hide'
     }),
     ...mapActions('notifications', ['showNotification']),
-    ...mapMutations('skills', {
-      addSkill: 'add',
-      remove: 'remove',
-      toggle: 'toggle',
-      update: 'update',
-    }),
-    add(){
+    ...mapMutations('skills', [
+      'add',
+      'remove',
+      'toggle',
+      'update',
+    ]),
+    validatedAddSkill(){
       if (this.newSkill.name === '') {
         this.showNotification({message: 'You must provide a description.', type:'warning'});
         return;
       }
 
-      this.addSkill({
+      this.add({
         id: uuid('skill'),
         ...this.newSkill
       });
 
-      this.toggleControls();
+      this.closeAddingControls();
     },
-    edit(skill) {
+    startEdit(skill) {
       this.editSkill = {...skill};
       this.showEditingControls = true;
     },
@@ -189,9 +189,9 @@ export default {
       }
 
       this.update(this.editSkill);
-      this.toggleEditingControls();
+      this.closeEditingControls();
     },
-    removeSkill() {
+    validatedRemoveSkill() {
       let skillToRemove;
 
       this.skills.some(skill => {
@@ -202,16 +202,16 @@ export default {
       });
 
       this.remove(skillToRemove);
-      this.toggleEditingControls();
+      this.closeEditingControls();
     },
-    toggleControls() {
+    toggleAddingControls() {
       this.hideNotification();
-      this.showControls = !this.showControls;
+      this.showAddingControls = !this.showAddingControls;
       this.newSkill = {name: '', checked: false};
     },
-    toggleEditingControls() {
+    closeEditingControls() {
       this.hideNotification();
-      this.showEditingControls = !this.showEditingControls;
+      this.showEditingControls = false;
       this.editSkill = {};
     },
   },
