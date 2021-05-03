@@ -79,8 +79,15 @@ export const restoreState = async (store, data) => {
     store.commit('actions/setD6', data.d6 ?? NaN);
 
     store.commit('actions/setCurrentPromptIdx', data.currentPromptIdx ?? 0);
+
+    const prompts = Array.isArray(data.prompts) ? data.prompts : [];
+
+    prompts.forEach(prompt => {
+        prompt.page = parseInt(prompt.page, 10);
+        prompt.count = parseInt(prompt.count, 10);
+    });
     
-    store.commit('actions/setPrompts', Array.isArray(data.prompts) ? data.prompts : []);
+    store.commit('actions/setPrompts', prompts);
 
     store.commit('characters/set', Array.isArray(data.characters) ? data.characters : []);
 
