@@ -3,7 +3,7 @@
   <HeadingComponent level="2">Prompts</HeadingComponent>
 
     <FormToggleComponent 
-      @save="addValidatedPrompt"
+      @save="validatedAddPrompt"
       @toggle="toggleControls"
       :showControls="showControls"
     >
@@ -127,17 +127,17 @@ import CardComponent from 'Components/CardComponent';
 import FormToggleComponent from 'Components/FormToggleComponent';
 import HeadingComponent from 'Components/HeadingComponent';
 import { mapGetters, mapState, mapMutations, mapActions } from 'vuex';
-import uuid from 'Libs/uuid';
+import entityFactory from 'Libs/entities/prompts';
 
 export default {
   name: 'PromptsPane',
   data() {
     return {
       showControls: false,
-      newPrompt: {
+      newPrompt: entityFactory({
         page: this.firstUnusedPrompt,
         count: 1,
-      },
+      }),
       makeCurrent: this.currentPrompt && this.currentPrompt.page ? false : true
     };
   },
@@ -195,9 +195,9 @@ export default {
       hideNotification: 'hide'
     }),
     ...mapActions('notifications', ['showNotification']),
-    addValidatedPrompt() {
+    validatedAddPrompt() {
       const promptExists = this.prompts.some((prompt) => {
-        return prompt.page === this.newPrompt.page;
+        return prompt.page === parseInt(this.newPrompt.page, 10);
       });
 
       if (promptExists) {
@@ -206,7 +206,6 @@ export default {
       }
 
       const prompt = {
-        id: uuid('prompt'),
         ...this.newPrompt,
       };
 
@@ -224,10 +223,12 @@ export default {
       this.hideNotification();
 
       this.showControls = !this.showControls;
-      this.newPrompt = {
+      
+      this.newPrompt = entityFactory({
         page: this.firstUnusedPrompt,
         count: 1,
-      };
+      });
+
       this.makeCurrent = this.currentPrompt && this.currentPrompt.page ? false : true;
     }
   }

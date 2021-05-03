@@ -159,7 +159,7 @@ import HeadingComponent from 'Components/HeadingComponent';
 import FormComponent from 'Components/FormComponent';
 import FormToggleComponent from 'Components/FormToggleComponent';
 import { mapMutations, mapActions, mapGetters, } from 'vuex';
-import uuid from 'Libs/uuid';
+import entityFactory from 'Libs/entities/characters';
 
 export default {
   name: 'CharactersPane',
@@ -167,13 +167,8 @@ export default {
       return {
           showAddingControls: false,
           showEditingControls: false,
-          editCharacter: {},
-          newCharacter: {
-            name: '',
-            dead: false,
-            immortal: false,
-            bio: '',
-          },
+          editCharacter: entityFactory(),
+          newCharacter: entityFactory(),
       }
   },
   components: {
@@ -212,10 +207,7 @@ export default {
         return;
       }
       
-      this.add({
-        id: uuid('character'),
-        ...this.newCharacter
-      });
+      this.add(this.newCharacter);
 
       this.toggleAddingControls();
     },
@@ -243,7 +235,7 @@ export default {
       this.closeEditingControls();
     },
     startEdit(character) {
-      this.editCharacter = {...character};
+      this.editCharacter = entityFactory(character);
       this.showEditingControls = true;
 
       // Scroll the edit form in the next tick to allow the dom to be updated.
@@ -255,18 +247,13 @@ export default {
     toggleAddingControls() {
       this.hideNotification();
       this.showAddingControls = !this.showAddingControls;
-      this.newCharacter = {
-            name: '',
-            bio: '',
-            dead: false,
-            immortal: false,
-          };
+      this.newCharacter = entityFactory();
     },
     closeEditingControls()
     {
       this.hideNotification();
-      this.showEditingControls = !this.showEditingControls;
-      this.editCharacter = {};
+      this.showEditingControls = false;
+      this.editCharacter = entityFactory();
     },
   }
 }

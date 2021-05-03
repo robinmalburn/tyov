@@ -1,5 +1,6 @@
 import { defaultGameState } from 'Libs/gameState';
-import { findById } from 'Libs/uuid';
+import entityFactory from 'Libs/entities/marks';
+import { findById } from 'Libs/entities';
 
 import Vue from 'vue';
 
@@ -8,10 +9,10 @@ const state = {
 };
 
 const mutations = {
-    add: (state, mark) => state.marks.push(mark),
+    add: (state, mark) => state.marks.push(entityFactory(mark)),
     update: (state, updated) => { 
         const found = findById(state.marks, updated.id);
-        Vue.set(state.marks, found.idx, updated);
+        Vue.set(state.marks, found.idx, entityFactory(updated));
     },
     set: (state, marks) => state.marks = marks,
     remove: (state, mark) => {

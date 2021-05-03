@@ -11,8 +11,6 @@ export default {
 
             if (prompt.name) {
                 delete prompt.name;
-
-                console.log(prompt);
             }
         });
 

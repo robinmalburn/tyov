@@ -14,7 +14,7 @@
           type="text"
           placeholder="Description"
           class="shadow appearance-none border rounded w-full py-1 px-2 m-1 text-gray-700 leading-tight focus:outline-none focus:ring-2 ring-gray-200"
-          v-model="newMark"
+          v-model="newMark.description"
           @keyup.enter="validatedAddMark"
         />
       </template>
@@ -88,16 +88,15 @@ import CardComponent from 'Components/CardComponent';
 import FormComponent from 'Components/FormComponent';
 import FormToggleComponent from 'Components/FormToggleComponent';
 import HeadingComponent from 'Components/HeadingComponent';
-
 import { mapMutations, mapState, mapActions } from 'vuex';
-import uuid from 'Libs/uuid';
+import entityFactory from 'Libs/entities/marks';
 
 export default{
   name: 'MarksPane',
   data: function() {
       return {
-        newMark: '',
-        editMark: {},
+        newMark: entityFactory(),
+        editMark: entityFactory(),
         showAddingControls: false,
         showEditingControls: false,
       }
@@ -122,15 +121,12 @@ export default{
       'remove'
     ]),
     validatedAddMark() {
-      if (this.newMark === '') {
+      if (this.newMark.description === '') {
         this.showNotification({message: 'You must provide a description', type:'warning'});
         return;
       }
       
-      this.add({
-        id: uuid('mark'),
-        description: this.newMark
-      });
+      this.add(this.newMark);
 
       this.toggleAddingControls();
     },
@@ -158,18 +154,18 @@ export default{
       this.closeEditingControls();
     },
     startEdit(mark) {
-      this.editMark = {...mark};
+      this.editMark = entityFactory(mark);
       this.showEditingControls = true;
     },
     closeEditingControls() {
       this.hideNotification();
       this.showEditingControls = false;
-      this.editMark = {};
+      this.editMark = entityFactory();
     },
     toggleAddingControls() {
       this.hideNotification();
       this.showAddingControls = !this.showAddingControls;
-      this.newMark = '';
+      this.newMark = entityFactory();
     },
   }
 }

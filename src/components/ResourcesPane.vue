@@ -226,7 +226,7 @@
               @click="validatedToggleDiary(diary)"
             >
               <span :class="{'line-through': diary.lost}">{{diary.name}}</span>
-              <span class="italic"> (diary - {{ memories(diary) }} of 4 memories)</span>
+              <span class="italic"> (diary - {{ activeMemories.length }} of 4 memories)</span>
             </span>
           </span>
           <span 
@@ -248,7 +248,7 @@ import HeadingComponent from 'Components/HeadingComponent';
 import FormComponent from 'Components/FormComponent';
 import FormToggleComponent from 'Components/FormToggleComponent';
 import { mapMutations, mapActions, mapGetters } from 'vuex';
-import uuid from 'Libs/uuid';
+import { resourceEntityFactory, diaryEntityFactory } from 'Libs/entities/resources';
 
 export default {
   name: 'ResourcesPane',
@@ -258,18 +258,10 @@ export default {
           showAddingDiaryControls: false,
           showEditingResourceControls: false,
           showEditingDiaryControls: false,
-          newResource: {
-              name: '',
-              lost: false,
-              stationary: false,
-          },
-          newDiary: {
-            name: '',
-            lost: false,
-            memories: [],
-          },
-          editResource: {},
-          editDiary: {},
+          newResource: resourceEntityFactory(),
+          newDiary: diaryEntityFactory(),
+          editResource: resourceEntityFactory(),
+          editDiary: diaryEntityFactory(),
       }
   },
   components: {
@@ -279,18 +271,7 @@ export default {
       HeadingComponent,
   },
   computed: {
-    ...mapGetters('resources', ['hasDiary', 'diaries', 'resources', 'diary']),
-    memories() {
-      return (diary) => {
-        return diary.memories.reduce((carry, memory) => {
-            if (!memory.forgotten) {
-              return carry + 1;
-            }
-
-            return carry;
-        }, 0)
-      }
-    }
+    ...mapGetters('resources', ['hasDiary', 'diaries', 'resources', 'diary', 'activeMemories']),
   },
   methods: {
     ...mapMutations('notifications', {
@@ -313,10 +294,7 @@ export default {
         return;
       }
 
-      this.addResource({
-        id: uuid('resource'),
-        ...this.newResource
-      });
+      this.addResource(this.newResource);
       this.toggleAddingResourceControls();
     },
     validatedToggleResource(resource) {
@@ -341,7 +319,7 @@ export default {
         if (diary.lost ) {
           this.showNotification({message: 'You may only have one active diary.', type: 'warning'});
           return;
-        } else if (this.memories(diary) > 0) {
+        } else if (this.memories.length > 0) {
           this.showNotification({message: 'Please cross out existing memories before losing the diary.', type: 'warning'});
           return;
         }
@@ -358,10 +336,7 @@ export default {
         return;
       }
 
-      this.addDiary({
-        id: uuid('diary'),
-        ...this.newDiary
-      });
+      this.addDiary(this.newDiary);
       this.toggleAddingDiaryControls();
     },
     validatedUpdateResource() {
@@ -414,40 +389,32 @@ export default {
       this.closeEditingDiaryControls();
     },
     startEditResource(resource){
-      this.editResource = {...resource};
+      this.editResource = resourceEntityFactory(resource);
       this.showEditingResourceControls = true;
     },
     startEditDiary(diary){
-      this.editDiary = {...diary};
+      this.editDiary = diaryEntityFactory(diary);
       this.showEditingDiaryControls = true;
     },
     toggleAddingResourceControls() {
       this.hideNotification();
       this.showAddingResourceControls = !this.showAddingResourceControls;
-      this.newResource = {
-          name: '',
-          lost: false,
-          stationary: false,
-        };
+      this.newResource = resourceEntityFactory();
     },
     toggleAddingDiaryControls() {
       this.hideNotification();
       this.showAddingDiaryControls = !this.showAddingDiaryControls;
-      this.newDiary = {
-        name: '',
-        lost: false,
-        memories: [],
-      }
+      this.newDiary = diaryEntityFactory();
     },
     closeEditingResourceControls() {
       this.hideNotification();
       this.showEditingResourceControls = false;
-      this.editResource = {};
+      this.editResource = resourceEntityFactory();
     },
     closeEditingDiaryControls() {
       this.hideNotification();
       this.showEditingDiaryControls = false;
-      this.editDiary = {};
+      this.editDiary = diaryEntityFactory();
     },
   }
 }

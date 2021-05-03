@@ -1,7 +1,8 @@
 import { randomRange } from 'Libs/random';
 import { defaultGameState } from 'Libs/gameState';
+import entityFactory from 'Libs/entities/prompts';
+import { findById } from 'Libs/entities';
 import Vue from 'vue';
-import uuid from 'Libs/uuid';
 
 const state = {
     ...defaultGameState('actions'),
@@ -32,15 +33,21 @@ const mutations = {
     setD10: (state, value) => state.d10 = value,
     rollD10: (state) => state.d10 = randomRange(1, 10),
     saveRoll: (state, roll) => state.lastRoll = roll,
-    makePrompt: (state, prompt) => state.prompts.push({id: uuid('prompt'), page: prompt, count: 0}),
-    addPrompt: (state, prompt) => state.prompts.push(prompt),
+    makePrompt: (state, prompt) => state.prompts.push(entityFactory({page: prompt, count: 0})),
+    addPrompt: (state, prompt) => state.prompts.push(entityFactory(prompt)),
     setPrompts: (state, prompts) => state.prompts = prompts,
     removePrompt: (state, prompt) => {
-        const idx = state.prompts.indexOf(prompt);
-        state.prompts.splice(idx, 1);
+        const found = findById(state.prompts, prompt.id);
+        state.prompts.splice(found.idx, 1);
     },
-    incrementPrompt: (state, prompt) => Vue.set(prompt, 'count', prompt.count + 1),
-    decrementPrompt: (state, prompt) => Vue.set(prompt, 'count', prompt.count - 1),
+    incrementPrompt: (state, prompt) => {
+        const found = findById(state.prompts, prompt.id);
+        Vue.set(found.entity, 'count', found.entity.count + 1)
+    },
+    decrementPrompt: (state, prompt) => {
+        const found = findById(state.prompts, prompt.id);
+        Vue.set(found.entity, 'count', found.entity.count - 1)
+    },
     setCurrentPromptIdx: (state, idx) => state.currentPromptIdx = idx,
 }
 
@@ -76,29 +83,27 @@ const actions = {
         }
 
         var prompt = state.prompts[promptIdx];
-        if (!prompt) {
-           prompt = {
-               id: uuid('prompt'),
-               page: newPrompt,
-               count: 0
-           };
 
-           commit('addPrompt', prompt)
+        if (!prompt) {
+            prompt = entityFactory({page: newPrompt});
+            commit('addPrompt', prompt)
         }
 
         commit('incrementPrompt', prompt);
         commit('setCurrentPromptIdx', promptIdx);
     },
     makePromptCurrent({commit, state}, prompt) {
-        const idx = state.prompts.indexOf(prompt);
-        commit('setCurrentPromptIdx', idx);
+        const found = findById(state.prompts, prompt.id);
+        commit('setCurrentPromptIdx', found.idx);
     },
     removePrompt({commit, getters, state}, prompt) {
-        let currentPrompt = getters.currentPrompt;
+        const currentPrompt = getters.currentPrompt;
 
         commit('removePrompt', prompt);
 
-        commit('setCurrentPromptIdx', state.prompts.indexOf(currentPrompt));
+        const found = findById(state.prompts, currentPrompt.id);
+
+        commit('setCurrentPromptIdx', found.idx);
     },
 }
 

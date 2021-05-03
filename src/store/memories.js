@@ -1,4 +1,6 @@
 import { defaultGameState } from 'Libs/gameState';
+import { memoryEntityFactory, eventEntityFactory } from 'Libs/entities/memories';
+import { findById } from 'Libs/entities';
 import Vue from 'vue';
 
 const state = {
@@ -7,33 +9,50 @@ const state = {
 
 const getters = {
     active: (state) => state.memories.reduce((accumlator, current) => {
-        if (current.forgotten === false && current.diarised === false) {
+        if (current.forgotten === false && current.diary === '') {
           return accumlator + 1;
         }
 
         return accumlator;
       }, 0),
     canAdd: (state, getters) => getters.active < 5,
-    forgottenMemories: (state) => state.memories.filter(memory => memory.forgotten && !memory.diarised),
-    activeMemories: (state) => state.memories.filter(memory => !memory.forgotten && !memory.diarised),
+    forgottenMemories: (state) => state.memories.filter(memory => memory.forgotten && memory.diary === ''),
+    activeMemories: (state) => state.memories.filter(memory => !memory.forgotten && memory.diary === ''),
+    events: (state) => (memory) => state.events.filter(event => event.memory === memory.id),
+    hasEvents: (state) => (memory) => state.events.some(event => event.id === memory.id),
 };
 
 const mutations = {
-    add: (state, memory) => state.memories.push(memory),
-    set: (state, memories) => state.memories = memories,
-    remove: (state, memory) => {
-        const idx = state.memories.indexOf(memory);
-        state.memories.splice(idx, 1);
+    addMemory: (state, memory) => state.memories.push(memoryEntityFactory(memory)),
+    setMemories: (state, memories) => state.memories = memories,
+    updateMemory: (state, memory) => {
+        const found = findById(state.memories, memory.id);
+        Vue.set(state.memories, found.idx, memoryEntityFactory(memory));
     },
-    toggle: (state, memory) => Vue.set(memory, 'forgotten', !memory.forgotten),
-    addEvent: (state, {memory, event}) => memory.events.push(event),
+    removeMemory: (state, memory) => {
+        const found = findById(state.memories, memory.id);
+        state.memories.splice(found.idx, 1);
+    },
+    toggleMemory: (state, memory) => {
+        const found = findById(state.memories, memory.id);
+        Vue.set(found.entity, 'forgotten', !found.entity.forgotten);
+    },
+    addEvent: (state, event) => state.events.push(eventEntityFactory(event)),
+    setEvents: (state, events) => state.events = events,
     removeEvent: (state, {memory, event}) => {
-        const idx = memory.events.indexOf(event);
-        memory.events.splice(idx, 1);
+        const foundMemory = findById(state.memories, memory.id);
+        const foundEvent = findById(foundMemory.entity.events, event.id);
+        foundMemory.entity.events.splice(foundEvent.idx, 1);
     },
-    diarise: (state, memory) => Vue.set(memory, 'diarised', true),
-    undiarise: (state, memory) => Vue.set(memory, 'diarised', false),
-}
+    diarise: (state, {memory, diary}) => {
+        const found = findById(state.memories, memory.id);
+        Vue.set(found.entity, 'diary', diary.id);
+    },
+    undiarise: (state, memory) => {
+        const found = findById(state.memories, memory.id);
+        Vue.set(found.entity, 'diary', '');
+    }
+};
 
 export default {
     namespaced: true,

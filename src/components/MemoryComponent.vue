@@ -5,13 +5,18 @@
         {{ memory.description }}
       </HeadingComponent>
       <div class="flex-initial text-right">
-        <RemoveCrossComponent @remove="$emit('remove-memory', memory)" />
+        <span 
+          class="cursor-pointer mx-2 hover:text-gray-400"
+          @click="$emit('edit-memory', memory)"
+        >
+          Edit
+        </span>
       </div>
     </div>
     
     <ul class="my-3">
       <li
-          v-for="event in memory.events"
+          v-for="event in events(memory)"
           :key="`event-${event.id}`"
       >
           <CardComponent>
@@ -29,7 +34,7 @@
       @save="add"
       @toggle="toggleControls"
       :showControls="showControls"
-      v-if="memory.events.length < 3 && !memory.forgotten && !memory.diarised"
+      v-if="events(memory).length < 3 && !memory.forgotten && memory.diary === ''"
     >
       <template #button>  
         Add an Event?
@@ -46,7 +51,7 @@
     </FormToggleComponent>
   
 
-    <div class="my-2 grid grid-rows gap-2" v-show="(!memory.forgotten || memory.forgotten && memory.diarised) || canAddMemories">
+    <div class="my-2 grid grid-rows gap-2" v-show="(!memory.forgotten || memory.forgotten && memory.diary !== '') || canAddMemories">
       <ButtonComponent
         class="w-full"
         @click="$emit('toggle-memory', memory)"
@@ -54,7 +59,7 @@
         <span v-if="memory.forgotten">
           Recover Memory
         </span>
-        <span v-else-if="!memory.diarised">
+        <span v-else-if="memory.diary === ''">
           Forget Memory
         </span>
         <span v-else>
@@ -66,14 +71,14 @@
         <ButtonComponent 
           class="w-full"
           @click="$emit('diarise-memory', memory)"
-          v-if="!memory.diarised && !isDiaryFull"
+          v-if="memory.diary === '' && !isDiaryFull"
         >
           Send to Diary
         </ButtonComponent>
         <ButtonComponent 
           class="w-full"
           @click="$emit('undiarise-memory', memory)"
-          v-else-if="memory.diarised && canAddMemories"
+          v-else-if="memory.diary !== '' && canAddMemories"
         >
           Recover from Diary
         </ButtonComponent>
@@ -89,7 +94,7 @@ import FormToggleComponent from 'Components/FormToggleComponent';
 import HeadingComponent from 'Components/HeadingComponent';
 import RemoveCrossComponent from 'Components/RemoveCrossComponent';
 import { mapMutations, mapActions, mapGetters } from 'vuex';
-import uuid from 'Libs/uuid';
+import { eventEntityFactory } from 'Libs/entities/memories';
 
 export default {
   name: 'MemoryComponent',
@@ -97,7 +102,7 @@ export default {
     memory: {
       type: Object,
       required: true,
-      validator: (memory) => Array.isArray(memory.events) && 'boolean' === typeof memory.forgotten,
+      validator: (memory) => 'string' === typeof memory.diary && 'boolean' === typeof memory.forgotten,
     },
     canAddMemories: {
       type: Boolean,
@@ -107,9 +112,7 @@ export default {
   data: function() {
       return {
           showControls: false,
-          newEvent:  {
-            description: ''
-          },
+          newEvent:  eventEntityFactory({memory: this.memory.id}),
       }
   },
   components: {
@@ -121,6 +124,7 @@ export default {
   },
   computed: {
     ...mapGetters('resources', ['hasDiary', 'isDiaryFull']),
+    ...mapGetters('memories', ['hasEvents', 'events']),
   },
   methods: {
     ...mapMutations('notifications', {
@@ -132,20 +136,16 @@ export default {
         this.showNotification({message: 'You must provide a description', type: 'warning'});
         return;
       }
-      const event = {
-        id: uuid('event'),
-        ...this.newEvent
-      };
 
-      this.$emit('add-event', {memory: this.memory, event});
+      const event = eventEntityFactory(this.newEvent);
+
+      this.$emit('add-event', event);
       this.toggleControls();
     },
     toggleControls() {
       this.hideNotification();
       this.showControls = !this.showControls;
-      this.newEvent = {
-        description: ''
-      };
+      this.newEvent = eventEntityFactory({memory: this.memory.id});
     },
   }
 }

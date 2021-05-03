@@ -3,17 +3,27 @@ import { SIGNATURE } from 'Libs/gameState';
 class Migrator {
     migrations = [];
 
-    migrate(data) {
+    async gatherMigrations(signature) {
+        const migrations = [];
+        const len = this.migrations.length;
+        
+        for (let i = 0; i < len; i++) {
+            const cb = this.migrations[i];
+            const module = await cb(signature);
+            if (module) {
+                migrations.push(module.default);
+            }
+        }
+
+        return migrations;
+    }
+
+    async migrate(data) {
         if (data.__SIGNATURE__ === SIGNATURE) {
             return data;
         }
 
-        const migrations = [];
-
-        this.migrations.forEach(async cb => {
-            const module = await cb()
-            migrations.push(module.default);
-        });
+        const migrations = await this.gatherMigrations(data.__SIGNATURE__);
 
         migrations.sort((a, b) => {
             // If neither has a required signature, leave their position unchanged.
@@ -47,10 +57,8 @@ class Migrator {
                 return;
             }
 
-            if (!data.__SIGNATURE__ || data.__SIGNATURE__ < migration.requiredSignature) {
-                console.info(`Running Migration: ${migration.description}`);
-                data = migration.migrate(data);
-            }
+            console.info(`Running Migration: ${migration.description}`);
+            data = migration.migrate(data);
         });
 
 
@@ -74,12 +82,13 @@ class Migrator {
 const migrator = new Migrator();
 
 migrator.register(
-    async () => import('Migrations/20210414-addSkillsIdMigration'),
-    async () => import('Migrations/20210415-addMarkDescriptionIdMigration'),
-    async () => import('Migrations/20210415-addResourcesIdMigration'),
-    async () => import('Migrations/20210415-addCharactersIdMigration'),
-    async () => import('Migrations/20210415-addMemoryIdEventDescriptionMigration'),
-    async () => import('Migrations/20210416-addPromptIdMigration'),
+    async (signature) => signature < 1 && import('Migrations/20210414-addSkillsIdMigration'),
+    async (signature) => signature < 1 && import('Migrations/20210415-addMarkDescriptionIdMigration'),
+    async (signature) => signature < 1 && import('Migrations/20210415-addResourcesIdMigration'),
+    async (signature) => signature < 1 && import('Migrations/20210415-addCharactersIdMigration'),
+    async (signature) => signature < 1 && import('Migrations/20210415-addMemoryIdEventDescriptionMigration'),
+    async (signature) => signature < 1 && import('Migrations/20210416-addPromptIdMigration'),
+    async (signature) => signature < 2 && import('Migrations/20210501-decoupleMemoryEventDiaryStates'),
 );
 
 export default migrator;

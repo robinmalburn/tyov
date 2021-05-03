@@ -1,6 +1,6 @@
 import migrator from 'Migrations';
 
-export const SIGNATURE = 1;
+export const SIGNATURE = 2;
 
 export const getStateFromStore = (store) => {
     return {
@@ -12,6 +12,7 @@ export const getStateFromStore = (store) => {
         characters: store.state.characters.characters,
         marks: store.state.marks.marks,
         memories: store.state.memories.memories,
+        events: store.state.memories.events,
         resources: store.state.resources.resources,
         diaries: store.state.resources.diaries,
         skills: store.state.skills.skills,
@@ -36,6 +37,7 @@ export const defaultGameState = (section) => {
         },
         memories: {
             memories: [],
+            events: [],
         },
         skills: {
             skills: []
@@ -62,13 +64,13 @@ export const defaultGameState = (section) => {
     }
 }
 
-export const restoreState = (store, data) => {
+export const restoreState = async (store, data) => {
     data =  {
         ...defaultGameState(),
         ...data,
     };
 
-    data = migrator.migrate(data);
+    data = await migrator.migrate(data);
 
     store.commit('actions/saveRoll', data.lastRoll ?? '?');
 
@@ -84,7 +86,9 @@ export const restoreState = (store, data) => {
 
     store.commit('marks/set', Array.isArray(data.marks) ? data.marks : []);
 
-    store.commit('memories/set', Array.isArray(data.memories) ? data.memories : []);
+    store.commit('memories/setMemories', Array.isArray(data.memories) ? data.memories : []);
+
+    store.commit('memories/setEvents', Array.isArray(data.events) ? data.events : []);
 
     store.commit('resources/setResources', Array.isArray(data.resources) ? data.resources : []);
 

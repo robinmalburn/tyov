@@ -119,7 +119,7 @@ import HeadingComponent from 'Components/HeadingComponent';
 import FormComponent from 'Components/FormComponent';
 import FormToggleComponent from 'Components/FormToggleComponent';
 import { mapMutations, mapGetters, mapActions } from 'vuex';
-import uuid from 'Libs/uuid';
+import entityFactory from 'Libs/entities/skills';
 
 
 export default {
@@ -128,11 +128,8 @@ export default {
       return {
           showAddingControls: false,
           showEditingControls: false,
-          newSkill: {
-              name: '',
-              checked: false,
-          },
-          editSkill: {},
+          newSkill: entityFactory(),
+          editSkill: entityFactory(),
       }
   },
   components: {
@@ -161,15 +158,12 @@ export default {
         return;
       }
 
-      this.add({
-        id: uuid('skill'),
-        ...this.newSkill
-      });
+      this.add(this.newSkill);
 
-      this.closeAddingControls();
+      this.toggleAddingControls();
     },
     startEdit(skill) {
-      this.editSkill = {...skill};
+      this.editSkill = entityFactory(skill);
       this.showEditingControls = true;
     },
     validatedToggleSkill(skill) {
@@ -207,12 +201,12 @@ export default {
     toggleAddingControls() {
       this.hideNotification();
       this.showAddingControls = !this.showAddingControls;
-      this.newSkill = {name: '', checked: false};
+      this.newSkill = entityFactory();
     },
     closeEditingControls() {
       this.hideNotification();
       this.showEditingControls = false;
-      this.editSkill = {};
+      this.editSkill = entityFactory();
     },
   },
 }
