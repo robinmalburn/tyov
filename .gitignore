@@ -2,6 +2,15 @@
 node_modules
 /dist
 
+# Development files
+/src
+/public
+tailwind.config.js
+vue.config.js
+babel.config.js
+package-lock.json
+package.json
+postcss.config.js
 
 # local env files
 .env.local
