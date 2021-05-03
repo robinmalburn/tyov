@@ -1,4 +1,4 @@
-m<template>
+<template>
   <CardComponent id="memories">
     <HeadingComponent level="2">Memories</HeadingComponent>
 
@@ -7,7 +7,7 @@ m<template>
       @save="validatedAddMemory"
       @toggle="toggleAddingControls"
       :show-controls="showAddingControls"
-      v-if="canAdd"
+      v-if="canAddMemories"
     >
       <template #button>
         Add a new Memory?
@@ -49,7 +49,7 @@ m<template>
     <FormComponent
       class="my-2"
       ref="editForm"
-      @save="validatedUpdate"
+      @save="validatedUpdateMemory"
       @cancel="closeEditingControls"
       @remove="validatedRemoveMemory"
       v-show="showEditingControls"
@@ -76,7 +76,7 @@ m<template>
           placeholder="Description"
           class="shadow appearance-none border rounded w-full py-1 px-2 m-1 text-gray-700 leading-tight focus:outline-none focus:ring-2 ring-gray-200"
           v-model="editMemory.description"
-          @keyup.enter="validatedUpdate"
+          @keyup.enter="validatedUpdateMemory"
         />
         <label>
           <input
@@ -104,7 +104,7 @@ m<template>
             Events
           </HeadingComponent>
           <div
-            v-for="event in events(editMemory)"
+            v-for="event in editEvents"
             :key="`edit-event-${event.id}`"
           >
               <input 
@@ -129,7 +129,10 @@ m<template>
         v-for="memory in activeMemories"
         :key="`memory-${memory.id}`"
         :memory="memory"
-        :can-add-memories="canAdd"
+        :can-add-memories="canAddMemories"
+        :can-add-events="memory.id !== editMemory.id && events(memory).length < 3"
+        :can-diarise="hasDiary && memory.id !== editMemory.id"
+        :can-toggle="memory.id !== editMemory.id"
         @add-event="addEvent"
         @remove-event="validatedRemoveEvent"
         @edit-memory="startEdit"
@@ -156,7 +159,10 @@ m<template>
                     v-for="memory in diaryMemories"
                     :key="`diary-${memory.id}`"
                     :memory="memory"
-                    :can-add-memories="canAdd"
+                    :can-add-memories="canAddMemories"
+                    :can-add-events="false"
+                    :can-diarise="hasDiary"
+                    :can-toggle="memory.id !== editMemory.id"
                     @add-event="addEvent"
                     @remove-event="validatedRemoveEvent"
                     @edit-memory="startEdit"
@@ -188,11 +194,14 @@ m<template>
                     v-for="memory in forgottenMemories"
                     :key="`memory-${memory.id}`"
                     :memory="memory"
-                    :can-add-memories="canAdd"
+                    :can-add-memories="canAddMemories"
+                    :can-add-events="false"
+                    :can-diarise="false"
+                    :can-toggle="memory.id !== editMemory.id"
                     @add-event="addEvent"
                     @remove-event="validatedRemoveEvent"
                     @edit-memory="startEdit"
-                    @toggle-memory="toggle"
+                    @toggle-memory="toggleMemory"
                     @diarise-memory="diariseMemory"
                     @undiarise-memory="undiariseMemory"
                   />
@@ -213,7 +222,7 @@ import FormToggleComponent from 'Components/FormToggleComponent';
 import MemoryComponent from 'Components/MemoryComponent';
 import SlideDownPanelComponent from 'Components/SlideDownPanelComponent';
 import { mapActions, mapMutations, mapState, mapGetters } from 'vuex';
-import { memoryEntityFactory } from 'Libs/entities/memories';
+import { memoryEntityFactory, eventEntityFactory } from 'Libs/entities/memories';
 
 export default {
   name: 'MemoriesPane',
@@ -222,6 +231,7 @@ export default {
       showAddingControls: false,
       showEditingControls: false,
       editMemory: memoryEntityFactory(),
+      editEvents: [],
       newMemory: memoryEntityFactory(),
     }
   },
@@ -235,7 +245,7 @@ export default {
   },
   computed: {
     ...mapState('memories', ['memories']),
-    ...mapGetters('memories', ['canAdd', 'forgottenMemories', 'activeMemories', 'events', 'hasEvents']),
+    ...mapGetters('memories', ['canAddMemories', 'forgottenMemories', 'activeMemories', 'events', 'hasEvents']),
     ...mapGetters('resources', {
         diary: 'diary', 
         hasDiary: 'hasDiary', 
@@ -257,6 +267,7 @@ export default {
       'removeEvent',
       'diarise',
       'undiarise',
+      'updateEvent',
     ]),
     validatedAddMemory() {
       this.hideNotification
@@ -272,16 +283,30 @@ export default {
       this.toggleAddingControls();
     },
     validatedRemoveMemory(){
+      if (this.hasEvents(this.editMemory)) {
+        this.events(this.editMemory).forEach(event => {
+          this.removeEvent(event);
+        });
+      }
+
       this.removeMemory(this.editMemory);
 
       this.closeEditingControls();
     },
-    validatedRemoveEvent({memory, event}) {
-      this.removeEvent({memory, event});
-      
+    validatedRemoveEvent(event) {
+      if (event.memory === this.editMemory.id) {
+        this.showNotification({message: 'You cannot alter this memory whilst it is being edited.', type:'warning'});
+        return;
+      }
+
+      this.removeEvent(event);
     },
-    validatedUpdate(){
+    validatedUpdateMemory(){
       this.updateMemory(this.editMemory);
+
+      if (this.hasEvents(this.editMemory)) {
+        this.editEvents.forEach(event => this.updateEvent(event));
+      }
 
       this.closeEditingControls();
     },
@@ -293,6 +318,7 @@ export default {
     },
     startEdit(memory) {
       this.editMemory = memoryEntityFactory(memory);
+      this.editEvents = this.events(this.editMemory).map(event => eventEntityFactory(event));
       this.showEditingControls = true;
 
       // Scroll the edit form in the next tick to allow the dom to be updated.
@@ -310,6 +336,7 @@ export default {
       this.hideNotification();
       this.showEditingControls = false;
       this.editMemory = memoryEntityFactory();
+      this.editEvents = [];
     },
   },
 }

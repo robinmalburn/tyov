@@ -23,7 +23,7 @@
             <div class="flex">
               <span :class="{'flex-1': true, 'line-through': memory.forgotten, 'text-gray-400': memory.forgotten}">{{event.description}}</span>
               <div class="text-right flex-inital">
-                <RemoveCrossComponent @remove="$emit('remove-event', {memory, event})" />
+                <RemoveCrossComponent @remove="$emit('remove-event', event)" />
               </div>
             </div>
           </CardComponent>
@@ -34,7 +34,7 @@
       @save="add"
       @toggle="toggleControls"
       :showControls="showControls"
-      v-if="events(memory).length < 3 && !memory.forgotten && memory.diary === ''"
+      v-if="canAddEvents"
     >
       <template #button>  
         Add an Event?
@@ -51,7 +51,7 @@
     </FormToggleComponent>
   
 
-    <div class="my-2 grid grid-rows gap-2" v-show="(!memory.forgotten || memory.forgotten && memory.diary !== '') || canAddMemories">
+    <div class="my-2 grid grid-rows gap-2" v-show="canToggle && ((!memory.forgotten || memory.forgotten && memory.diary !== '') || canAddMemories)">
       <ButtonComponent
         class="w-full"
         @click="$emit('toggle-memory', memory)"
@@ -67,7 +67,7 @@
         </span>
       </ButtonComponent>
       
-      <template v-if="!memory.forgotten && hasDiary">
+      <template v-if="canDiarise">
         <ButtonComponent 
           class="w-full"
           @click="$emit('diarise-memory', memory)"
@@ -107,7 +107,19 @@ export default {
     canAddMemories: {
       type: Boolean,
       required: true,
-    }
+    },
+    canAddEvents: {
+      type: Boolean,
+      required: true,
+    },
+    canDiarise: {
+      type: Boolean,
+      required: true,
+    },
+    canToggle: {
+      type: Boolean,
+      required: true,
+    },
   },
   data: function() {
       return {
@@ -124,7 +136,7 @@ export default {
   },
   computed: {
     ...mapGetters('resources', ['hasDiary', 'isDiaryFull']),
-    ...mapGetters('memories', ['hasEvents', 'events']),
+    ...mapGetters('memories', ['events']),
   },
   methods: {
     ...mapMutations('notifications', {
