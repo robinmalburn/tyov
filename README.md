@@ -1,5 +1,6 @@
 # Thousand Year Old Vampire Companion
-`tyov` is a companion web app for the excellent solo RPG [Thousand Year Old Vampire by Tim Hutchings](https://thousandyearoldvampire.com/).
+`tyov` is a [companion web app](https://robinmalburn.github.io/tyov/) for the excellent solo RPG [Thousand Year Old Vampire by Tim Hutchings](https://thousandyearoldvampire.com/).
+
 
 ## Features
 The app provides a user friendly, but comprehensive interface for managing the game's mechanics, including:
