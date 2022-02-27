@@ -1,0 +1,2 @@
+(window["webpackJsonp"]=window["webpackJsonp"]||[]).push([["chunk-2d0e958e"],{"8cc0":function(e,i,r){"use strict";r.r(i);r("d3b7"),r("159b");var c=r("49dc");i["default"]={description:"Adds ID to resources and diaries.",requiredSignature:1,migrate:function(e){return e.resources.forEach((function(e){e.id||(e.id=Object(c["a"])("resource"))})),e.diaries.forEach((function(e){e.id||(e.id=Object(c["a"])("diary"))})),e}}}}]);
+//# sourceMappingURL=chunk-2d0e958e.664e9ca2.js.map

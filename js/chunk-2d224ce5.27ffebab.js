@@ -1,0 +1,2 @@
+(window["webpackJsonp"]=window["webpackJsonp"]||[]).push([["chunk-2d224ce5"],{e268:function(c,r,e){"use strict";e.r(r);e("d3b7"),e("159b");var t=e("49dc");r["default"]={description:"Adds ID to characters.",requiredSignature:1,migrate:function(c){return c.characters.forEach((function(c){c.id||(c.id=Object(t["a"])("character"))})),c}}}}]);
+//# sourceMappingURL=chunk-2d224ce5.27ffebab.js.map

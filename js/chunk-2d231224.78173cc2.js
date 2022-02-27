@@ -1,2 +1,0 @@
-(window["webpackJsonp"]=window["webpackJsonp"]||[]).push([["chunk-2d231224"],{eef4:function(e,n,t){"use strict";t.r(n);t("159b"),t("b0c0");var r=t("49dc");n["default"]={description:"Adds ID to prompts and removes name.",requiredSignature:1,migrate:function(e){return e.prompts.forEach((function(e){e.id||(e.id=Object(r["a"])("prompt")),e.name&&delete e.name})),e}}}}]);
-//# sourceMappingURL=chunk-2d231224.78173cc2.js.map

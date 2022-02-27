@@ -1,2 +1,0 @@
-(window["webpackJsonp"]=window["webpackJsonp"]||[]).push([["chunk-2d0a4210"],{"04b8":function(i,n,s){"use strict";s.r(n);s("159b");var t=s("49dc");n["default"]={description:"Adds ID to skills.",requiredSignature:1,migrate:function(i){return i.skills.forEach((function(i){i.id||(i.id=Object(t["a"])("skill"))})),i}}}}]);
-//# sourceMappingURL=chunk-2d0a4210.7ab2858b.js.map

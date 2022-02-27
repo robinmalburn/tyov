@@ -1,0 +1,2 @@
+(window["webpackJsonp"]=window["webpackJsonp"]||[]).push([["chunk-2d0da355"],{"6b2e":function(i,n,r){"use strict";r.r(n);r("d3b7"),r("159b");var t=r("49dc");n["default"]={description:"Adds ID & Description to marks.",requiredSignature:1,migrate:function(i){return i.marks.forEach((function(i,n,r){"string"===typeof i&&(r[n]={id:Object(t["a"])("mark"),description:i})})),i}}}}]);
+//# sourceMappingURL=chunk-2d0da355.fe262925.js.map
