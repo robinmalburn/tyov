@@ -135,7 +135,7 @@ export default {
     return {
       showControls: false,
       newPrompt: entityFactory({
-        page: this.firstUnusedPrompt,
+        page: 1,
         count: 1,
       }),
       makeCurrent: this.currentPrompt && this.currentPrompt.page ? false : true
