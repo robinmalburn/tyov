@@ -1,0 +1,2 @@
+"use strict";(self["webpackChunktyov"]=self["webpackChunktyov"]||[]).push([[758],{4758:function(r,e,i){i.r(e);var s=i(8204);e["default"]={description:"Adds ID to resources and diaries.",requiredSignature:1,migrate(r){return r.resources.forEach((r=>{r.id||(r.id=(0,s.Z)("resource"))})),r.diaries.forEach((r=>{r.id||(r.id=(0,s.Z)("diary"))})),r}}}}]);
+//# sourceMappingURL=758.1437fb30.js.map
