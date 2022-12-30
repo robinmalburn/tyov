@@ -1,5 +1,3 @@
-import { SIGNATURE } from 'Libs/gameState';
-
 class Migrator {
     migrations = [];
 
@@ -18,8 +16,8 @@ class Migrator {
         return migrations;
     }
 
-    async migrate(data) {
-        if (data.__SIGNATURE__ === SIGNATURE) {
+    async migrate(data, signature) {
+        if (data.__SIGNATURE__ === signature) {
             return data;
         }
 

@@ -70,7 +70,7 @@ export const restoreState = async (store, data) => {
         ...data,
     };
 
-    data = await migrator.migrate(data);
+    data = await migrator.migrate(data, SIGNATURE);
 
     store.commit('actions/saveRoll', data.lastRoll ?? '?');
 
