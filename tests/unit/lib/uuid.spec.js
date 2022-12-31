@@ -1,7 +1,7 @@
 import uuid from 'Libs/uuid';
 
 describe('lib/uuid.js', () => {
-    it('generates uuids (with the default namespace).', () => { 
+    it('Generates uuids (with the default namespace).', () => { 
         const first = uuid();
         const second = uuid();
         const pattern = /uuid-\d+-\d{13,}/;
@@ -11,7 +11,7 @@ describe('lib/uuid.js', () => {
         expect(first).not.toEqual(second);
     });
 
-    it ('generates a uuid in a given namesapce.', () => { 
+    it ('Generates a uuid in a given namesapce.', () => { 
         const bare = uuid();
         const namespaced = uuid('foo');
         const barePattern = /uuid-\d+-\d{13,}/;

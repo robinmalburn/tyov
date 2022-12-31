@@ -46,7 +46,7 @@ export const defaultGameState = (section) => {
             resources: [],
             diaries: [],
         },
-    }
+    };
 
     if (section) {
         return {
@@ -61,7 +61,7 @@ export const defaultGameState = (section) => {
         ...state.memories,
         ...state.resources,
         ...state.skills
-    }
+    };
 }
 
 export const restoreState = async (store, data) => {
@@ -76,7 +76,7 @@ export const restoreState = async (store, data) => {
 
     store.commit('actions/setD6', data.d6 ?? NaN);
 
-    store.commit('actions/setD6', data.d6 ?? NaN);
+    store.commit('actions/setD10', data.d10 ?? NaN);
 
     store.commit('actions/setCurrentPromptIdx', data.currentPromptIdx ?? 0);
 
