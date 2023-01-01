@@ -35,7 +35,7 @@ export const deepCopy = (data) => {
     try {
         return JSON.parse(JSON.stringify(data));
     } catch (err) {
-        console.err(`Error with deep data copy, falling back to shallow copy.  Error: ${err}`);
+        console.error(`Error with deep data copy, falling back to shallow copy.  Error: ${err}`);
 
         return shallowCopy(data);
     }
