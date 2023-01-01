@@ -4,6 +4,8 @@ import {
     defaultGameState,
     getStateFromStore,
     restoreState,
+    serialize,
+    deserialize,
  } from 'Libs/gameState';
 
 
@@ -43,16 +45,25 @@ const STATE = {
     },
 };
 
+const serializedDataProvider = () => { 
+    return [
+        ['foo', 'IgBmAG8AbwAiAA=='],
+        [1,'MQA='],
+        [true, 'dAByAHUAZQA='],
+        [{foo: 'bar'}, 'ewAiAGYAbwBvACIAOgAiAGIAYQByACIAfQA='],
+    ];
+};
+
  describe('lib/gameState.js', () => { 
     afterEach(() => { 
         jest.restoreAllMocks();
     });
 
-    it('To have the expected signature.', () => { 
+    it('Has the expected signature.', () => { 
         expect(SIGNATURE).toEqual(2);
     });
 
-    it('To return a default game state, or slices of it.', () => { 
+    it('Can return a default game state, or slices of it.', () => { 
         const expectedState = {
             ...STATE.actions,
             ...STATE.characters,
@@ -74,12 +85,12 @@ const STATE = {
         ['memories', STATE.memories],
         ['resources', STATE.resources],
         ['skills', STATE.skills],
-    ])('To return a section of default state, or an empty dictionary if an invalid section is requested.', (section, expectedState) => {
+    ])('Can return a section of default state, or an empty dictionary if an invalid section is requested.', (section, expectedState) => {
         const result = defaultGameState(section);
         expect(result).toEqual(expectedState);
     })
 
-    it('To be able to get state from a store.', () => { 
+    it('Can get state from a store.', () => { 
         const store = {
                 state: STATE,
             };
@@ -100,7 +111,7 @@ const STATE = {
                 
     });
 
-    it('To be able to restore state to a store.', async () => { 
+    it('Can restore state to a store.', async () => { 
         const commit = jest.fn();
         const store = {commit};
         const data = {};
@@ -125,7 +136,7 @@ const STATE = {
         commit.mockRestore();
     });
 
-    it('To be able to restore state to a store, with existing data.', async () => { 
+    it('Can restore state to a store, with existing data.', async () => { 
         const commit = jest.fn();
         const store = {commit};
         const data = {
@@ -154,5 +165,72 @@ const STATE = {
         expect(commit).toHaveBeenNthCalledWith(12, 'skills/set', STATE.skills.skills);
 
         commit.mockRestore();
+    });
+
+    it.each(serializedDataProvider())('Can serialize data into base64.', (input, output) => {
+        const spyStringify = jest.spyOn(JSON, 'stringify');
+        const spyBtoA = jest.spyOn(global, 'btoa');
+
+        const result = serialize(input);
+
+        expect(result).toEqual(output);
+        expect(spyStringify).toHaveBeenCalledWith(input);
+        expect(spyBtoA).toHaveBeenCalled();
+
+        spyStringify.mockRestore();
+        spyBtoA.mockRestore();
+    });
+
+    it('Throws on failure to serialize.', () => {
+        const input = 'foo';
+        const spyStringify = jest.spyOn(JSON, 'stringify');
+        const spyBtoA = jest.spyOn(global, 'btoa');
+
+        spyStringify.mockImplementation(() => { 
+            throw 'Fail';
+        });
+
+        expect(() => { 
+            serialize(input);
+        }).toThrow('Unable to serialize data structure.');
+
+        expect(spyStringify).toHaveBeenCalledWith(input);
+        expect(spyBtoA).not.toHaveBeenCalled();
+
+        spyStringify.mockRestore();
+        spyBtoA.mockRestore();
+    });
+
+    it.each(serializedDataProvider())('Can deserialize data from base64.', (output, input) => { 
+        const spyParse = jest.spyOn(JSON, 'parse');
+        const spyAtoB = jest.spyOn(global, 'atob');
+
+        const result = deserialize(input);
+
+        expect(result).toEqual(output);
+        expect(spyParse).toHaveBeenCalled();
+        expect(spyAtoB).toHaveBeenCalledWith(input);
+
+        spyParse.mockRestore();
+        spyAtoB.mockRestore();
+    });
+
+    it('Throws on failure to deserialize.', () => {
+        const spyParse = jest.spyOn(JSON, 'parse');
+        const spyAtoB = jest.spyOn(global, 'atob');
+
+        spyParse.mockImplementation(() => { 
+            throw 'Fail';
+        });
+
+        expect(() => { 
+            deserialize('foo');
+        }).toThrow('Unable to parse deserialised data.');
+
+        expect(spyParse).toHaveBeenCalled();
+        expect(spyAtoB).toHaveBeenCalledWith('foo');
+
+        spyParse.mockRestore();
+        spyAtoB.mockRestore();
     });
  });
