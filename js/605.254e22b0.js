@@ -1,0 +1,2 @@
+"use strict";(self["webpackChunktyov"]=self["webpackChunktyov"]||[]).push([[605],{1605:function(e,i,s){s.r(i);var r=s(4920);i["default"]={description:"Adds ID to skills.",requiredSignature:1,migrate(e){return e.skills.forEach((e=>{e.id||(e.id=(0,r.Z)("skill"))})),e}}}}]);
+//# sourceMappingURL=605.254e22b0.js.map

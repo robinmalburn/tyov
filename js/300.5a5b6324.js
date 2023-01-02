@@ -1,0 +1,2 @@
+"use strict";(self["webpackChunktyov"]=self["webpackChunktyov"]||[]).push([[300],{7300:function(e,r,t){t.r(r);var i=t(4920);r["default"]={description:"Adds ID to memories and events.",requiredSignature:1,migrate(e){return e.memories.forEach((e=>{e.id||(e.id=(0,i.Z)("memory")),e.events.forEach(((e,r,t)=>{"string"===typeof e&&(e={description:e,id:(0,i.Z)("event")},t[r]=e)}))})),e}}}}]);
+//# sourceMappingURL=300.5a5b6324.js.map
