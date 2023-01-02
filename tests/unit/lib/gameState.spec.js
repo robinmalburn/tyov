@@ -1,4 +1,4 @@
-import migrator from 'Migrations/index';
+import migrator from 'Migrations';
 import { 
     SIGNATURE,
     defaultGameState,
@@ -9,7 +9,7 @@ import {
  } from 'Libs/gameState';
 
 
-jest.mock('Migrations/index', () => {
+jest.mock('Migrations', () => {
     return {
       __esModule: true,
       default: {

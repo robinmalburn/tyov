@@ -1,4 +1,4 @@
-import migrator from 'Migrations/index';
+import migrator from 'Migrations';
 
 export const SIGNATURE = 2;
 
