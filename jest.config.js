@@ -6,5 +6,5 @@ module.exports = {
             '^Stores/(.*)$': '<rootDir>/src/store/$1',
             '^Components/(.*)$': '<rootDir>/src/components/$1',
   },
-  moduleDirectories: ['node_modules', 'src']
+  modulePaths: ["<rootDir>/src"]
 }
