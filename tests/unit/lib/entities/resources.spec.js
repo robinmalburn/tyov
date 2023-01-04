@@ -1,10 +1,10 @@
-import { baseEntityFactory } from 'Lib/entities';
+import { baseEntityFactory } from 'Libs/entities';
 import { 
     resourceEntityFactory,
     diaryEntityFactory,
-} from 'Lib/entities/resources';
+} from 'Libs/entities/resources';
 
-jest.mock('Lib/entities');
+jest.mock('Libs/entities');
 
 describe('lib/entities/resources.js', () => {
     describe('Test suite for resource entities.', () => { 

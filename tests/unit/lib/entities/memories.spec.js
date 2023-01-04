@@ -1,10 +1,10 @@
-import { baseEntityFactory } from 'Lib/entities';
+import { baseEntityFactory } from 'Libs/entities';
 import {
     memoryEntityFactory,
     eventEntityFactory
- } from 'Lib/entities/memories';
+ } from 'Libs/entities/memories';
 
-jest.mock('Lib/entities');
+jest.mock('Libs/entities');
 
 describe('lib/entities/memories.js', () => {
     describe('Test suite for memory entities', () => {

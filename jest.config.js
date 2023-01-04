@@ -3,7 +3,6 @@ module.exports = {
   moduleNameMapper: {
             '^Migrations': '<rootDir>/src/migrations/index.js',
             '^Migrations/(.*)$': '<rootDir>/src/migrations/$1',
-            '^Libs/entities': '<rootDir>/src/lib/entities/index.js',
             '^Libs/(.*)$': '<rootDir>/src/lib/$1',
             '^Stores/(.*)$': '<rootDir>/src/store/$1',
             '^Components/(.*)$': '<rootDir>/src/components/$1',

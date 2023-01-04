@@ -1,7 +1,7 @@
-import { baseEntityFactory } from 'Lib/entities';
-import characters from 'Lib/entities/characters';
+import { baseEntityFactory } from 'Libs/entities';
+import characters from 'Libs/entities/characters';
 
-jest.mock('Lib/entities');
+jest.mock('Libs/entities');
 
 describe('lib/entities/characters.js', () => {
     it('Can create a default character entity.', () => { 
