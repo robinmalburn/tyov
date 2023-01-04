@@ -10,11 +10,15 @@ import {
 jest.mock('Libs/uuid', () => { 
     return { 
         __esModule: true,
-        default: jest.fn().mockImplementation((ns) => `uuid-${ns}`)
+        default: jest.fn()
     };
 });
 
 describe('lib/entities/index.js', () => { 
+
+    beforeEach(() => { 
+        uuid.mockImplementation((ns) => `uuid-${ns}`);
+    });
 
     describe('Test suite for the hasId function.', () => {
         it('Can determine if data has the given ID.', () => { 
@@ -131,8 +135,6 @@ describe('lib/entities/index.js', () => {
             expect(spyStringify).toHaveBeenCalledWith(data);
             expect(result).toEqual(data);
             expect(result.foo).toBe(inner);
-
-            spyStringify.mockReset();
         });
     });
 
@@ -153,8 +155,6 @@ describe('lib/entities/index.js', () => {
 
             expect(uuid).toHaveBeenCalledWith('uuid');
             expect(entity.name).toEqual('bar');
-
-            uuid.mockReset();
         });
 
         it('Can create a base entity with a new UUID and custom namespace.', () => { 
@@ -164,8 +164,6 @@ describe('lib/entities/index.js', () => {
 
             expect(uuid).toHaveBeenCalledWith('ns');
             expect(entity.name).toEqual('bar');
-
-            uuid.mockReset();
         });
     });
 

@@ -13,7 +13,7 @@ jest.mock('Migrations', () => {
     return {
       __esModule: true,
       default: {
-        migrate: jest.fn((data) => data),
+        migrate: jest.fn(),
       },
     };
 });
@@ -55,8 +55,8 @@ const serializedDataProvider = () => {
 };
 
  describe('lib/gameState.js', () => { 
-    afterEach(() => { 
-        jest.restoreAllMocks();
+    beforeEach(() => { 
+        migrator.migrate.mockImplementation((data) => data);
     });
 
     it('Has the expected signature.', () => { 
@@ -132,8 +132,6 @@ const serializedDataProvider = () => {
         expect(commit).toHaveBeenNthCalledWith(10, 'resources/setResources', STATE.resources.resources);
         expect(commit).toHaveBeenNthCalledWith(11, 'resources/setDiaries', STATE.resources.diaries);
         expect(commit).toHaveBeenNthCalledWith(12, 'skills/set', STATE.skills.skills);
-
-        commit.mockRestore();
     });
 
     it('Can restore state to a store, with existing data.', async () => { 
@@ -163,8 +161,6 @@ const serializedDataProvider = () => {
         expect(commit).toHaveBeenNthCalledWith(10, 'resources/setResources', STATE.resources.resources);
         expect(commit).toHaveBeenNthCalledWith(11, 'resources/setDiaries', STATE.resources.diaries);
         expect(commit).toHaveBeenNthCalledWith(12, 'skills/set', STATE.skills.skills);
-
-        commit.mockRestore();
     });
 
     it.each(serializedDataProvider())('Can serialize data into base64.', (input, output) => {
@@ -176,9 +172,6 @@ const serializedDataProvider = () => {
         expect(result).toEqual(output);
         expect(spyStringify).toHaveBeenCalledWith(input);
         expect(spyBtoA).toHaveBeenCalled();
-
-        spyStringify.mockRestore();
-        spyBtoA.mockRestore();
     });
 
     it('Throws on failure to serialize.', () => {
@@ -196,9 +189,6 @@ const serializedDataProvider = () => {
 
         expect(spyStringify).toHaveBeenCalledWith(input);
         expect(spyBtoA).not.toHaveBeenCalled();
-
-        spyStringify.mockRestore();
-        spyBtoA.mockRestore();
     });
 
     it.each(serializedDataProvider())('Can deserialize data from base64.', (output, input) => { 
@@ -210,9 +200,6 @@ const serializedDataProvider = () => {
         expect(result).toEqual(output);
         expect(spyParse).toHaveBeenCalled();
         expect(spyAtoB).toHaveBeenCalledWith(input);
-
-        spyParse.mockRestore();
-        spyAtoB.mockRestore();
     });
 
     it('Throws on failure to deserialize.', () => {
@@ -229,8 +216,5 @@ const serializedDataProvider = () => {
 
         expect(spyParse).toHaveBeenCalled();
         expect(spyAtoB).toHaveBeenCalledWith('foo');
-
-        spyParse.mockRestore();
-        spyAtoB.mockRestore();
     });
  });

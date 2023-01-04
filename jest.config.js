@@ -7,5 +7,7 @@ module.exports = {
             '^Stores/(.*)$': '<rootDir>/src/store/$1',
             '^Components/(.*)$': '<rootDir>/src/components/$1',
   },
-  modulePaths: ["<rootDir>/src"]
+  modulePaths: ["<rootDir>/src"],
+  restoreMocks: true,
+  resetMocks: true,
 }

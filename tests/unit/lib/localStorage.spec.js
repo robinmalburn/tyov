@@ -14,8 +14,6 @@ describe('lib/localStorage.js', () => {
         }
 
         expect(setItem).toBeCalled();
-        stringify.mockRestore();
-        setItem.mockRestore();
     });
 
     it.each([
@@ -37,9 +35,6 @@ describe('lib/localStorage.js', () => {
 
         expect(getItem).toBeCalledWith(key);
         expect(result).toEqual(value);
-
-        parse.mockRestore();
-        getItem.mockRestore();
     });
 
     it('Can get a value from storage, even if it cannot be parsed.', () => {
@@ -59,9 +54,6 @@ describe('lib/localStorage.js', () => {
         expect(parse).toBeCalledWith(value);
         expect(getItem).toBeCalledWith(key);
         expect(result).toEqual(value);
-
-        parse.mockRestore();
-        getItem.mockRestore();
     });
 
     describe.each(
@@ -77,9 +69,6 @@ describe('lib/localStorage.js', () => {
                 expect(isSupported).toEqual(true);
                 expect(setItem).toHaveBeenCalled();
                 expect(removeItem).toHaveBeenCalled();
-
-                setItem.mockRestore();
-                removeItem.mockRestore();
             });
 
             it('Can have support checked and denied.', () => {
@@ -95,9 +84,6 @@ describe('lib/localStorage.js', () => {
                 expect(isSupported).toEqual(false);
                 expect(setItem).toHaveBeenCalled();
                 expect(removeItem).toHaveBeenCalled();
-
-                setItem.mockRestore();
-                removeItem.mockRestore();
             });
         });
 });
