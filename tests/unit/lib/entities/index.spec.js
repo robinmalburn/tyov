@@ -1,9 +1,18 @@
+import uuid from 'Libs/uuid';
 import { 
     hasId,
     findById,
     shallowCopy,
     deepCopy,
+    baseEntityFactory,
 } from 'Libs/entities';
+
+jest.mock('Libs/uuid', () => { 
+    return { 
+        __esModule: true,
+        default: jest.fn().mockImplementation((ns) => `uuid-${ns}`)
+    };
+});
 
 describe('lib/entities/index.js', () => { 
 
@@ -126,4 +135,38 @@ describe('lib/entities/index.js', () => {
             spyStringify.mockReset();
         });
     });
+
+    describe('Test suite for base entity factory.', () => { 
+        it('Can create a base entity with a default namespace.', () => { 
+            const data = {id: 'foo', name: 'bar'};
+
+            const entity = baseEntityFactory(data);
+
+            expect(entity).not.toBe(data);
+            expect(entity).toEqual(data);
+        });
+
+        it('Can create a base entity with a new UUID.', () => { 
+            const data = {name: 'bar'};
+
+            const entity = baseEntityFactory(data);
+
+            expect(uuid).toHaveBeenCalledWith('uuid');
+            expect(entity.name).toEqual('bar');
+
+            uuid.mockReset();
+        });
+
+        it('Can create a base entity with a new UUID and custom namespace.', () => { 
+            const data = {name: 'bar'};
+
+            const entity = baseEntityFactory(data, 'ns');
+
+            expect(uuid).toHaveBeenCalledWith('ns');
+            expect(entity.name).toEqual('bar');
+
+            uuid.mockReset();
+        });
+    });
+
 });
