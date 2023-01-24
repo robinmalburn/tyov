@@ -11,10 +11,10 @@
 <script>
 const BUTTON_TYPES = {
     default: {
-            'bg-gray-200': true,
-            'hover:bg-gray-400': true,
-            'ring-gray-100': true,
-        },
+        'bg-gray-200': true,
+        'hover:bg-gray-400': true,
+        'ring-gray-100': true,
+    },
     primary: {
         'bg-red-700': true,
         'hover:bg-red-900': true,
