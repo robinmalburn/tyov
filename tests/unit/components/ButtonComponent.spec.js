@@ -31,7 +31,7 @@ const BUTTON_TYPES = {
     ],
 };
 
-describe('components/CardComponent.vue', () => {
+describe('components/ButtonComponent.vue', () => {
     it('Has the correct component name', () => { 
         expect(ButtonComponent.name).toEqual('ButtonComponent');
     });
