@@ -38,8 +38,16 @@ export default {
           extraClasses[context.data.staticClass] = true;
       }
 
+
+      if (context.data.attrs && context.data.attrs.class) { 
+        const classes = context.data.attrs.class.split(' ');
+        for (const cls of classes) {
+            extraClasses[cls] = true;
+        }
+      }
+
       return createElement(
-          `h${context.props.level}`,
+          `h${Math.min(6, Math.max(1, context.props.level))}`,
           {
               ...context.data,
               class: {
