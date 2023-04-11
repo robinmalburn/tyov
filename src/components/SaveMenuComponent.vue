@@ -46,7 +46,9 @@ export default {
     ButtonComponent,
   },
   computed: {
-    supportsLocalStorage,
+    supportsLocalStorage() {
+      return supportsLocalStorage();
+    },
   },
   methods: {
     toFile() {
