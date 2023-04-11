@@ -64,7 +64,6 @@ export default {
               'border-indigo-200': this.shouldShow,
               'shadow-md': this.shouldShow,
               'hover:shadow-xl': this.shouldShow,
-              
           }
       }
   },
