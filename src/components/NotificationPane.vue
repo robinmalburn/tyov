@@ -46,6 +46,11 @@ export default {
   components: {
       RemoveCrossComponent,
   },
+  data() { 
+    return {
+        timeout: 5000,
+    }
+  },
   computed: {
       ...mapState('notifications', ['visible', 'message', 'type']),
       classes() {
@@ -70,7 +75,7 @@ export default {
           if (value) {
             timer = setTimeout(() => {
                 this.hide();
-            }, 5000);
+            }, this.timeout);
           }
       }
   }
