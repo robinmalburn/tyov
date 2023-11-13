@@ -1,2 +1,2 @@
 "use strict";(self["webpackChunktyov"]=self["webpackChunktyov"]||[]).push([[521],{521:function(e,r,t){t.r(r);var a=t(4920);r["default"]={description:"Adds ID to prompts and removes name.",requiredSignature:1,migrate(e){return e.prompts.forEach((e=>{e.id||(e.id=(0,a.Z)("prompt")),e.name&&delete e.name})),e}}}}]);
-//# sourceMappingURL=521.06f9b334.js.map
+//# sourceMappingURL=521.b2c930bb.js.map
