@@ -1,0 +1,2 @@
+"use strict";(self["webpackChunktyov"]=self["webpackChunktyov"]||[]).push([[683],{9683:function(r,e,t){t.r(e);t(8111),t(7588);var a=t(7224);e["default"]={description:"Adds ID to characters.",requiredSignature:1,migrate(r){return r.characters.forEach(r=>{r.id||(r.id=(0,a.A)("character"))}),r}}}}]);
+//# sourceMappingURL=683.2f52b5e7.js.map

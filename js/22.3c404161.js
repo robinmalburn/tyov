@@ -1,2 +1,0 @@
-"use strict";(self["webpackChunktyov"]=self["webpackChunktyov"]||[]).push([[22],{4022:function(r,e,t){t.r(e);t(8111),t(7588);var i=t(7224);e["default"]={description:"Adds ID & Description to marks.",requiredSignature:1,migrate(r){return r.marks.forEach(((r,e,t)=>{"string"===typeof r&&(t[e]={id:(0,i.A)("mark"),description:r})})),r}}}}]);
-//# sourceMappingURL=22.3c404161.js.map
