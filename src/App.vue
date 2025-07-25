@@ -1,13 +1,13 @@
 <template>
   <div id="app" class="p-6 flex flex-col min-h-screen">
-    <HeadingComponent level="1" class="text-center">TYOV ~ Companion</HeadingComponent>
+    <HeadingComponent level="1" class="text-center"
+      >TYOV ~ Companion</HeadingComponent
+    >
     <NotificationPane />
     <div class="flex flex-col md:flex-row flex-grow">
       <div class="flex-1">
         <SlideDownPanelComponent class="flex-1">
-          <template #closed-heading>
-            Open Actions
-          </template>
+          <template #closed-heading> Open Actions </template>
           <ActionsPane />
           <PromptsPane />
         </SlideDownPanelComponent>
@@ -15,7 +15,7 @@
           <MemoriesPane />
         </div>
       </div>
-      <div  class="flex-1">
+      <div class="flex-1">
         <MarksPane />
         <SkillsPane />
         <ResourcesPane />
@@ -25,14 +25,14 @@
     <div class="border-t mt-4 text-right">
       <ul>
         <li>
-          <a 
+          <a
             class="hover:text-gray-400"
             href="https://www.version1.net/"
             v-html="copyright"
           />
         </li>
         <li>
-          <a 
+          <a
             class="hover:text-gray-400"
             href="https://thousandyearoldvampire.com/"
             v-html="'Thousand Year Old Vampire Copyright &copy; Tim Hutchings'"
@@ -56,7 +56,7 @@ import SlideDownPanelComponent from "./components/SlideDownPanelComponent";
 import SkillsPane from "./components/SkillsPane";
 
 export default {
-  name: 'App',
+  name: "App",
   components: {
     ActionsPane,
     PromptsPane,
@@ -73,9 +73,9 @@ export default {
     copyright() {
       // Be a little defensive since we're trusting local clocks, but querying
       // a remote API for the copyright year seemed a bit overkill.
-      const year = Math.max(2021, (new Date()).getUTCFullYear());
-      return `Copyright &copy; ${year} Robin Malburn`
-    }
+      const year = Math.max(2021, new Date().getUTCFullYear());
+      return `Copyright &copy; ${year} Robin Malburn`;
+    },
   },
-}
+};
 </script>

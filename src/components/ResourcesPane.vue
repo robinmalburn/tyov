@@ -1,17 +1,15 @@
 <template>
   <CardComponent id="resources" class="m-1 p-4 border-2 border-gray-100">
     <HeadingComponent level="2">Resources</HeadingComponent>
-    <FormToggleComponent 
+    <FormToggleComponent
       class="my-2"
       @save="validatedAddResource"
       @toggle="toggleAddingResourceControls"
       :show-controls="showAddingResourceControls"
     >
-      <template #button>
-        Add a new Resource?
-      </template>
+      <template #button> Add a new Resource? </template>
       <template #form>
-        <input 
+        <input
           type="text"
           placeholder="Description"
           class="shadow appearance-none border rounded w-full py-1 px-2 m-1 text-gray-700 leading-tight focus:outline-none focus:ring-2 ring-gray-200"
@@ -20,38 +18,36 @@
         />
         <label>
           <input
-              type="checkbox"
-              class="shadow border rounded py-2 px-2 m-1 text-gray-700 leading-tight focus:outline-none focus:ring-2 ring-gray-200"
-              v-model="newResource.lost"
-              :true-value="true"
-              :false-value="false"
+            type="checkbox"
+            class="shadow border rounded py-2 px-2 m-1 text-gray-700 leading-tight focus:outline-none focus:ring-2 ring-gray-200"
+            v-model="newResource.lost"
+            :true-value="true"
+            :false-value="false"
           />
           Lost?
         </label>
         <label>
           <input
-              type="checkbox"
-              class="shadow border rounded py-2 px-2 m-1 text-gray-700 leading-tight focus:outline-none focus:ring-2 ring-gray-200"
-              v-model="newResource.stationary"
-              :true-value="true"
-              :false-value="false"
+            type="checkbox"
+            class="shadow border rounded py-2 px-2 m-1 text-gray-700 leading-tight focus:outline-none focus:ring-2 ring-gray-200"
+            v-model="newResource.stationary"
+            :true-value="true"
+            :false-value="false"
           />
           Stationary?
         </label>
       </template>
     </FormToggleComponent>
 
-    <FormToggleComponent 
+    <FormToggleComponent
       @save="validatedAddDiary"
       @toggle="toggleAddingDiaryControls"
       :show-controls="showAddingDiaryControls"
       v-if="!hasDiary"
     >
-      <template #button>
-        Add a Diary?
-      </template>
+      <template #button> Add a Diary? </template>
       <template #form>
-        <input 
+        <input
           type="text"
           placeholder="Name"
           class="shadow appearance-none border rounded w-full py-1 px-2 m-1 text-gray-700 leading-tight focus:outline-none focus:ring-2 ring-gray-200"
@@ -60,11 +56,11 @@
         />
         <label>
           <input
-              type="checkbox"
-              class="shadow border rounded py-2 px-2 m-1 text-gray-700 leading-tight focus:outline-none focus:ring-2 ring-gray-200"
-              v-model="newDiary.lost"
-              :true-value="true"
-              :false-value="false"
+            type="checkbox"
+            class="shadow border rounded py-2 px-2 m-1 text-gray-700 leading-tight focus:outline-none focus:ring-2 ring-gray-200"
+            v-model="newDiary.lost"
+            :true-value="true"
+            :false-value="false"
           />
           Lost?
         </label>
@@ -79,23 +75,23 @@
       v-show="showEditingResourceControls"
       :buttons="[
         {
-            type: 'default',
-            event: 'save',
-            label: 'Save',
+          type: 'default',
+          event: 'save',
+          label: 'Save',
         },
         {
-            type: 'default',
-            event: 'cancel',
-            label: 'Cancel',
+          type: 'default',
+          event: 'cancel',
+          label: 'Cancel',
         },
         {
-            type: 'default',
-            event: 'remove',
-            label: 'Remove',
+          type: 'default',
+          event: 'remove',
+          label: 'Remove',
         },
       ]"
     >
-      <input 
+      <input
         type="text"
         placeholder="Description"
         class="shadow appearance-none border rounded w-full py-1 px-2 m-1 text-gray-700 leading-tight focus:outline-none focus:ring-2 ring-gray-200"
@@ -104,21 +100,21 @@
       />
       <label>
         <input
-            type="checkbox"
-            class="shadow border rounded py-2 px-2 m-1 text-gray-700 leading-tight focus:outline-none focus:ring-2 ring-gray-200"
-            v-model="editResource.lost"
-            :true-value="true"
-            :false-value="false"
+          type="checkbox"
+          class="shadow border rounded py-2 px-2 m-1 text-gray-700 leading-tight focus:outline-none focus:ring-2 ring-gray-200"
+          v-model="editResource.lost"
+          :true-value="true"
+          :false-value="false"
         />
         Lost?
       </label>
       <label>
         <input
-            type="checkbox"
-            class="shadow border rounded py-2 px-2 m-1 text-gray-700 leading-tight focus:outline-none focus:ring-2 ring-gray-200"
-            v-model="editResource.stationary"
-            :true-value="true"
-            :false-value="false"
+          type="checkbox"
+          class="shadow border rounded py-2 px-2 m-1 text-gray-700 leading-tight focus:outline-none focus:ring-2 ring-gray-200"
+          v-model="editResource.stationary"
+          :true-value="true"
+          :false-value="false"
         />
         Stationary?
       </label>
@@ -132,23 +128,23 @@
       v-show="showEditingDiaryControls"
       :buttons="[
         {
-            type: 'default',
-            event: 'save',
-            label: 'Save',
+          type: 'default',
+          event: 'save',
+          label: 'Save',
         },
         {
-            type: 'default',
-            event: 'cancel',
-            label: 'Cancel',
+          type: 'default',
+          event: 'cancel',
+          label: 'Cancel',
         },
         {
-            type: 'default',
-            event: 'remove',
-            label: 'Remove',
+          type: 'default',
+          event: 'remove',
+          label: 'Remove',
         },
       ]"
     >
-      <input 
+      <input
         type="text"
         placeholder="Description"
         class="shadow appearance-none border rounded w-full py-1 px-2 m-1 text-gray-700 leading-tight focus:outline-none focus:ring-2 ring-gray-200"
@@ -157,11 +153,11 @@
       />
       <label>
         <input
-            type="checkbox"
-            class="shadow border rounded py-2 px-2 m-1 text-gray-700 leading-tight focus:outline-none focus:ring-2 ring-gray-200"
-            v-model="editDiary.lost"
-            :true-value="true"
-            :false-value="false"
+          type="checkbox"
+          class="shadow border rounded py-2 px-2 m-1 text-gray-700 leading-tight focus:outline-none focus:ring-2 ring-gray-200"
+          v-model="editDiary.lost"
+          :true-value="true"
+          :false-value="false"
         />
         Lost?
       </label>
@@ -189,14 +185,16 @@
               class="cursor-pointer hover:text-gray-400"
               @click="validatedToggleResource(resource)"
             >
-              <span :class="{'line-through': resource.lost}">{{resource.name}}</span>
+              <span :class="{ 'line-through': resource.lost }">{{
+                resource.name
+              }}</span>
               <span v-if="resource.stationary"> (stationary)</span>
             </span>
           </span>
-          <span 
-              class="cursor-pointer select-none flex-initial text-right mx-2 hover:text-gray-400"
-              @click="startEditResource(resource)"
-            >
+          <span
+            class="cursor-pointer select-none flex-initial text-right mx-2 hover:text-gray-400"
+            @click="startEditResource(resource)"
+          >
             Edit
           </span>
         </div>
@@ -216,7 +214,7 @@
     >
       <li
         class="select-none"
-        v-for="diary in diaries" 
+        v-for="diary in diaries"
         :key="`diary-${diary.id}`"
       >
         <div class="grid grid-cols-6">
@@ -225,14 +223,18 @@
               class="cursor-pointer hover:text-gray-400"
               @click="validatedToggleDiary(diary)"
             >
-              <span :class="{'line-through': diary.lost}">{{diary.name}}</span>
-              <span class="italic"> (diary - {{ activeMemories.length }} of 4 memories)</span>
+              <span :class="{ 'line-through': diary.lost }">{{
+                diary.name
+              }}</span>
+              <span class="italic">
+                (diary - {{ activeMemories.length }} of 4 memories)</span
+              >
             </span>
           </span>
-          <span 
-              class="cursor-pointer select-none flex-initial text-right mx-2 hover:text-gray-400"
-              @click="startEditDiary(diary)"
-            >
+          <span
+            class="cursor-pointer select-none flex-initial text-right mx-2 hover:text-gray-400"
+            @click="startEditDiary(diary)"
+          >
             Edit
           </span>
         </div>
@@ -240,57 +242,68 @@
     </transition-group>
   </CardComponent>
 </template>
-<HeadingComponent level="2">Marks</HeadingComponent>
 
 <script>
-import CardComponent from 'Components/CardComponent';
-import HeadingComponent from 'Components/HeadingComponent';
-import FormComponent from 'Components/FormComponent';
-import FormToggleComponent from 'Components/FormToggleComponent';
-import { mapMutations, mapActions, mapGetters } from 'vuex';
-import { resourceEntityFactory, diaryEntityFactory } from 'Libs/entities/resources';
+import CardComponent from "Components/CardComponent";
+import HeadingComponent from "Components/HeadingComponent";
+import FormComponent from "Components/FormComponent";
+import FormToggleComponent from "Components/FormToggleComponent";
+import { mapMutations, mapActions, mapGetters } from "vuex";
+import {
+  resourceEntityFactory,
+  diaryEntityFactory,
+} from "Libs/entities/resources";
 
 export default {
-  name: 'ResourcesPane',
-  data: function() {
-      return {
-          showAddingResourceControls: false,
-          showAddingDiaryControls: false,
-          showEditingResourceControls: false,
-          showEditingDiaryControls: false,
-          newResource: resourceEntityFactory(),
-          newDiary: diaryEntityFactory(),
-          editResource: resourceEntityFactory(),
-          editDiary: diaryEntityFactory(),
-      }
+  name: "ResourcesPane",
+  data: function () {
+    return {
+      showAddingResourceControls: false,
+      showAddingDiaryControls: false,
+      showEditingResourceControls: false,
+      showEditingDiaryControls: false,
+      newResource: resourceEntityFactory(),
+      newDiary: diaryEntityFactory(),
+      editResource: resourceEntityFactory(),
+      editDiary: diaryEntityFactory(),
+    };
   },
   components: {
-      CardComponent,
-      FormComponent,
-      FormToggleComponent,
-      HeadingComponent,
+    CardComponent,
+    FormComponent,
+    FormToggleComponent,
+    HeadingComponent,
   },
   computed: {
-    ...mapGetters('resources', ['hasDiary', 'diaries', 'resources', 'diary', 'activeMemories']),
+    ...mapGetters("resources", [
+      "hasDiary",
+      "diaries",
+      "resources",
+      "diary",
+      "activeMemories",
+    ]),
   },
   methods: {
-    ...mapMutations('notifications', {
-      hideNotification: 'hide'
+    ...mapMutations("notifications", {
+      hideNotification: "hide",
     }),
-    ...mapActions('notifications', ['showNotification']),
-    ...mapMutations('resources', [
-      'addResource',
-      'updateResource',
-      'removeResource',
-      'toggleResource',
-      'addDiary',
-      'updateDiary',
-      'removeDiary',
-      'toggleDiary',
+    ...mapActions("notifications", ["showNotification"]),
+    ...mapMutations("resources", [
+      "addResource",
+      "updateResource",
+      "removeResource",
+      "toggleResource",
+      "addDiary",
+      "updateDiary",
+      "removeDiary",
+      "toggleDiary",
     ]),
-    validatedAddResource(){
-      if (this.newResource.name === '') {
-        this.showNotification({message: 'You must provide a description.', type: 'warning'});
+    validatedAddResource() {
+      if (this.newResource.name === "") {
+        this.showNotification({
+          message: "You must provide a description.",
+          type: "warning",
+        });
         return;
       }
 
@@ -301,7 +314,10 @@ export default {
       this.hideNotification();
 
       if (this.editResource.id === resource.id) {
-        this.showNotification({message: 'You cannot change this resource whilst it is being edited.', type:'warning'});
+        this.showNotification({
+          message: "You cannot change this resource whilst it is being edited.",
+          type: "warning",
+        });
         return;
       }
 
@@ -311,16 +327,26 @@ export default {
       this.hideNotification();
 
       if (this.editDiary.id === diary.id) {
-        this.showNotification({message: 'You cannot change this resource whilst it is being edited.', type:'warning'});
+        this.showNotification({
+          message: "You cannot change this resource whilst it is being edited.",
+          type: "warning",
+        });
         return;
       }
 
       if (this.hasDiary) {
-        if (diary.lost ) {
-          this.showNotification({message: 'You may only have one active diary.', type: 'warning'});
+        if (diary.lost) {
+          this.showNotification({
+            message: "You may only have one active diary.",
+            type: "warning",
+          });
           return;
         } else if (this.memories.length > 0) {
-          this.showNotification({message: 'Please cross out existing memories before losing the diary.', type: 'warning'});
+          this.showNotification({
+            message:
+              "Please cross out existing memories before losing the diary.",
+            type: "warning",
+          });
           return;
         }
       }
@@ -328,11 +354,17 @@ export default {
       this.toggleDiary(diary);
     },
     validatedAddDiary() {
-      if (this.newDiary.name === '') {
-        this.showNotification({message: 'You must provide a description.', type: 'warning'});
+      if (this.newDiary.name === "") {
+        this.showNotification({
+          message: "You must provide a description.",
+          type: "warning",
+        });
         return;
       } else if (this.hasDiary) {
-        this.showNotification({message: 'You may only have one active diary.', type: 'warning'});
+        this.showNotification({
+          message: "You may only have one active diary.",
+          type: "warning",
+        });
         return;
       }
 
@@ -340,8 +372,11 @@ export default {
       this.toggleAddingDiaryControls();
     },
     validatedUpdateResource() {
-      if (this.editResource.name === '') {
-        this.showNotification({message: 'You must provide a description.', type: 'warning'});
+      if (this.editResource.name === "") {
+        this.showNotification({
+          message: "You must provide a description.",
+          type: "warning",
+        });
         return;
       }
 
@@ -349,12 +384,22 @@ export default {
 
       this.closeEditingResourceControls();
     },
-    validatedUpdateDiary(){
-      if (this.editDiary.name === '') {
-        this.showNotification({message: 'You must provide a description.', type: 'warning'});
+    validatedUpdateDiary() {
+      if (this.editDiary.name === "") {
+        this.showNotification({
+          message: "You must provide a description.",
+          type: "warning",
+        });
         return;
-      } else if (this.diary && this.editDiary.id !== this.diary.id && this.editDiary.lost === false) {
-        this.showNotification({message: 'You may only have one active diary.', type: 'warning'});
+      } else if (
+        this.diary &&
+        this.editDiary.id !== this.diary.id &&
+        this.editDiary.lost === false
+      ) {
+        this.showNotification({
+          message: "You may only have one active diary.",
+          type: "warning",
+        });
         return;
       }
 
@@ -365,7 +410,7 @@ export default {
     validatedRemoveResource() {
       let resourceToRemove;
 
-      this.resources.some(resource => {
+      this.resources.some((resource) => {
         if (resource.id === this.editResource.id) {
           resourceToRemove = resource;
           return true;
@@ -378,7 +423,7 @@ export default {
     validatedRemoveDiary() {
       let diaryToRemove;
 
-      this.diaries.some(diary => {
+      this.diaries.some((diary) => {
         if (diary.id === this.editDiary.id) {
           diaryToRemove = diary;
           return true;
@@ -388,11 +433,11 @@ export default {
       this.removeDiary(diaryToRemove);
       this.closeEditingDiaryControls();
     },
-    startEditResource(resource){
+    startEditResource(resource) {
       this.editResource = resourceEntityFactory(resource);
       this.showEditingResourceControls = true;
     },
-    startEditDiary(diary){
+    startEditDiary(diary) {
       this.editDiary = diaryEntityFactory(diary);
       this.showEditingDiaryControls = true;
     },
@@ -416,6 +461,6 @@ export default {
       this.showEditingDiaryControls = false;
       this.editDiary = diaryEntityFactory();
     },
-  }
-}
+  },
+};
 </script>
