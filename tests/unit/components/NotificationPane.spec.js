@@ -1,3 +1,4 @@
+import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import NotificationPane from "Components/NotificationPane";
 import { shallowMount, createLocalVue } from "@vue/test-utils";
 import Vuex from "vuex";
@@ -16,6 +17,10 @@ describe("NotificationPane", () => {
   let state;
   let mutations;
 
+  afterEach(() => {
+    vi.resetAllMocks();
+  });
+
   beforeEach(() => {
     state = {
       message: "",
@@ -24,7 +29,7 @@ describe("NotificationPane", () => {
     };
 
     mutations = {
-      hide: jest.fn(),
+      hide: vi.fn(),
     };
 
     store = new Vuex.Store({
@@ -73,7 +78,7 @@ describe("NotificationPane", () => {
     });
     state.visible = true;
     await wrapper.vm.$nextTick();
-    const hideSpy = jest.spyOn(wrapper.vm, "hide");
+    const hideSpy = vi.spyOn(wrapper.vm, "hide");
     await new Promise((resolve) => setTimeout(resolve, 100));
     expect(hideSpy).toHaveBeenCalled();
   });

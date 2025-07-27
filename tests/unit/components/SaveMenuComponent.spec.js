@@ -1,3 +1,4 @@
+import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import SaveMenuComponent from "Components/SaveMenuComponent";
 import SlideDownPanelComponent from "Components/SlideDownPanelComponent";
 import ButtonComponent from "Components/ButtonComponent";
@@ -5,15 +6,19 @@ import { shallowMount } from "@vue/test-utils";
 import { getStateFromStore, serialize } from "Libs/gameState";
 import localStorage, { supportsLocalStorage } from "Libs/localStorage";
 
-jest.mock("Libs/gameState");
+vi.mock("Libs/gameState");
 
-jest.mock("Libs/localStorage");
+vi.mock("Libs/localStorage");
 
 describe("SaveMenuComponent", () => {
   beforeEach(() => {
     getStateFromStore.mockImplementation(() => ({ test: "data" }));
-    serialize.mockImplementation(() => 'serialized');
+    serialize.mockImplementation(() => "serialized");
     supportsLocalStorage.mockImplementation(() => true);
+  });
+
+  afterEach(() => {
+    vi.resetAllMocks();
   });
 
   it("Has the correct component name", () => {
@@ -83,11 +88,13 @@ describe("SaveMenuComponent", () => {
       },
     });
 
-    const buttons = wrapper.findAllComponents(ButtonComponent).filter(w => w.text() === 'To File');
+    const buttons = wrapper
+      .findAllComponents(ButtonComponent)
+      .filter((w) => w.text() === "To File");
 
     expect(buttons.length).toEqual(1);
 
-    global.URL.createObjectURL = jest.fn();
+    global.URL.createObjectURL = vi.fn();
 
     const button = buttons.at(0);
 
@@ -111,7 +118,9 @@ describe("SaveMenuComponent", () => {
       },
     });
 
-    const buttons = wrapper.findAllComponents(ButtonComponent).filter(w => w.text() === 'To Local Storage');
+    const buttons = wrapper
+      .findAllComponents(ButtonComponent)
+      .filter((w) => w.text() === "To Local Storage");
 
     expect(buttons.length).toEqual(1);
 

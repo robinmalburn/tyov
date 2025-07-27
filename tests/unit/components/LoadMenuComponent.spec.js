@@ -1,3 +1,4 @@
+import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import LoadMenuComponent from "Components/LoadMenuComponent";
 import SlideDownPanelComponent from "Components/SlideDownPanelComponent";
 import ButtonComponent from "Components/ButtonComponent";
@@ -6,9 +7,9 @@ import Vuex from "vuex";
 import { restoreState, deserialize } from "Libs/gameState";
 import localStorage, { supportsLocalStorage } from "Libs/localStorage";
 
-jest.mock("Libs/gameState");
+vi.mock("Libs/gameState");
 
-jest.mock("Libs/localStorage");
+vi.mock("Libs/localStorage");
 
 const localVue = createLocalVue();
 localVue.use(Vuex);
@@ -27,11 +28,11 @@ describe("LoadMenuComponent", () => {
     localStorage.get.mockImplementation(() => "save-content");
 
     actions = {
-      showNotification: jest.fn(),
+      showNotification: vi.fn(),
     };
 
     mutations = {
-      hide: jest.fn(),
+      hide: vi.fn(),
     };
 
     store = new Vuex.Store({
@@ -43,6 +44,10 @@ describe("LoadMenuComponent", () => {
         },
       },
     });
+  });
+
+  afterEach(() => {
+    vi.resetAllMocks();
   });
 
   it("Has the correct component name", () => {
@@ -114,7 +119,7 @@ describe("LoadMenuComponent", () => {
       },
     });
 
-    const mockReadAsText = jest.fn();
+    const mockReadAsText = vi.fn();
     const mockReader = {
       readAsText: mockReadAsText,
       result: "dummy data",
@@ -122,7 +127,7 @@ describe("LoadMenuComponent", () => {
       onerror: null,
     };
 
-    jest.spyOn(global, "FileReader").mockImplementation(() => mockReader);
+    vi.spyOn(global, "FileReader").mockImplementation(() => mockReader);
 
     const mockEvent = {
       target: {
@@ -157,7 +162,7 @@ describe("LoadMenuComponent", () => {
         },
       });
 
-      const mockReadAsText = jest.fn();
+      const mockReadAsText = vi.fn();
       const mockReader = {
         readAsText: mockReadAsText,
         result: "",
@@ -165,7 +170,7 @@ describe("LoadMenuComponent", () => {
         onerror: null,
       };
 
-      jest.spyOn(global, "FileReader").mockImplementation(() => mockReader);
+      vi.spyOn(global, "FileReader").mockImplementation(() => mockReader);
 
       const mockEvent = {
         target: {
@@ -196,7 +201,7 @@ describe("LoadMenuComponent", () => {
       },
     });
 
-    const mockReadAsText = jest.fn();
+    const mockReadAsText = vi.fn();
     const mockReader = {
       readAsText: mockReadAsText,
       result: "dummy data",
@@ -204,7 +209,7 @@ describe("LoadMenuComponent", () => {
       onerror: null,
     };
 
-    jest.spyOn(global, "FileReader").mockImplementation(() => mockReader);
+    vi.spyOn(global, "FileReader").mockImplementation(() => mockReader);
 
     const mockEvent = {
       target: {

@@ -1,3 +1,4 @@
+import { describe, it, expect } from "vitest";
 import SlideDownPanelComponent from "Components/SlideDownPanelComponent";
 import { shallowMount } from "@vue/test-utils";
 
@@ -81,7 +82,7 @@ describe("components/SlideDownPanelComponent.vue", () => {
   });
 
   it("Renders the default slot and toggles its visibility", async () => {
-    const content = 'Panel Content';
+    const content = "Panel Content";
     const wrapper = shallowMount(SlideDownPanelComponent, {
       slots: {
         default: `<p>${content}</p>`,
