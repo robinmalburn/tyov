@@ -1,29 +1,34 @@
-import { baseEntityFactory } from 'Libs/entities';
-import prompts from 'Libs/entities/prompts';
+import { describe, it, expect, vi, afterEach } from "vitest";
+import { baseEntityFactory } from "Libs/entities";
+import prompts from "Libs/entities/prompts";
 
-jest.mock('Libs/entities');
+vi.mock("Libs/entities");
 
-describe('lib/entities/prompts.js', () => {
-    it('Can create a default prompt entity.', () => { 
-        const prompt = prompts();
+describe("lib/entities/prompts.js", () => {
+  afterEach(() => {
+    vi.resetAllMocks();
+  });
 
-        expect(prompt.page).toEqual(1);
-        expect(prompt.count).toEqual(0);
-        expect(baseEntityFactory).toHaveBeenCalledWith({}, 'prompt');
-    });
-    
-    it('Can create a prompt entity with injected data.', () => { 
-        baseEntityFactory.mockImplementation((values) => values);
+  it("Can create a default prompt entity.", () => {
+    const prompt = prompts();
 
-        const data = {
-            page: 10,
-            count: 2,
-        };
+    expect(prompt.page).toEqual(1);
+    expect(prompt.count).toEqual(0);
+    expect(baseEntityFactory).toHaveBeenCalledWith({}, "prompt");
+  });
 
-        const prompt = prompts(data);
+  it("Can create a prompt entity with injected data.", () => {
+    baseEntityFactory.mockImplementation((values) => values);
 
-        expect(prompt.page).toEqual(data.page);
-        expect(prompt.count).toEqual(data.count);
-        expect(baseEntityFactory).toHaveBeenCalledWith(data, 'prompt');
-    });
+    const data = {
+      page: 10,
+      count: 2,
+    };
+
+    const prompt = prompts(data);
+
+    expect(prompt.page).toEqual(data.page);
+    expect(prompt.count).toEqual(data.count);
+    expect(baseEntityFactory).toHaveBeenCalledWith(data, "prompt");
+  });
 });

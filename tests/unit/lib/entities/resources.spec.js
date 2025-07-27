@@ -1,62 +1,67 @@
-import { baseEntityFactory } from 'Libs/entities';
-import { 
-    resourceEntityFactory,
-    diaryEntityFactory,
-} from 'Libs/entities/resources';
+import { describe, it, expect, vi, afterEach } from "vitest";
+import { baseEntityFactory } from "Libs/entities";
+import {
+  resourceEntityFactory,
+  diaryEntityFactory,
+} from "Libs/entities/resources";
 
-jest.mock('Libs/entities');
+vi.mock("Libs/entities");
 
-describe('lib/entities/resources.js', () => {
-    describe('Test suite for resource entities.', () => { 
-        it('Can create a default resource entity.', () => { 
-            const resource = resourceEntityFactory();
+describe("lib/entities/resources.js", () => {
+  afterEach(() => {
+    vi.resetAllMocks();
+  });
 
-            expect(resource.name).toEqual('');
-            expect(resource.lost).toEqual(false);
-            expect(resource.stationary).toEqual(false);
-            expect(baseEntityFactory).toHaveBeenCalledWith({}, 'resource');
-        });
-        
-        it('Can create a resource entity with injected data.', () => { 
-            baseEntityFactory.mockImplementation((values) => values);
+  describe("Test suite for resource entities.", () => {
+    it("Can create a default resource entity.", () => {
+      const resource = resourceEntityFactory();
 
-            const data = {
-                name: 'foo',
-                lost: true,
-                stationary: true
-            };
-
-            const resource = resourceEntityFactory(data);
-
-            expect(resource.name).toEqual(data.name);
-            expect(resource.lost).toEqual(data.lost);
-            expect(resource.stationary).toEqual(data.stationary);
-            expect(baseEntityFactory).toHaveBeenCalledWith(data, 'resource');
-        });
+      expect(resource.name).toEqual("");
+      expect(resource.lost).toEqual(false);
+      expect(resource.stationary).toEqual(false);
+      expect(baseEntityFactory).toHaveBeenCalledWith({}, "resource");
     });
 
-    describe('Test suite for diary entities.', () => { 
-        it('Can create a default diary entity.', () => { 
-            const diary = diaryEntityFactory();
+    it("Can create a resource entity with injected data.", () => {
+      baseEntityFactory.mockImplementation((values) => values);
 
-            expect(diary.name).toEqual('');
-            expect(diary.lost).toEqual(false);
-            expect(baseEntityFactory).toHaveBeenCalledWith({}, 'diary');
-        });
-        
-        it('Can create a diary entity with injected data.', () => { 
-            baseEntityFactory.mockImplementation((values) => values);
+      const data = {
+        name: "foo",
+        lost: true,
+        stationary: true,
+      };
 
-            const data = {
-                name: 'foo',
-                lost: true,
-            };
+      const resource = resourceEntityFactory(data);
 
-            const diary = diaryEntityFactory(data);
-
-            expect(diary.name).toEqual(data.name);
-            expect(diary.lost).toEqual(data.lost);
-            expect(baseEntityFactory).toHaveBeenCalledWith(data, 'diary');
-        });
+      expect(resource.name).toEqual(data.name);
+      expect(resource.lost).toEqual(data.lost);
+      expect(resource.stationary).toEqual(data.stationary);
+      expect(baseEntityFactory).toHaveBeenCalledWith(data, "resource");
     });
+  });
+
+  describe("Test suite for diary entities.", () => {
+    it("Can create a default diary entity.", () => {
+      const diary = diaryEntityFactory();
+
+      expect(diary.name).toEqual("");
+      expect(diary.lost).toEqual(false);
+      expect(baseEntityFactory).toHaveBeenCalledWith({}, "diary");
+    });
+
+    it("Can create a diary entity with injected data.", () => {
+      baseEntityFactory.mockImplementation((values) => values);
+
+      const data = {
+        name: "foo",
+        lost: true,
+      };
+
+      const diary = diaryEntityFactory(data);
+
+      expect(diary.name).toEqual(data.name);
+      expect(diary.lost).toEqual(data.lost);
+      expect(baseEntityFactory).toHaveBeenCalledWith(data, "diary");
+    });
+  });
 });

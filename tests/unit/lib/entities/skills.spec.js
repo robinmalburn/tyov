@@ -1,29 +1,34 @@
-import { baseEntityFactory } from 'Libs/entities';
-import skills from 'Libs/entities/skills';
+import { describe, it, expect, vi, afterEach } from "vitest";
+import { baseEntityFactory } from "Libs/entities";
+import skills from "Libs/entities/skills";
 
-jest.mock('Libs/entities');
+vi.mock("Libs/entities");
 
-describe('lib/entities/skills.js', () => {
-    it('Can create a default skill entity.', () => { 
-        const skill = skills();
+describe("lib/entities/skills.js", () => {
+  afterEach(() => {
+    vi.resetAllMocks();
+  });
 
-        expect(skill.name).toEqual('');
-        expect(skill.checked).toEqual(false);
-        expect(baseEntityFactory).toHaveBeenCalledWith({}, 'skill');
-    });
-    
-    it('Can create a skill entity with injected data.', () => { 
-        baseEntityFactory.mockImplementation((values) => values);
+  it("Can create a default skill entity.", () => {
+    const skill = skills();
 
-        const data = {
-            name: 'foo',
-            checked: true
-        };
+    expect(skill.name).toEqual("");
+    expect(skill.checked).toEqual(false);
+    expect(baseEntityFactory).toHaveBeenCalledWith({}, "skill");
+  });
 
-        const skill = skills(data);
+  it("Can create a skill entity with injected data.", () => {
+    baseEntityFactory.mockImplementation((values) => values);
 
-        expect(skill.name).toEqual(data.name);
-        expect(skill.checked).toEqual(data.checked);
-        expect(baseEntityFactory).toHaveBeenCalledWith(data, 'skill');
-    });
+    const data = {
+      name: "foo",
+      checked: true,
+    };
+
+    const skill = skills(data);
+
+    expect(skill.name).toEqual(data.name);
+    expect(skill.checked).toEqual(data.checked);
+    expect(baseEntityFactory).toHaveBeenCalledWith(data, "skill");
+  });
 });
