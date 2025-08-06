@@ -11,8 +11,8 @@
   },
   "dependencies": {
     "jsdom": "^26.1.0",
-    "vue": "^3.5",
-    "vuex": "^4.1.0"
+    "pinia": "^3.0.3",
+    "vue": "^3.5"
   },
   "devDependencies": {
     "@tailwindcss/vite": "^4.1.11",
