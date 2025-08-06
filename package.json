@@ -10,13 +10,12 @@
     "lint": "eslint --ext .js,.vue"
   },
   "dependencies": {
-    "@tailwindcss/postcss7-compat": "^2.0.2",
-    "@tailwindcss/vite": "^4.1.11",
     "jsdom": "^26.1.0",
     "vue": "^2.7",
     "vuex": "^3.4.0"
   },
   "devDependencies": {
+    "@tailwindcss/vite": "^4.1.11",
     "@vitejs/plugin-vue2": "^2.2.3",
     "@vue/test-utils": "^1.3.6",
     "eslint": "^9.32.0",
