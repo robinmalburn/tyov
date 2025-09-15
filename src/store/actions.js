@@ -1,10 +1,8 @@
-import { randomRange } from "Libs/random";
-import { defaultGameState } from "Libs/gameState";
-import entityFactory from "Libs/entities/prompts";
-import { findById } from "Libs/entities";
-import Vue from "vue";
 import { defineStore } from "pinia";
-
+import { randomRange } from "../lib/random";
+import { defaultGameState } from "../lib/gameState";
+import entityFactory from "../lib/entities/prompts";
+import { findById } from "../lib/entities";
 export const useActionsStore = defineStore("actions", {
   state: () => ({
     ...defaultGameState("actions"),
@@ -12,100 +10,105 @@ export const useActionsStore = defineStore("actions", {
   getters: {
     die: (state) => state.d10 - state.d6,
     currentRoll: (state) => {
-      if (isNaN(this.die)) {
+      const die = state.d10 - state.d6;
+      if (isNaN(die)) {
         return "?";
       }
-
-      return `${this.die} (+${state.d10}, -${state.d6})`;
+      return `${die} (+${state.d10}, -${state.d6})`;
     },
     sortedPrompts: (state) => {
       const prompts = [...state.prompts];
-
       prompts.sort((a, b) => (a.page > b.page ? -1 : 1));
-
       return prompts;
     },
     currentPrompt: (state) => state.prompts[state.currentPromptIdx] ?? {},
   },
-});
-
-const mutations = {
-  rollD6: (state) => (state.d6 = randomRange(1, 6)),
-  setD6: (state, value) => (state.d6 = value),
-  setD10: (state, value) => (state.d10 = value),
-  rollD10: (state) => (state.d10 = randomRange(1, 10)),
-  saveRoll: (state, roll) => (state.lastRoll = roll),
-  makePrompt: (state, prompt) =>
-    state.prompts.push(entityFactory({ page: prompt, count: 0 })),
-  addPrompt: (state, prompt) => state.prompts.push(entityFactory(prompt)),
-  setPrompts: (state, prompts) => (state.prompts = prompts),
-  removePrompt: (state, prompt) => {
-    const found = findById(state.prompts, prompt.id);
-    state.prompts.splice(found.idx, 1);
-  },
-  incrementPrompt: (state, prompt) => {
-    const found = findById(state.prompts, prompt.id);
-    Vue.set(found.entity, "count", found.entity.count + 1);
-  },
-  decrementPrompt: (state, prompt) => {
-    const found = findById(state.prompts, prompt.id);
-    Vue.set(found.entity, "count", found.entity.count - 1);
-  },
-  setCurrentPromptIdx: (state, idx) => (state.currentPromptIdx = idx),
-};
-
-const actions = {
-  roll: ({ commit, getters, state }) => {
-    commit("saveRoll", getters.currentRoll);
-    commit("rollD6");
-    commit("rollD10");
-
-    let newPrompt = (getters.currentPrompt && getters.currentPrompt.page) ?? 0;
-
-    newPrompt += getters.die;
-
-    if (newPrompt <= 0) {
-      newPrompt = 1;
-    }
-
-    var promptIdx = state.currentPromptIdx;
-
-    const promptFound = state.prompts.some((prompt, idx) => {
-      if (prompt.page === newPrompt) {
-        promptIdx = idx;
-        if (prompt.count === 3) {
-          promptIdx += 1;
-          newPrompt += 1;
-        }
-        return true;
+  actions: {
+    rollD6() {
+      this.d6 = randomRange(1, 6);
+    },
+    setD6(value) {
+      this.d6 = value;
+    },
+    setD10(value) {
+      this.d10 = value;
+    },
+    rollD10() {
+      this.d10 = randomRange(1, 10);
+    },
+    saveRoll(roll) {
+      this.lastRoll = roll;
+    },
+    makePrompt(prompt) {
+      this.prompts.push(entityFactory({ page: prompt, count: 0 }));
+    },
+    addPrompt(prompt) {
+      this.prompts.push(entityFactory(prompt));
+    },
+    setPrompts(prompts) {
+      this.prompts = prompts;
+    },
+    removePrompt(prompt) {
+      const found = findById(this.prompts, prompt.id);
+      this.prompts.splice(found.idx, 1);
+    },
+    incrementPrompt(prompt) {
+      const found = findById(this.prompts, prompt.id);
+      if (found && found.entity) {
+        found.entity.count = (found.entity.count || 0) + 1;
       }
-    });
+    },
+    decrementPrompt(prompt) {
+      const found = findById(this.prompts, prompt.id);
+      if (found && found.entity) {
+        found.entity.count = (found.entity.count || 0) - 1;
+      }
+    },
+    setCurrentPromptIdx(idx) {
+      this.currentPromptIdx = idx;
+    },
+    roll() {
+      this.saveRoll(this.currentRoll);
+      this.rollD6();
+      this.rollD10();
 
-    if (!promptFound) {
-      promptIdx = state.prompts.length;
-    }
+      let newPrompt = (this.currentPrompt && this.currentPrompt.page) ?? 0;
+      newPrompt += this.die;
+      if (newPrompt <= 0) {
+        newPrompt = 1;
+      }
 
-    var prompt = state.prompts[promptIdx];
-
-    if (!prompt) {
-      prompt = entityFactory({ page: newPrompt });
-      commit("addPrompt", prompt);
-    }
-
-    commit("incrementPrompt", prompt);
-    commit("setCurrentPromptIdx", promptIdx);
+      let promptIdx = this.currentPromptIdx;
+      const promptFound = this.prompts.some((prompt, idx) => {
+        if (prompt.page === newPrompt) {
+          promptIdx = idx;
+          if (prompt.count === 3) {
+            promptIdx += 1;
+            newPrompt += 1;
+          }
+          return true;
+        }
+      });
+      if (!promptFound) {
+        promptIdx = this.prompts.length;
+      }
+      let prompt = this.prompts[promptIdx];
+      if (!prompt) {
+        prompt = entityFactory({ page: newPrompt });
+        this.addPrompt(prompt);
+      }
+      this.incrementPrompt(prompt);
+      this.setCurrentPromptIdx(promptIdx);
+    },
+    makePromptCurrent(prompt) {
+      const found = findById(this.prompts, prompt.id);
+      this.setCurrentPromptIdx(found.idx);
+    },
+    removePromptAndUpdateCurrent(prompt) {
+      const currentPrompt = this.currentPrompt;
+      this.removePrompt(prompt);
+      const found = findById(this.prompts, currentPrompt.id);
+      this.setCurrentPromptIdx(found.idx);
+    },
   },
-  makePromptCurrent({ commit, state }, prompt) {
-    const found = findById(state.prompts, prompt.id);
-    commit("setCurrentPromptIdx", found.idx);
-  },
-  removePrompt({ commit, getters, state }, prompt) {
-    const currentPrompt = getters.currentPrompt;
-
-    commit("removePrompt", prompt);
-
-    const found = findById(state.prompts, currentPrompt.id);
-
-    commit("setCurrentPromptIdx", found.idx);
-  },
-};
+});
