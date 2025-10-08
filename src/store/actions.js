@@ -50,7 +50,16 @@ export const useActionsStore = defineStore("actions", {
     },
     removePrompt(prompt) {
       const found = findById(this.prompts, prompt.id);
+
+      const current = this.currentPrompt;
+
       this.prompts.splice(found.idx, 1);
+
+      const currentFound = findById(this.prompts, current.id);
+
+      console.log(found.idx, currentFound.idx);
+
+      this.currentPromptIdx = currentFound.idx;
     },
     incrementPrompt(prompt) {
       const found = findById(this.prompts, prompt.id);
@@ -102,12 +111,6 @@ export const useActionsStore = defineStore("actions", {
     },
     makePromptCurrent(prompt) {
       const found = findById(this.prompts, prompt.id);
-      this.setCurrentPromptIdx(found.idx);
-    },
-    removePromptAndUpdateCurrent(prompt) {
-      const currentPrompt = this.currentPrompt;
-      this.removePrompt(prompt);
-      const found = findById(this.prompts, currentPrompt.id);
       this.setCurrentPromptIdx(found.idx);
     },
   },

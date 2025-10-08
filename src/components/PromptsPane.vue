@@ -49,16 +49,16 @@
 
     <div
       class="divide-y divide-gray-200 divide-dashed"
-      v-if="currentPrompt.page"
+      v-if="store.currentPrompt.page"
     >
       <div class="text-red-700 my-2">
-        <strong>Current:</strong> {{ currentPrompt.page }}:
-        <span v-html="tally(currentPrompt.count)" />
+        <strong>Current:</strong> {{ store.currentPrompt.page }}:
+        <span v-html="tally(store.currentPrompt.count)" />
       </div>
       <ol class="my-2 max-h-40 overflow-auto">
         <li
           class="select-none"
-          v-for="prompt in prompts"
+          v-for="prompt in store.sortedPrompts"
           :key="`prompt-key-${prompt.id}`"
         >
           <div class="flex">
@@ -66,25 +66,25 @@
               <span
                 class="cursor-pointer select-none hover:text-gray-400"
                 title="Set as current prompt"
-                @click="makePromptCurrent(prompt)"
+                @click="store.makePromptCurrent(prompt)"
                 v-html="'&rarr;'"
-                v-show="prompt.page !== currentPrompt.page"
+                v-show="prompt.page !== store.currentPrompt.page"
               />
             </div>
             <div class="flex-initial w-6 text-center">
               <span
                 class="cursor-pointer select-none hover:text-gray-400"
                 title="Remove prompt"
-                @click="removePrompt(prompt)"
+                @click="store.removePrompt(prompt)"
                 v-html="'&times;'"
-                v-show="prompt.page !== currentPrompt.page"
+                v-show="prompt.page !== store.currentPrompt.page"
               />
             </div>
             <div class="flex-initial w-6 text-center">
               <span
                 class="cursor-pointer select-none hover:text-gray-400"
                 title="Increment visits"
-                @click="incrementPrompt(prompt)"
+                @click="store.incrementPrompt(prompt)"
                 v-html="'&plus;'"
                 v-show="prompt.count < 3"
               />
@@ -93,7 +93,7 @@
               <span
                 class="cursor-pointer select-none hover:text-gray-400"
                 title="Decrement visits"
-                @click="decrementPrompt(prompt)"
+                @click="store.decrementPrompt(prompt)"
                 v-html="'&minus;'"
                 v-show="prompt.count > 1"
               />
@@ -101,7 +101,9 @@
             <div class="flex-initial">
               <span
                 class="select-none"
-                :class="{ 'text-red-700': prompt.page === currentPrompt.page }"
+                :class="{
+                  'text-red-700': prompt.page === store.currentPrompt.page,
+                }"
               >
                 <span class="px-2">{{ prompt.page }}:</span>
                 <span v-html="tally(prompt.count)" />
@@ -114,123 +116,105 @@
   </CardComponent>
 </template>
 
-<script>
+<script setup>
 import CardComponent from "Components/CardComponent";
 import FormToggleComponent from "Components/FormToggleComponent";
 import HeadingComponent from "Components/HeadingComponent";
-import { mapGetters, mapState, mapMutations, mapActions } from "vuex";
+import { ref, computed, watch } from "vue";
 import entityFactory from "Libs/entities/prompts";
+import { useActionsStore } from "../store/actions";
+import { useNotificationsStore } from "../store/notifications";
 
-export default {
-  name: "PromptsPane",
-  data() {
-    return {
-      showControls: false,
-      newPrompt: entityFactory({
-        page: 1,
-        count: 1,
-      }),
-      makeCurrent: this.currentPrompt && this.currentPrompt.page ? false : true,
-    };
-  },
-  components: {
-    CardComponent,
-    FormToggleComponent,
-    HeadingComponent,
-  },
-  computed: {
-    ...mapState("actions", ["currentPromptPage"]),
-    ...mapGetters("actions", ["sortedPrompts", "currentPrompt"]),
-    tally() {
-      return (count) => {
-        let tally = "";
-        let char = "&omicron;";
-        if (count >= 3) {
-          char = "&oslash;";
-        }
+const store = useActionsStore();
+const notificationsStore = useNotificationsStore();
 
-        for (let i = 0; i < count; i++) {
-          tally += char;
-        }
+const showControls = ref(false);
+const newPrompt = ref(
+  entityFactory({
+    page: 1,
+    count: 1,
+  })
+);
+const makeCurrent = ref(false);
 
-        return tally;
-      };
-    },
-    firstUnusedPrompt() {
-      var unused = 1;
+const tally = computed(() => {
+  return (count) => {
+    let tally = "";
+    let char = "&omicron;";
+    if (count >= 3) {
+      char = "&oslash;";
+    }
 
-      if (!this.sortedPrompts.length) {
-        return unused;
-      }
+    for (let i = 0; i < count; i++) {
+      tally += char;
+    }
 
-      const prompts = [...this.sortedPrompts];
-      prompts.sort((a, b) => (a.page > b.page ? 1 : -1));
+    return tally;
+  };
+});
+const firstUnusedPrompt = computed(() => {
+  var unused = 1;
 
-      prompts.some((prompt) => {
-        let page = prompt.page;
-        if (page > unused) {
-          return true;
-        }
+  if (!store.sortedPrompts.length) {
+    return unused;
+  }
 
-        unused = page + 1;
+  const prompts = [...store.sortedPrompts];
+  prompts.sort((a, b) => (a.page > b.page ? 1 : -1));
 
-        return false;
-      });
+  prompts.some((prompt) => {
+    let page = prompt.page;
+    if (page > unused) {
+      return true;
+    }
 
-      return unused;
-    },
-  },
-  methods: {
-    ...mapMutations("actions", [
-      "addPrompt",
-      "incrementPrompt",
-      "decrementPrompt",
-    ]),
-    ...mapActions("actions", ["makePromptCurrent", "removePrompt"]),
-    ...mapMutations("notifications", {
-      hideNotification: "hide",
-    }),
-    ...mapActions("notifications", ["showNotification"]),
-    validatedAddPrompt() {
-      const promptExists = this.sortedPrompts.some((prompt) => {
-        return prompt.page === parseInt(this.newPrompt.page, 10);
-      });
+    unused = page + 1;
 
-      if (promptExists) {
-        this.showNotification({
-          message: "This prompt already exists, you cannot re-add it",
-          type: "warning",
-        });
-        return;
-      }
+    return false;
+  });
 
-      const prompt = {
-        ...this.newPrompt,
-      };
+  return unused;
+});
 
-      prompt.page = parseInt(prompt.page, 10);
+const validatedAddPrompt = () => {
+  const promptExists = store.sortedPrompts.some((prompt) => {
+    return prompt.page === parseInt(newPrompt.value.page, 10);
+  });
 
-      this.addPrompt(prompt);
+  if (promptExists) {
+    notificationsStore.showNotification({
+      message: "This prompt already exists, you cannot re-add it",
+      type: "warning",
+    });
+    return;
+  }
 
-      if (this.makeCurrent) {
-        this.makePromptCurrent(prompt);
-      }
+  const prompt = {
+    ...newPrompt.value,
+  };
 
-      this.toggleControls();
-    },
-    toggleControls() {
-      this.hideNotification();
+  prompt.page = parseInt(prompt.page, 10);
 
-      this.showControls = !this.showControls;
+  store.addPrompt(prompt);
 
-      this.newPrompt = entityFactory({
-        page: this.firstUnusedPrompt,
-        count: 1,
-      });
+  if (makeCurrent.value) {
+    store.makePromptCurrent(prompt);
+  }
 
-      this.makeCurrent =
-        this.currentPrompt && this.currentPrompt.page ? false : true;
-    },
-  },
+  toggleControls();
+};
+
+const toggleControls = () => {
+  notificationsStore.hide();
+
+  showControls.value = !showControls.value;
+
+  newPrompt.value = entityFactory({
+    page: firstUnusedPrompt.value,
+    count: 1,
+  });
+
+  makeCurrent.value =
+    store.currentPrompt && store.currentPrompt.page ? false : true;
 };
 </script>
