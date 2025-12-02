@@ -1,1 +1,0 @@
-import{u as o}from"./index-CZ6FjKgO.js";const d={description:"Adds ID & Description to marks.",requiredSignature:1,migrate(r){return r.marks.forEach((i,t,e)=>{typeof i=="string"&&(e[t]={id:o("mark"),description:i})}),r}};export{d as default};

@@ -1,1 +1,0 @@
-import{u as e}from"./index-CZ6FjKgO.js";const s={description:"Adds ID to resources and diaries.",requiredSignature:1,migrate(i){return i.resources.forEach(r=>{r.id||(r.id=e("resource"))}),i.diaries.forEach(r=>{r.id||(r.id=e("diary"))}),i}};export{s as default};
