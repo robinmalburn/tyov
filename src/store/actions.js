@@ -57,8 +57,6 @@ export const useActionsStore = defineStore("actions", {
 
       const currentFound = findById(this.prompts, current.id);
 
-      console.log(found.idx, currentFound.idx);
-
       this.currentPromptIdx = currentFound.idx;
     },
     incrementPrompt(prompt) {
