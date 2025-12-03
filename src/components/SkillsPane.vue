@@ -129,8 +129,6 @@ const editSkill = ref(entityFactory());
 const skills = computed(() => skillsStore.sortedSkills);
 const notificationStore = useNotificationsStore();
 
-const { add, remove, toggle, update } = skillsStore;
-
 const startEdit = (skill) => {
   notificationStore.hide();
   editSkill.value = entityFactory(skill);
@@ -158,7 +156,7 @@ const validatedAddSkill = () => {
     return;
   }
 
-  add(newSkill.value);
+  skillsStore.add(newSkill.value);
 
   toggleAddingControls();
 };
@@ -174,7 +172,7 @@ const validatedToggleSkill = (skill) => {
     return;
   }
 
-  toggle(skill);
+  skillsStore.toggle(skill);
 };
 
 const validatedUpdateSkill = () => {
@@ -186,7 +184,7 @@ const validatedUpdateSkill = () => {
     return;
   }
 
-  update(editSkill.value);
+  skillsStore.update(editSkill.value);
   closeEditingControls();
 };
 
@@ -200,7 +198,7 @@ const validatedRemoveSkill = () => {
     }
   });
 
-  remove(skillToRemove);
+  skillsStore.remove(skillToRemove);
 
   closeEditingControls();
 };

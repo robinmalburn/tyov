@@ -98,8 +98,6 @@ const showEditingControls = ref(false);
 
 const marks = computed(() => marksStore.marks);
 
-const { add, update, remove } = marksStore;
-
 const toggleAddingControls = () => {
   notificationStore.hide();
   showAddingControls.value = !showAddingControls.value;
@@ -121,7 +119,7 @@ const validatedAddMark = () => {
     return;
   }
 
-  add(newMark.value);
+  marksStore.add(newMark.value);
 
   toggleAddingControls();
 };
@@ -136,7 +134,7 @@ const validatedRemoveMark = () => {
     }
   });
 
-  remove(markToRemove);
+  marksStore.remove(markToRemove);
 
   closeEditingControls();
 };
@@ -150,7 +148,7 @@ const validatedUpdateMark = () => {
     return;
   }
 
-  update(editMark.value);
+  marksStore.update(editMark.value);
   closeEditingControls();
 };
 
