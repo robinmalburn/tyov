@@ -59,7 +59,7 @@
         <li
           class="select-none"
           v-for="prompt in store.sortedPrompts"
-          :key="`prompt-key-${prompt.id}`"
+          :key="`prompt-key-${prompt.id}-${prompt.count}`"
         >
           <div class="flex">
             <div class="flex-initial w-6 text-center">
