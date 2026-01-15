@@ -2,18 +2,16 @@
   <CardComponent id="memories">
     <HeadingComponent level="2">Memories</HeadingComponent>
 
-    <FormToggleComponent 
+    <FormToggleComponent
       type="primary"
       @save="validatedAddMemory"
       @toggle="toggleAddingControls"
       :show-controls="showAddingControls"
       v-if="canAddMemories"
     >
-      <template #button>
-        Add a new Memory?
-      </template>
+      <template #button> Add a new Memory? </template>
       <template #form>
-        <input 
+        <input
           type="text"
           placeholder="Description"
           class="shadow appearance-none border rounded w-full py-1 px-2 m-1 text-gray-700 leading-tight focus:outline-none focus:ring-2 ring-gray-200"
@@ -22,29 +20,27 @@
         />
         <label>
           <input
-              type="checkbox"
-              class="shadow border rounded py-2 px-2 m-1 text-gray-700 leading-tight focus:outline-none focus:ring-2 ring-gray-200"
-              v-model="newMemory.forgotten"
-              :true-value="true"
-              :false-value="false"
+            type="checkbox"
+            class="shadow border rounded py-2 px-2 m-1 text-gray-700 leading-tight focus:outline-none focus:ring-2 ring-gray-200"
+            v-model="newMemory.forgotten"
+            :true-value="true"
+            :false-value="false"
           />
           Forgotten?
         </label>
         <label v-if="hasDiary && !isDiaryFull">
           <input
-              type="checkbox"
-              class="shadow border rounded py-2 px-2 m-1 text-gray-700 leading-tight focus:outline-none focus:ring-2 ring-gray-200"
-              v-model="newMemory.diary"
-              :true-value="diary.id"
-              :false-value="''"
+            type="checkbox"
+            class="shadow border rounded py-2 px-2 m-1 text-gray-700 leading-tight focus:outline-none focus:ring-2 ring-gray-200"
+            v-model="newMemory.diary"
+            :true-value="diary.id"
+            :false-value="''"
           />
           Diarised?
         </label>
       </template>
     </FormToggleComponent>
-    <div v-else>
-      You must choose to forget a memory to add more.
-    </div>
+    <div v-else>You must choose to forget a memory to add more.</div>
 
     <FormComponent
       class="my-2"
@@ -55,82 +51,79 @@
       v-show="showEditingControls"
       :buttons="[
         {
-            type: 'default',
-            event: 'save',
-            label: 'Save',
+          type: 'default',
+          event: 'save',
+          label: 'Save',
         },
         {
-            type: 'default',
-            event: 'cancel',
-            label: 'Cancel',
+          type: 'default',
+          event: 'cancel',
+          label: 'Cancel',
         },
         {
-            type: 'default',
-            event: 'remove',
-            label: 'Remove',
+          type: 'default',
+          event: 'remove',
+          label: 'Remove',
         },
       ]"
     >
-        <input 
-          type="text"
-          placeholder="Description"
-          class="shadow appearance-none border rounded w-full py-1 px-2 m-1 text-gray-700 leading-tight focus:outline-none focus:ring-2 ring-gray-200"
-          v-model="editMemory.description"
-          @keyup.enter="validatedUpdateMemory"
+      <input
+        type="text"
+        placeholder="Description"
+        class="shadow appearance-none border rounded w-full py-1 px-2 m-1 text-gray-700 leading-tight focus:outline-none focus:ring-2 ring-gray-200"
+        v-model="editMemory.description"
+        @keyup.enter="validatedUpdateMemory"
+      />
+      <label>
+        <input
+          type="checkbox"
+          class="shadow border rounded py-2 px-2 m-1 text-gray-700 leading-tight focus:outline-none focus:ring-2 ring-gray-200"
+          v-model="editMemory.forgotten"
+          :true-value="true"
+          :false-value="false"
         />
-        <label>
-          <input
-              type="checkbox"
-              class="shadow border rounded py-2 px-2 m-1 text-gray-700 leading-tight focus:outline-none focus:ring-2 ring-gray-200"
-              v-model="editMemory.forgotten"
-              :true-value="true"
-              :false-value="false"
-          />
-          Forgotten?
-        </label>
-        <label v-if="(hasDiary && !isDiaryFull) || editMemory.diary !== ''">
-          <input
-              type="checkbox"
-              class="shadow border rounded py-2 px-2 m-1 text-gray-700 leading-tight focus:outline-none focus:ring-2 ring-gray-200"
-              v-model="editMemory.diary"
-              :true-value="diary.id"
-              :false-value="''"
-          />
-          Diarised?
-        </label>
+        Forgotten?
+      </label>
+      <label v-if="(hasDiary && !isDiaryFull) || editMemory.diary !== ''">
+        <input
+          type="checkbox"
+          class="shadow border rounded py-2 px-2 m-1 text-gray-700 leading-tight focus:outline-none focus:ring-2 ring-gray-200"
+          v-model="editMemory.diary"
+          :true-value="diary.id"
+          :false-value="''"
+        />
+        Diarised?
+      </label>
 
-        <div class="mt-2" v-if="hasEvents(editMemory)">
-          <HeadingComponent level="6">
-            Events
-          </HeadingComponent>
-          <div
-            v-for="event in editEvents"
-            :key="`edit-event-${event.id}`"
-          >
-              <input 
-                type="text"
-                placeholder="Description"
-                class="shadow appearance-none border rounded w-full py-1 px-2 m-1 text-gray-700 leading-tight focus:outline-none focus:ring-2 ring-gray-200"
-                v-model="event.description"
-              />
-          </div>
+      <div class="mt-2" v-if="hasEvents(editMemory)">
+        <HeadingComponent level="6"> Events </HeadingComponent>
+        <div v-for="event in editEvents" :key="`edit-event-${event.id}`">
+          <input
+            type="text"
+            placeholder="Description"
+            class="shadow appearance-none border rounded w-full py-1 px-2 m-1 text-gray-700 leading-tight focus:outline-none focus:ring-2 ring-gray-200"
+            v-model="event.description"
+          />
         </div>
+      </div>
     </FormComponent>
 
     <transition-group
-        enter-active-class="transition-all duration-400 ease-out"
-        leave-active-class="transition-all duration-400 ease-in"
-        enter-class="opacity-0 scale-40"
-        enter-to-class="opacity-100 scale-100"
-        leave-class="opacity-100 scale-100"
-        leave-to-class="opacity-0 scale-40"
+      enter-active-class="transition-all duration-400 ease-out"
+      leave-active-class="transition-all duration-400 ease-in"
+      enter-from-class="opacity-0 scale-40"
+      enter-to-class="opacity-100 scale-100"
+      leave-from-class="opacity-100 scale-100"
+      leave-to-class="opacity-0 scale-40"
     >
       <MemoryComponent
         v-for="memory in activeMemories"
         :key="`memory-${memory.id}`"
         :memory="memory"
         :can-add-memories="canAddMemories"
-        :can-add-events="memory.id !== editMemory.id && events(memory).length < 3"
+        :can-add-events="
+          memory.id !== editMemory.id && events(memory).length < 3
+        "
         :can-diarise="hasDiary && memory.id !== editMemory.id"
         :can-toggle="memory.id !== editMemory.id"
         @add-event="addEvent"
@@ -139,205 +132,207 @@
         @toggle-memory="toggleMemory"
         @diarise-memory="diariseMemory"
         @undiarise-memory="undiariseMemory"
-    />
+      />
     </transition-group>
 
     <SlideDownPanelComponent v-if="hasDiary">
-        <template #closed-heading>
-            Diary
-        </template>
-          <div v-if="diaryMemories.length > 0">
-            <transition-group
-                enter-active-class="transition-all duration-400 ease-out"
-                leave-active-class="transition-all duration-400 ease-in"
-                enter-class="opacity-0 scale-40"
-                enter-to-class="opacity-100 scale-100"
-                leave-class="opacity-100 scale-100"
-                leave-to-class="opacity-0 scale-40"
-            >
-                <MemoryComponent
-                    v-for="memory in diaryMemories"
-                    :key="`diary-${memory.id}`"
-                    :memory="memory"
-                    :can-add-memories="canAddMemories"
-                    :can-add-events="false"
-                    :can-diarise="hasDiary"
-                    :can-toggle="memory.id !== editMemory.id"
-                    @add-event="addEvent"
-                    @remove-event="validatedRemoveEvent"
-                    @edit-memory="startEdit"
-                    @toggle-memory="toggleMemory"
-                    @diarise-memory="diariseMemory"
-                    @undiarise-memory="undiariseMemory"
-                />
-            </transition-group>
-        </div>
-        <div class="py-2" v-else>
-          The diary is empty.
-        </div>
+      <template #closed-heading> Diary </template>
+      <div v-if="diaryMemories.length > 0">
+        <transition-group
+          enter-active-class="transition-all duration-400 ease-out"
+          leave-active-class="transition-all duration-400 ease-in"
+          enter-class="opacity-0 scale-40"
+          enter-to-class="opacity-100 scale-100"
+          leave-class="opacity-100 scale-100"
+          leave-to-class="opacity-0 scale-40"
+        >
+          <MemoryComponent
+            v-for="memory in diaryMemories"
+            :key="`diary-${memory.id}`"
+            :memory="memory"
+            :can-add-memories="canAddMemories"
+            :can-add-events="false"
+            :can-diarise="hasDiary"
+            :can-toggle="memory.id !== editMemory.id"
+            @add-event="addEvent"
+            @remove-event="validatedRemoveEvent"
+            @edit-memory="startEdit"
+            @toggle-memory="toggleMemory"
+            @diarise-memory="diariseMemory"
+            @undiarise-memory="undiariseMemory"
+          />
+        </transition-group>
+      </div>
+      <div class="py-2" v-else>The diary is empty.</div>
     </SlideDownPanelComponent>
 
     <SlideDownPanelComponent>
-        <template #closed-heading>
-            Forgotten Memories
-        </template>
-          <div v-if="forgottenMemories.length > 0">
-            <transition-group
-                enter-active-class="transition-all duration-400 ease-out"
-                leave-active-class="transition-all duration-400 ease-in"
-                enter-class="opacity-0 scale-40"
-                enter-to-class="opacity-100 scale-100"
-                leave-class="opacity-100 scale-100"
-                leave-to-class="opacity-0 scale-40"
-            >
-                <MemoryComponent
-                    v-for="memory in forgottenMemories"
-                    :key="`memory-${memory.id}`"
-                    :memory="memory"
-                    :can-add-memories="canAddMemories"
-                    :can-add-events="false"
-                    :can-diarise="false"
-                    :can-toggle="memory.id !== editMemory.id"
-                    @add-event="addEvent"
-                    @remove-event="validatedRemoveEvent"
-                    @edit-memory="startEdit"
-                    @toggle-memory="toggleMemory"
-                    @diarise-memory="diariseMemory"
-                    @undiarise-memory="undiariseMemory"
-                  />
-            </transition-group>
-        </div>
-        <div class="py-2" v-else>
-          You have forgotten no memories... yet.
-        </div>
+      <template #closed-heading> Forgotten Memories </template>
+      <div v-if="forgottenMemories.length > 0">
+        <transition-group
+          enter-active-class="transition-all duration-400 ease-out"
+          leave-active-class="transition-all duration-400 ease-in"
+          enter-from-class="opacity-0 scale-40"
+          enter-to-class="opacity-100 scale-100"
+          leave-from-class="opacity-100 scale-100"
+          leave-to-class="opacity-0 scale-40"
+        >
+          <MemoryComponent
+            v-for="memory in forgottenMemories"
+            :key="`memory-${memory.id}`"
+            :memory="memory"
+            :can-add-memories="canAddMemories"
+            :can-add-events="false"
+            :can-diarise="false"
+            :can-toggle="memory.id !== editMemory.id"
+            @add-event="addEvent"
+            @remove-event="validatedRemoveEvent"
+            @edit-memory="startEdit"
+            @toggle-memory="toggleMemory"
+            @diarise-memory="diariseMemory"
+            @undiarise-memory="undiariseMemory"
+          />
+        </transition-group>
+      </div>
+      <div class="py-2" v-else>You have forgotten no memories... yet.</div>
     </SlideDownPanelComponent>
   </CardComponent>
 </template>
 
-<script>
-import CardComponent from 'Components/CardComponent';
-import HeadingComponent from 'Components/HeadingComponent';
-import FormComponent from 'Components/FormComponent';
-import FormToggleComponent from 'Components/FormToggleComponent';
-import MemoryComponent from 'Components/MemoryComponent';
-import SlideDownPanelComponent from 'Components/SlideDownPanelComponent';
-import { mapActions, mapMutations, mapState, mapGetters } from 'vuex';
-import { memoryEntityFactory, eventEntityFactory } from 'Libs/entities/memories';
+<script setup>
+import CardComponent from "Components/CardComponent";
+import HeadingComponent from "Components/HeadingComponent";
+import FormComponent from "Components/FormComponent";
+import FormToggleComponent from "Components/FormToggleComponent";
+import MemoryComponent from "Components/MemoryComponent";
+import SlideDownPanelComponent from "Components/SlideDownPanelComponent";
+import {
+  memoryEntityFactory,
+  eventEntityFactory,
+} from "Libs/entities/memories";
+import { computed, ref, nextTick, useTemplateRef } from "vue";
+import { useMemoriesStore } from "Stores/memories";
+import { useResourcesStore } from "Stores/resources";
+import { useNotificationsStore } from "Stores/notifications";
 
-export default {
-  name: 'MemoriesPane',
-  data() {
-    return {
-      showAddingControls: false,
-      showEditingControls: false,
-      editMemory: memoryEntityFactory(),
-      editEvents: [],
-      newMemory: memoryEntityFactory(),
-    }
-  },
-  components: {
-      CardComponent,
-      FormComponent,
-      FormToggleComponent,
-      HeadingComponent,
-      MemoryComponent,
-      SlideDownPanelComponent,
-  },
-  computed: {
-    ...mapState('memories', ['memories']),
-    ...mapGetters('memories', ['canAddMemories', 'forgottenMemories', 'activeMemories', 'events', 'hasEvents']),
-    ...mapGetters('resources', {
-        diary: 'diary', 
-        hasDiary: 'hasDiary', 
-        isDiaryFull: 'isDiaryFull', 
-        diaryMemories: 'memories',
-    }),
-  },
-  methods: {
-    ...mapMutations('notifications', {
-      hideNotification: 'hide'
-    }),
-    ...mapActions('notifications', ['showNotification']),
-    ...mapMutations('memories', [
-      'addMemory',
-      'updateMemory',
-      'removeMemory',
-      'toggleMemory',
-      'addEvent',
-      'removeEvent',
-      'diarise',
-      'undiarise',
-      'updateEvent',
-    ]),
-    validatedAddMemory() {
-      this.hideNotification
-      if (this.newMemory.description === '') {
-        this.showNotification({message: 'You must provide a description.', type:'warning'});
-        return;
-      }
+const showAddingControls = ref(false);
+const showEditingControls = ref(false);
+const editMemory = ref(memoryEntityFactory());
+const editEvents = ref([]);
+const newMemory = ref(memoryEntityFactory());
 
-      const memory = memoryEntityFactory(this.newMemory);
+const memoriesStore = useMemoriesStore();
+const resourcesStore = useResourcesStore();
+const notificationStore = useNotificationsStore();
 
-      this.addMemory(memory);
+const editForm = useTemplateRef("editForm");
 
-      this.toggleAddingControls();
-    },
-    validatedRemoveMemory(){
-      if (this.hasEvents(this.editMemory)) {
-        this.events(this.editMemory).forEach(event => {
-          this.removeEvent(event);
-        });
-      }
+const canAddMemories = computed(() => memoriesStore.canAddMemories);
+const forgottenMemories = computed(() => memoriesStore.forgottenMemories);
+const activeMemories = computed(() => memoriesStore.activeMemories);
+const diary = computed(() => resourcesStore.diary);
+const hasDiary = computed(() => resourcesStore.hasDiary);
+const isDiaryFull = computed(() => resourcesStore.isDiaryFull);
+const diaryMemories = computed(() => resourcesStore.diaryMemories);
 
-      this.removeMemory(this.editMemory);
+const events = (memory) => memoriesStore.sortedEvents(memory);
+const hasEvents = (memory) => memoriesStore.hasEvents(memory);
 
-      this.closeEditingControls();
-    },
-    validatedRemoveEvent(event) {
-      if (event.memory === this.editMemory.id) {
-        this.showNotification({message: 'You cannot alter this memory whilst it is being edited.', type:'warning'});
-        return;
-      }
+const toggleAddingControls = () => {
+  notificationStore.hide();
+  showAddingControls.value = !showAddingControls.value;
+  newMemory.value = memoryEntityFactory();
+};
 
-      this.removeEvent(event);
-    },
-    validatedUpdateMemory(){
-      this.updateMemory(this.editMemory);
+const closeEditingControls = () => {
+  notificationStore.hide();
+  showEditingControls.value = false;
+  editMemory.value = memoryEntityFactory();
+  editEvents.value = [];
+};
 
-      if (this.hasEvents(this.editMemory)) {
-        this.editEvents.forEach(event => this.updateEvent(event));
-      }
+const validatedAddMemory = () => {
+  notificationStore.hide();
+  if (newMemory.value.description === "") {
+    notificationStore.showNotification({
+      message: "You must provide a description.",
+      type: "warning",
+    });
+    return;
+  }
 
-      this.closeEditingControls();
-    },
-    diariseMemory(memory) {
-      this.diarise({diary: this.diary, memory});
-    },
-    undiariseMemory(memory) {
-      this.undiarise(memory);
-    },
-    startEdit(memory) {
-      this.editMemory = memoryEntityFactory(memory);
-      this.editEvents = this.events(this.editMemory).map(event => eventEntityFactory(event));
-      this.showEditingControls = true;
+  const memory = memoryEntityFactory(newMemory.value);
 
-      // Scroll the edit form in the next tick to allow the dom to be updated.
-      this.$nextTick(() => {
-        const rect = this.$refs.editForm.$el.getBoundingClientRect();
-        window.scrollTo({top: rect.y + window.scrollY, behavior: 'smooth'});
-      });
-    },
-    toggleAddingControls() {
-      this.newMemory = memoryEntityFactory();
+  memoriesStore.addMemory(memory);
 
-      this.showAddingControls = !this.showAddingControls;
-    },
-    closeEditingControls() {
-      this.hideNotification();
-      this.showEditingControls = false;
-      this.editMemory = memoryEntityFactory();
-      this.editEvents = [];
-    },
-  },
-}
-</script>a
+  toggleAddingControls();
+};
+
+const validatedRemoveMemory = () => {
+  notificationStore.hide();
+  if (hasEvents(editMemory.value)) {
+    events(editMemory.value).forEach((event) => {
+      memoriesStore.removeEvent(event);
+    });
+  }
+
+  memoriesStore.removeMemory(editMemory.value);
+
+  closeEditingControls();
+};
+
+const validatedRemoveEvent = (event) => {
+  notificationStore.hide();
+  if (event.memory === editMemory.value.id) {
+    notificationStore.showNotification({
+      message: "You cannot alter this memory whilst it is being edited.",
+      type: "warning",
+    });
+    return;
+  }
+
+  memoriesStore.removeEvent(event);
+};
+
+const validatedUpdateMemory = () => {
+  notificationStore.hide();
+  memoriesStore.updateMemory(editMemory.value);
+
+  if (hasEvents(editMemory.value)) {
+    editEvents.value.forEach((event) => memoriesStore.updateEvent(event));
+  }
+
+  closeEditingControls();
+};
+
+const diariseMemory = (memory) => {
+  memoriesStore.diarise({ diary: diary.value, memory });
+};
+
+const undiariseMemory = (memory) => {
+  memoriesStore.undiarise(memory);
+};
+
+const addEvent = (memory) => {
+  memoriesStore.addEvent(memory);
+};
+
+const toggleMemory = (memory) => {
+  memoriesStore.toggleMemory(memory);
+};
+
+const startEdit = (memory) => {
+  notificationStore.hide();
+  editMemory.value = memoryEntityFactory(memory);
+  editEvents.value = events(editMemory.value).map((event) =>
+    eventEntityFactory(event)
+  );
+  showEditingControls.value = true;
+
+  // Scroll the edit form in the next tick to allow the dom to be updated.
+  nextTick(() => {
+    const rect = editForm.value.$el.getBoundingClientRect();
+    window.scrollTo({ top: rect.y + window.scrollY, behavior: "smooth" });
+  });
+};
+</script>
