@@ -1,46 +1,44 @@
-import { defaultGameState } from 'Libs/gameState';
-import entityFactory from 'Libs/entities/characters';
-import { findById } from 'Libs/entities';
-import Vue from 'vue';
+import { defineStore } from "pinia";
+import { defaultGameState } from "Libs/gameState";
+import entityFactory from "Libs/entities/characters";
+import { findById } from "Libs/entities";
 
-const state = {
-    ...defaultGameState('characters'),
-};
-
-const getters = {
-    characters: (state) => [...state.characters].sort((a, b) => {
+export const useCharactersStore = defineStore("characters", {
+  state: () => ({
+    ...defaultGameState("characters"),
+  }),
+  getters: {
+    charactersSorted: (state) =>
+      [...state.characters].sort((a, b) => {
         if (a.dead && !b.dead) {
-            return 1;
+          return 1;
         }
 
         if (!a.dead && b.dead) {
-            return -1;
+          return -1;
         }
 
         return a.name.localeCompare(b.name);
-    }),
-}
-
-const mutations = {
-    add: (state, character) => state.characters.push(entityFactory(character)),
-    update: (state, update) => {
-        const found = findById(state.characters, update.id);
-        Vue.set(state.characters, found.idx, entityFactory(update));
+      }),
+  },
+  actions: {
+    add(character) {
+      this.characters.push(entityFactory(character));
     },
-    set: (state, characters) => state.characters = characters,
-    remove: (state, character) => {
-        const found = findById(state.characters, character.id);
-        state.characters.splice(found.idx, 1)
+    update(update) {
+      const found = findById(this.characters, update.id);
+      this.characters[found.idx] = entityFactory(update);
     },
-    toggle: (state, character) => {
-        const found = findById(state.characters, character.id);
-        Vue.set(found.entity,'dead', !found.entity.dead);
+    set(characters) {
+      this.characters = characters;
     },
-}
-
-export default {
-    namespaced: true,
-    state,
-    getters,
-    mutations,
-};
+    remove(character) {
+      const found = findById(this.characters, character.id);
+      this.characters.splice(found.idx, 1);
+    },
+    toggle(character) {
+      const found = findById(this.characters, character.id);
+      found.entity.dead = !found.entity.dead;
+    },
+  },
+});
