@@ -2,9 +2,9 @@
   <transition
     enter-active-class="transition-all duration-400 ease-out"
     leave-active-class="transition-all duration-400 ease-in"
-    enter-class="opacity-0 scale-40"
+    enter-from-class="opacity-0 scale-40"
     enter-to-class="opacity-100 scale-100"
-    leave-class="opacity-100 scale-100"
+    leave-from-class="opacity-100 scale-100"
     leave-to-class="opacity-0 scale-40"
   >
     <div :class="classes" v-show="notificationStore.visible">

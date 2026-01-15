@@ -141,9 +141,9 @@
         <transition-group
           enter-active-class="transition-all duration-400 ease-out"
           leave-active-class="transition-all duration-400 ease-in"
-          enter-class="opacity-0 scale-40"
+          enter-from-class="opacity-0 scale-40"
           enter-to-class="opacity-100 scale-100"
-          leave-class="opacity-100 scale-100"
+          leave-from-class="opacity-100 scale-100"
           leave-to-class="opacity-0 scale-40"
         >
           <MemoryComponent
@@ -233,7 +233,7 @@ const activeMemories = computed(() => memoriesStore.activeMemories);
 const diary = computed(() => resourcesStore.diary);
 const hasDiary = computed(() => resourcesStore.hasDiary);
 const isDiaryFull = computed(() => resourcesStore.isDiaryFull);
-const diaryMemories = computed(() => resourcesStore.diaryMemories);
+const diaryMemories = computed(() => resourcesStore.memories);
 
 const events = (memory) => memoriesStore.sortedEvents(memory);
 const hasEvents = (memory) => memoriesStore.hasEvents(memory);

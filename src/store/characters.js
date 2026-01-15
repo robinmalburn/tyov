@@ -8,7 +8,7 @@ export const useCharactersStore = defineStore("characters", {
     ...defaultGameState("characters"),
   }),
   getters: {
-    charactersSorted: (state) =>
+    sortedCharacters: (state) =>
       [...state.characters].sort((a, b) => {
         if (a.dead && !b.dead) {
           return 1;

@@ -56,9 +56,9 @@
       tag="ul"
       enter-active-class="transition-all duration-100 ease-out"
       leave-active-class="transition-all duration-100 ease-in"
-      enter-class="opacity-0"
+      enter-from-class="opacity-0"
       enter-to-class="opacity-100"
-      leave-class="opacity-100"
+      leave-from-class="opacity-100"
       leave-to-class="opacity-0"
       move-class="transition-transform duration-500 ease-in-out"
     >
