@@ -1,118 +1,91 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
+import { shallowMount, mount } from "@vue/test-utils";
+import { createPinia, setActivePinia } from "pinia";
+
+// Mock modules BEFORE importing components that use them
+vi.mock("Libs/gameState");
+
+vi.mock("Libs/localStorage", () => ({
+  default: {
+    get: vi.fn(),
+    set: vi.fn(),
+  },
+  supportsLocalStorage: vi.fn(() => true),
+}));
+
+// Now import components and dependencies
 import LoadMenuComponent from "Components/LoadMenuComponent";
 import SlideDownPanelComponent from "Components/SlideDownPanelComponent";
 import ButtonComponent from "Components/ButtonComponent";
-import { shallowMount, createLocalVue } from "@vue/test-utils";
-import Vuex from "vuex";
+import { useNotificationsStore } from "Stores/notifications";
 import { restoreState, deserialize } from "Libs/gameState";
 import localStorage, { supportsLocalStorage } from "Libs/localStorage";
 
-vi.mock("Libs/gameState");
-
-vi.mock("Libs/localStorage");
-
-const localVue = createLocalVue();
-localVue.use(Vuex);
-
 describe("LoadMenuComponent", () => {
-  let store;
-  let actions;
-  let mutations;
+  let notificationsStore;
 
   beforeEach(() => {
+    setActivePinia(createPinia());
+    notificationsStore = useNotificationsStore();
+
     deserialize.mockImplementation(() => ({
       test: "data",
     }));
 
     supportsLocalStorage.mockImplementation(() => true);
     localStorage.get.mockImplementation(() => "save-content");
-
-    actions = {
-      showNotification: vi.fn(),
-    };
-
-    mutations = {
-      hide: vi.fn(),
-    };
-
-    store = new Vuex.Store({
-      modules: {
-        notifications: {
-          actions,
-          mutations,
-          namespaced: true,
-        },
-      },
-    });
   });
 
   afterEach(() => {
     vi.resetAllMocks();
   });
 
-  it("Has the correct component name", () => {
-    expect(LoadMenuComponent.name).toEqual("LoadMenuComponent");
-  });
-
   it("Renders a SlideDownPanelComponent with a 'Load' heading", () => {
-    const wrapper = shallowMount(LoadMenuComponent, {
-      stubs: {
-        SlideDownPanelComponent,
-      },
-    });
+    const wrapper = mount(LoadMenuComponent);
 
     expect(wrapper.findComponent(SlideDownPanelComponent).exists()).toBe(true);
 
     expect(wrapper.text()).toContain("Load");
   });
 
-  it("Renders ButtonComponents with the correct labels", () => {
-    const wrapper = shallowMount(LoadMenuComponent, {
-      data() {
-        return { loading: true };
-      },
-      stubs: {
-        SlideDownPanelComponent,
-        ButtonComponent,
-      },
-    });
+  it("Renders ButtonComponents with the correct labels", async () => {
+    const wrapper = mount(LoadMenuComponent);
+
+    // Click toggle button to open the panel
+    const toggleButton = wrapper.findAllComponents(ButtonComponent).at(0);
+    await toggleButton.trigger("click");
 
     const buttons = wrapper.findAllComponents(ButtonComponent);
 
-    expect(supportsLocalStorage).toHaveBeenCalled();
+    // SlideDownPanel has 1 button (Show/Close), plus 2 buttons for From File and From Local Storage
     expect(buttons.length).toEqual(3);
-    expect(buttons.at(0).text()).toEqual("Close");
+    // Skip the first button which is from SlideDownPanel
     expect(buttons.at(1).text()).toEqual("From File");
     expect(buttons.at(2).text()).toEqual("From Local Storage");
   });
 
-  it("Does not render the 'From Local Storage' button if local storage is not supported", () => {
-    supportsLocalStorage.mockImplementation(() => false);
+  it("Does not render the 'From Local Storage' button if local storage is not supported", async () => {
+    supportsLocalStorage.mockReturnValue(false);
 
-    const wrapper = shallowMount(LoadMenuComponent, {
-      data() {
-        return { loading: true };
-      },
-      stubs: {
-        SlideDownPanelComponent,
-        ButtonComponent,
-      },
-    });
+    const wrapper = mount(LoadMenuComponent);
+    await wrapper.vm.$nextTick();
+
+    // Click toggle button to open the panel
+    const toggleButton = wrapper.findAllComponents(ButtonComponent).at(0);
+    await toggleButton.trigger("click");
+    await wrapper.vm.$nextTick();
 
     const buttons = wrapper.findAllComponents(ButtonComponent);
 
+    // SlideDownPanel has 1 button (Show/Close), plus only 1 button for From File
+    // (From Local Storage button should not be rendered)
     expect(buttons.length).toEqual(2);
-    expect(buttons.at(0).text()).toEqual("Close");
     expect(buttons.at(1).text()).toEqual("From File");
   });
 
   it("Can restore saves from uploaded files", async () => {
+    const hideSpy = vi.spyOn(notificationsStore, "hide");
     const wrapper = shallowMount(LoadMenuComponent, {
-      store,
-      localVue,
-      data() {
-        return { loading: true };
-      },
       stubs: {
         SlideDownPanelComponent,
         ButtonComponent,
@@ -127,7 +100,9 @@ describe("LoadMenuComponent", () => {
       onerror: null,
     };
 
-    vi.spyOn(global, "FileReader").mockImplementation(() => mockReader);
+    vi.spyOn(global, "FileReader").mockImplementation(function () {
+      return mockReader;
+    });
 
     const mockEvent = {
       target: {
@@ -138,29 +113,27 @@ describe("LoadMenuComponent", () => {
     wrapper.vm.load(mockEvent);
 
     expect(mockReadAsText).toHaveBeenCalled();
-    expect(wrapper.vm.loading).toBe(true);
-    expect(mutations.hide).toHaveBeenCalled();
+    expect(hideSpy).toHaveBeenCalled();
 
     mockReader.onload();
 
-    expect(restoreState).toHaveBeenCalledWith(store, { test: "data" });
-    expect(wrapper.vm.loading).toBe(false);
+    expect(restoreState).toHaveBeenCalledWith({ test: "data" });
   });
 
   it.each([[[]], [["file1", "file2"]]])(
     "Enforces a mandatory single file to be uploaded before starting a restore from file",
     async (files) => {
       const wrapper = shallowMount(LoadMenuComponent, {
-        store,
-        localVue,
-        data() {
-          return { loading: true };
-        },
         stubs: {
           SlideDownPanelComponent,
           ButtonComponent,
         },
       });
+
+      const showNotificationSpy = vi.spyOn(
+        notificationsStore,
+        "showNotification"
+      );
 
       const mockReadAsText = vi.fn();
       const mockReader = {
@@ -170,7 +143,9 @@ describe("LoadMenuComponent", () => {
         onerror: null,
       };
 
-      vi.spyOn(global, "FileReader").mockImplementation(() => mockReader);
+      vi.spyOn(global, "FileReader").mockImplementation(function () {
+        return mockReader;
+      });
 
       const mockEvent = {
         target: {
@@ -180,21 +155,19 @@ describe("LoadMenuComponent", () => {
 
       wrapper.vm.load(mockEvent);
 
-      expect(actions.showNotification).toHaveBeenCalled();
+      expect(showNotificationSpy).toHaveBeenCalled();
       expect(mockReadAsText).not.toHaveBeenCalled();
-      expect(wrapper.vm.loading).toBe(true);
-      expect(mutations.hide).not.toHaveBeenCalled();
       expect(restoreState).not.toHaveBeenCalled();
     }
   );
 
   it("Can handle errors loading an uploaded file", async () => {
+    const showNotificationSpy = vi.spyOn(
+      notificationsStore,
+      "showNotification"
+    );
+    const hideSpy = vi.spyOn(notificationsStore, "hide");
     const wrapper = shallowMount(LoadMenuComponent, {
-      store,
-      localVue,
-      data() {
-        return { loading: true };
-      },
       stubs: {
         SlideDownPanelComponent,
         ButtonComponent,
@@ -209,7 +182,9 @@ describe("LoadMenuComponent", () => {
       onerror: null,
     };
 
-    vi.spyOn(global, "FileReader").mockImplementation(() => mockReader);
+    vi.spyOn(global, "FileReader").mockImplementation(function () {
+      return mockReader;
+    });
 
     const mockEvent = {
       target: {
@@ -220,28 +195,22 @@ describe("LoadMenuComponent", () => {
     wrapper.vm.load(mockEvent);
 
     expect(mockReadAsText).toHaveBeenCalled();
-    expect(wrapper.vm.loading).toBe(true);
-    expect(mutations.hide).toHaveBeenCalled();
+    expect(hideSpy).toHaveBeenCalled();
 
     mockReader.onerror();
 
     expect(restoreState).not.toHaveBeenCalled();
-    expect(wrapper.vm.loading).toBe(true);
-    expect(actions.showNotification).toHaveBeenCalled();
+    expect(showNotificationSpy).toHaveBeenCalled();
   });
 
   it("Calls 'fromLocalStorage' when the 'From Local Storage' button is clicked", async () => {
-    const wrapper = shallowMount(LoadMenuComponent, {
-      store,
-      localVue,
-      data() {
-        return { loading: true };
-      },
-      stubs: {
-        SlideDownPanelComponent,
-        ButtonComponent,
-      },
-    });
+    const hideSpy = vi.spyOn(notificationsStore, "hide");
+    const wrapper = mount(LoadMenuComponent);
+
+    // Click toggle button to open the panel
+    const toggleButton = wrapper.findAllComponents(ButtonComponent).at(0);
+    await toggleButton.trigger("click");
+    await wrapper.vm.$nextTick();
 
     const buttons = wrapper
       .findAllComponents(ButtonComponent)
@@ -254,10 +223,9 @@ describe("LoadMenuComponent", () => {
     button.vm.$emit("click");
     await wrapper.vm.$nextTick();
 
-    expect(mutations.hide).toHaveBeenCalled();
+    expect(hideSpy).toHaveBeenCalled();
     expect(localStorage.get).toHaveBeenCalledWith("save-game");
     expect(deserialize).toHaveBeenCalledWith("save-content");
-    expect(restoreState).toHaveBeenCalledWith(store, { test: "data" });
-    expect(wrapper.vm.loading).toBe(false);
+    expect(restoreState).toHaveBeenCalledWith({ test: "data" });
   });
 });

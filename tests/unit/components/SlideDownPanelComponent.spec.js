@@ -1,21 +1,17 @@
 import { describe, it, expect } from "vitest";
 import SlideDownPanelComponent from "Components/SlideDownPanelComponent";
-import { shallowMount } from "@vue/test-utils";
+import { mount, shallowMount } from "@vue/test-utils";
 
 describe("components/SlideDownPanelComponent.vue", () => {
-  it("Has the correct component name", () => {
-    expect(SlideDownPanelComponent.name).toEqual("SlideDownPanelComponent");
-  });
-
   it("Renders the panel closed by default", () => {
-    const wrapper = shallowMount(SlideDownPanelComponent);
+    const wrapper = mount(SlideDownPanelComponent);
     const button = wrapper.findComponent({ name: "ButtonComponent" });
     expect(wrapper.vm.isOpen).toBe(false);
     expect(button.text()).toBe("Show");
   });
 
   it("Toggles the panel when the button is clicked and emits a change event", async () => {
-    const wrapper = shallowMount(SlideDownPanelComponent);
+    const wrapper = mount(SlideDownPanelComponent);
     const button = wrapper.findComponent({ name: "ButtonComponent" });
 
     button.vm.$emit("click");
@@ -36,7 +32,7 @@ describe("components/SlideDownPanelComponent.vue", () => {
   });
 
   it("Displays the correct heading slot when the panel is open or closed", async () => {
-    const wrapper = shallowMount(SlideDownPanelComponent, {
+    const wrapper = mount(SlideDownPanelComponent, {
       slots: {
         "closed-heading": "Foo",
         "open-heading": "Bar",

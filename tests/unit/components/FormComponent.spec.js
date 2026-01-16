@@ -1,14 +1,10 @@
 import { describe, it, expect } from "vitest";
 import FormComponent from "Components/FormComponent";
-import { shallowMount } from "@vue/test-utils";
+import { shallowMount, mount } from "@vue/test-utils";
 
 const CONTAINER_CLASSES = ["my-1", "flex", "flex-col", "md:flex-row"];
 
 describe("components/FormComponent.vue", () => {
-  it("Has the correct component name", () => {
-    expect(FormComponent.name).toEqual("FormComponent");
-  });
-
   it("Supports setting the default slot within the form.", () => {
     const slot = '<div id="test">foo</div>';
     const wrapper = shallowMount(FormComponent, {
@@ -42,7 +38,7 @@ describe("components/FormComponent.vue", () => {
       },
     ];
 
-    const wrapper = shallowMount(FormComponent);
+    const wrapper = mount(FormComponent);
 
     expect(wrapper.props("buttons")).toEqual(props);
 
@@ -124,8 +120,8 @@ describe("components/FormComponent.vue", () => {
 
     buttonPropsProvider.forEach(({ description, props }) => {
       it(`It correctly displays ${description}`, async () => {
-        const wrapper = shallowMount(FormComponent, {
-          propsData: {
+        const wrapper = mount(FormComponent, {
+          props: {
             buttons: props,
           },
         });

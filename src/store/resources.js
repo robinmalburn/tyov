@@ -1,96 +1,112 @@
-import { defaultGameState } from 'Libs/gameState';
-import { resourceEntityFactory, diaryEntityFactory } from 'Libs/entities/resources';
-import { findById } from 'Libs/entities';
-import Vue from 'vue';
+import { defineStore } from "pinia";
+import { defaultGameState } from "Libs/gameState";
+import {
+  resourceEntityFactory,
+  diaryEntityFactory,
+} from "Libs/entities/resources";
+import { findById } from "Libs/entities";
+import { useMemoriesStore } from "Stores/memories";
 
-const state = {
-    ...defaultGameState('resources'),
-};
-
-const getters = {
-    resources: (state) => [...state.resources].sort((a, b) => {
+export const useResourcesStore = defineStore("resources", {
+  state: () => ({
+    ...defaultGameState("resources"),
+  }),
+  getters: {
+    sortedResources(state) {
+      return [...state.resources].sort((a, b) => {
         // If a is not lost, move it up the array.
         if (a.lost && !b.lost) {
-            return 1;
+          return 1;
         }
-
         //If a is lost, move it down the array.
         if (!a.lost && b.lost) {
-            return -1;
+          return -1;
         }
-
         // Finally, sort alphabetically.
         return a.name.localeCompare(b.name);
-    }),
-    diaries: (state) => [...state.diaries].sort((a, b) => {
+      });
+    },
+    sortedDiaries(state) {
+      return [...state.diaries].sort((a, b) => {
         // If a is not lost, move it up the array.
         if (a.lost && !b.lost) {
-            return 1;
+          return 1;
         }
-
         //If a is lost, move it down the array.
         if (!a.lost && b.lost) {
-            return -1;
+          return -1;
         }
-
         // Finally, sort alphabetically.
         return a.name.localeCompare(b.name);
-    }),
-    diary: state => state.diaries.filter(diary => !diary.lost)[0] || null,
-    lostDiaries: (state) => state.diaries.filter(diary => diary.lost),
-    hasDiary: (state, getters) =>  getters.diary !== null,
-    memories: (state, getters, rootState) => {
-        return rootState.memories.memories.filter(memory => {
-            return memory.diary === getters.diary.id;
-        });
+      });
     },
-    activeMemories: (state, getters) => getters.memories.filter(memory => !memory.forgotten),
-    forgottenMemories: (state, getters) => getters.memories.filter(memory => memory.forgotten),
-    isDiaryFull: (state, getters) => {
-        let count = 0;
-        return getters.memories.some(memory => {
-            if (!memory.lost) {
-                count += 1;
-            }
-            return count >= 4;
-        })
-    }
-}
-
-const mutations = {
-    addResource: (state, resource) => state.resources.push(resourceEntityFactory(resource)),
-    setResources: (state, resources) => state.resources = resources,
-    updateResource: (state, updated) => { 
-        const found = findById(state.resources, updated.id);
-        Vue.set(state.resources, found.idx, resourceEntityFactory(updated));
+    diary(state) {
+      return state.diaries.filter((diary) => !diary.lost)[0] || null;
     },
-    removeResource: (state, resource) => {
-        const found = findById(state.resources, resource.id);
-        state.resources.splice(found.idx, 1);
+    lostDiaries(state) {
+      return state.diaries.filter((diary) => diary.lost);
     },
-    toggleResource: (state, resource) => {
-        const found = findById(state.resources, resource.id);
-        Vue.set(found.entity, 'lost', !found.entity.lost);
+    hasDiary(state) {
+      return state.diaries.some((diary) => !diary.lost);
     },
-    addDiary: (state, diary) => state.diaries.push(diaryEntityFactory(diary)),
-    updateDiary: (state, updated) => { 
-        const found = findById(state.diaries, updated.id);
-        Vue.set(state.diaries, found.idx, diaryEntityFactory(updated));
+    memories() {
+      const memoriesStore = useMemoriesStore();
+      return memoriesStore.memories.filter((memory) => {
+        return memory.diary === this.diary?.id;
+      });
     },
-    setDiaries: (state, diaries) => state.diaries = diaries,
-    removeDiary: (state, diary) => {
-        const found = findById(state.diaries, diary.id);
-        state.diaries.splice(found.idx, 1);
+    activeMemories() {
+      return this.memories.filter((memory) => !memory.forgotten);
     },
-    toggleDiary: (state, diary) => {
-        const found = findById(state.diaries, diary.id);
-        Vue.set(found.entity, 'lost', !found.entity.lost);
-    }
-}
-
-export default {
-    namespaced: true,
-    state,
-    getters,
-    mutations,
-};
+    forgottenMemories() {
+      return this.memories.filter((memory) => memory.forgotten);
+    },
+    isDiaryFull() {
+      let count = 0;
+      return this.memories.some((memory) => {
+        if (!memory.lost) {
+          count += 1;
+        }
+        return count >= 4;
+      });
+    },
+  },
+  actions: {
+    addResource(resource) {
+      this.resources.push(resourceEntityFactory(resource));
+    },
+    setResources(resources) {
+      this.resources = resources;
+    },
+    updateResource(updated) {
+      const found = findById(this.resources, updated.id);
+      this.resources[found.idx] = resourceEntityFactory(updated);
+    },
+    removeResource(resource) {
+      const found = findById(this.resources, resource.id);
+      this.resources.splice(found.idx, 1);
+    },
+    toggleResource(resource) {
+      const found = findById(this.resources, resource.id);
+      this.resources[found.idx].lost = !this.resources[found.idx].lost;
+    },
+    addDiary(diary) {
+      this.diaries.push(diaryEntityFactory(diary));
+    },
+    updateDiary(updated) {
+      const found = findById(this.diaries, updated.id);
+      this.diaries[found.idx] = diaryEntityFactory(updated);
+    },
+    setDiaries(diaries) {
+      this.diaries = diaries;
+    },
+    removeDiary(diary) {
+      const found = findById(this.diaries, diary.id);
+      this.diaries.splice(found.idx, 1);
+    },
+    toggleDiary(diary) {
+      const found = findById(this.diaries, diary.id);
+      this.diaries[found.idx].lost = !this.diaries[found.idx].lost;
+    },
+  },
+});

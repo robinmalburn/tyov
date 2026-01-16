@@ -1,28 +1,26 @@
-import { defaultGameState } from 'Libs/gameState';
-import entityFactory from 'Libs/entities/marks';
-import { findById } from 'Libs/entities';
+import { defineStore } from "pinia";
+import { defaultGameState } from "Libs/gameState";
+import entityFactory from "Libs/entities/marks";
+import { findById } from "Libs/entities";
 
-import Vue from 'vue';
-
-const state = {
-    ...defaultGameState('marks'),
-};
-
-const mutations = {
-    add: (state, mark) => state.marks.push(entityFactory(mark)),
-    update: (state, updated) => { 
-        const found = findById(state.marks, updated.id);
-        Vue.set(state.marks, found.idx, entityFactory(updated));
+export const useMarksStore = defineStore("marks", {
+  state: () => ({
+    ...defaultGameState("marks"),
+  }),
+  actions: {
+    add(mark) {
+      this.marks.push(entityFactory(mark));
     },
-    set: (state, marks) => state.marks = marks,
-    remove: (state, mark) => {
-        const found = findById(state.marks, mark.id);
-        state.marks.splice(found.idx, 1)
+    update(updated) {
+      const found = findById(this.marks, updated.id);
+      this.marks[found.idx] = entityFactory(updated);
     },
-}
-
-export default {
-    namespaced: true,
-    state,
-    mutations,
-};
+    set(marks) {
+      this.marks = marks;
+    },
+    remove(mark) {
+      const found = findById(this.marks, mark.id);
+      this.marks.splice(found.idx, 1);
+    },
+  },
+});

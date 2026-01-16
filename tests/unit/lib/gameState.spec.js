@@ -1,4 +1,5 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
+import { createPinia, setActivePinia } from "pinia";
 import migrator from "Migrations";
 import {
   SIGNATURE,
@@ -8,6 +9,12 @@ import {
   serialize,
   deserialize,
 } from "Libs/gameState";
+import { useActionsStore } from "Stores/actions";
+import { useCharactersStore } from "Stores/characters";
+import { useMarksStore } from "Stores/marks";
+import { useMemoriesStore } from "Stores/memories";
+import { useResourcesStore } from "Stores/resources";
+import { useSkillsStore } from "Stores/skills";
 
 vi.mock("Migrations", () => {
   return {
@@ -56,6 +63,7 @@ const serializedDataProvider = () => {
 
 describe("lib/gameState.js", () => {
   beforeEach(() => {
+    setActivePinia(createPinia());
     migrator.migrate.mockImplementation((data) => data);
   });
 
@@ -98,9 +106,26 @@ describe("lib/gameState.js", () => {
   );
 
   it("Can get state from a store.", () => {
-    const store = {
-      state: STATE,
-    };
+    const actionsStore = useActionsStore();
+    const charactersStore = useCharactersStore();
+    const marksStore = useMarksStore();
+    const memoriesStore = useMemoriesStore();
+    const resourcesStore = useResourcesStore();
+    const skillsStore = useSkillsStore();
+
+    // Set up default state
+    actionsStore.d6 = STATE.actions.d6;
+    actionsStore.d10 = STATE.actions.d10;
+    actionsStore.lastRoll = STATE.actions.lastRoll;
+    actionsStore.currentPromptIdx = STATE.actions.currentPromptIdx;
+    actionsStore.prompts = STATE.actions.prompts;
+    charactersStore.characters = STATE.characters.characters;
+    marksStore.marks = STATE.marks.marks;
+    memoriesStore.memories = STATE.memories.memories;
+    memoriesStore.events = STATE.memories.events;
+    resourcesStore.resources = STATE.resources.resources;
+    resourcesStore.diaries = STATE.resources.diaries;
+    skillsStore.skills = STATE.skills.skills;
 
     const expected = {
       ...STATE.actions,
@@ -112,81 +137,80 @@ describe("lib/gameState.js", () => {
       __SIGNATURE__: SIGNATURE,
     };
 
-    const result = getStateFromStore(store);
+    const result = getStateFromStore();
 
     expect(result).toEqual(expected);
   });
 
   it("Can restore state to a store.", async () => {
-    const commit = vi.fn();
-    const store = { commit };
+    const actionsStore = useActionsStore();
+    const charactersStore = useCharactersStore();
+    const marksStore = useMarksStore();
+    const memoriesStore = useMemoriesStore();
+    const resourcesStore = useResourcesStore();
+    const skillsStore = useSkillsStore();
+
+    const saveRollSpy = vi.spyOn(actionsStore, "saveRoll");
+    const setD6Spy = vi.spyOn(actionsStore, "setD6");
+    const setD10Spy = vi.spyOn(actionsStore, "setD10");
+    const setCurrentPromptIdxSpy = vi.spyOn(
+      actionsStore,
+      "setCurrentPromptIdx"
+    );
+    const setPromptsSpy = vi.spyOn(actionsStore, "setPrompts");
+    const setCharactersSpy = vi.spyOn(charactersStore, "set");
+    const setMarksSpy = vi.spyOn(marksStore, "set");
+    const setMemoriesSpy = vi.spyOn(memoriesStore, "setMemories");
+    const setEventsSpy = vi.spyOn(memoriesStore, "setEvents");
+    const setResourcesSpy = vi.spyOn(resourcesStore, "setResources");
+    const setDiariesSpy = vi.spyOn(resourcesStore, "setDiaries");
+    const setSkillsSpy = vi.spyOn(skillsStore, "set");
+
     const data = {};
 
-    await restoreState(store, data);
+    await restoreState(data);
 
     expect(migrator.migrate).toHaveBeenCalled();
-    expect(commit).toHaveBeenCalledTimes(12);
-    expect(commit).toHaveBeenNthCalledWith(
-      1,
-      "actions/saveRoll",
-      STATE.actions.lastRoll
-    );
-    expect(commit).toHaveBeenNthCalledWith(
-      2,
-      "actions/setD6",
-      STATE.actions.d6
-    );
-    expect(commit).toHaveBeenNthCalledWith(
-      3,
-      "actions/setD10",
-      STATE.actions.d10
-    );
-    expect(commit).toHaveBeenNthCalledWith(
-      4,
-      "actions/setCurrentPromptIdx",
+    expect(saveRollSpy).toHaveBeenCalledWith(STATE.actions.lastRoll);
+    expect(setD6Spy).toHaveBeenCalledWith(STATE.actions.d6);
+    expect(setD10Spy).toHaveBeenCalledWith(STATE.actions.d10);
+    expect(setCurrentPromptIdxSpy).toHaveBeenCalledWith(
       STATE.actions.currentPromptIdx
     );
-    expect(commit).toHaveBeenNthCalledWith(
-      5,
-      "actions/setPrompts",
-      STATE.actions.prompts
-    );
-    expect(commit).toHaveBeenNthCalledWith(
-      6,
-      "characters/set",
-      STATE.characters.characters
-    );
-    expect(commit).toHaveBeenNthCalledWith(7, "marks/set", STATE.marks.marks);
-    expect(commit).toHaveBeenNthCalledWith(
-      8,
-      "memories/setMemories",
-      STATE.memories.memories
-    );
-    expect(commit).toHaveBeenNthCalledWith(
-      9,
-      "memories/setEvents",
-      STATE.memories.events
-    );
-    expect(commit).toHaveBeenNthCalledWith(
-      10,
-      "resources/setResources",
-      STATE.resources.resources
-    );
-    expect(commit).toHaveBeenNthCalledWith(
-      11,
-      "resources/setDiaries",
-      STATE.resources.diaries
-    );
-    expect(commit).toHaveBeenNthCalledWith(
-      12,
-      "skills/set",
-      STATE.skills.skills
-    );
+    expect(setPromptsSpy).toHaveBeenCalledWith(STATE.actions.prompts);
+    expect(setCharactersSpy).toHaveBeenCalledWith(STATE.characters.characters);
+    expect(setMarksSpy).toHaveBeenCalledWith(STATE.marks.marks);
+    expect(setMemoriesSpy).toHaveBeenCalledWith(STATE.memories.memories);
+    expect(setEventsSpy).toHaveBeenCalledWith(STATE.memories.events);
+    expect(setResourcesSpy).toHaveBeenCalledWith(STATE.resources.resources);
+    expect(setDiariesSpy).toHaveBeenCalledWith(STATE.resources.diaries);
+    expect(setSkillsSpy).toHaveBeenCalledWith(STATE.skills.skills);
   });
 
   it("Can restore state to a store, with existing data.", async () => {
-    const commit = vi.fn();
-    const store = { commit };
+    const actionsStore = useActionsStore();
+    const charactersStore = useCharactersStore();
+    const marksStore = useMarksStore();
+    const memoriesStore = useMemoriesStore();
+    const resourcesStore = useResourcesStore();
+    const skillsStore = useSkillsStore();
+
+    const saveRollSpy = vi.spyOn(actionsStore, "saveRoll");
+    const setD6Spy = vi.spyOn(actionsStore, "setD6");
+    const setD10Spy = vi.spyOn(actionsStore, "setD10");
+    const setCurrentPromptIdxSpy = vi.spyOn(
+      actionsStore,
+      "setCurrentPromptIdx"
+    );
+    const setPromptsSpy = vi.spyOn(actionsStore, "setPrompts");
+    const setCharactersSpy = vi.spyOn(charactersStore, "set");
+    const setMarksSpy = vi.spyOn(marksStore, "set");
+    const setMemoriesSpy = vi.spyOn(memoriesStore, "setMemories");
+    const setEventsSpy = vi.spyOn(memoriesStore, "setEvents");
+    const setResourcesSpy = vi.spyOn(resourcesStore, "setResources");
+    const setDiariesSpy = vi.spyOn(resourcesStore, "setDiaries");
+    const setSkillsSpy = vi.spyOn(skillsStore, "set");
+
     const data = {
       d6: 1,
       d10: 2,
@@ -198,58 +222,21 @@ describe("lib/gameState.js", () => {
       ],
     };
 
-    await restoreState(store, data);
+    await restoreState(data);
 
     expect(migrator.migrate).toHaveBeenCalled();
-    expect(commit).toHaveBeenCalledTimes(12);
-    expect(commit).toHaveBeenNthCalledWith(
-      1,
-      "actions/saveRoll",
-      data.lastRoll
-    );
-    expect(commit).toHaveBeenNthCalledWith(2, "actions/setD6", data.d6);
-    expect(commit).toHaveBeenNthCalledWith(3, "actions/setD10", data.d10);
-    expect(commit).toHaveBeenNthCalledWith(
-      4,
-      "actions/setCurrentPromptIdx",
-      data.currentPromptIdx
-    );
-    expect(commit).toHaveBeenNthCalledWith(
-      5,
-      "actions/setPrompts",
-      data.prompts
-    );
-    expect(commit).toHaveBeenNthCalledWith(
-      6,
-      "characters/set",
-      STATE.characters.characters
-    );
-    expect(commit).toHaveBeenNthCalledWith(7, "marks/set", STATE.marks.marks);
-    expect(commit).toHaveBeenNthCalledWith(
-      8,
-      "memories/setMemories",
-      STATE.memories.memories
-    );
-    expect(commit).toHaveBeenNthCalledWith(
-      9,
-      "memories/setEvents",
-      STATE.memories.events
-    );
-    expect(commit).toHaveBeenNthCalledWith(
-      10,
-      "resources/setResources",
-      STATE.resources.resources
-    );
-    expect(commit).toHaveBeenNthCalledWith(
-      11,
-      "resources/setDiaries",
-      STATE.resources.diaries
-    );
-    expect(commit).toHaveBeenNthCalledWith(
-      12,
-      "skills/set",
-      STATE.skills.skills
-    );
+    expect(saveRollSpy).toHaveBeenCalledWith(data.lastRoll);
+    expect(setD6Spy).toHaveBeenCalledWith(data.d6);
+    expect(setD10Spy).toHaveBeenCalledWith(data.d10);
+    expect(setCurrentPromptIdxSpy).toHaveBeenCalledWith(data.currentPromptIdx);
+    expect(setPromptsSpy).toHaveBeenCalledWith(data.prompts);
+    expect(setCharactersSpy).toHaveBeenCalledWith(STATE.characters.characters);
+    expect(setMarksSpy).toHaveBeenCalledWith(STATE.marks.marks);
+    expect(setMemoriesSpy).toHaveBeenCalledWith(STATE.memories.memories);
+    expect(setEventsSpy).toHaveBeenCalledWith(STATE.memories.events);
+    expect(setResourcesSpy).toHaveBeenCalledWith(STATE.resources.resources);
+    expect(setDiariesSpy).toHaveBeenCalledWith(STATE.resources.diaries);
+    expect(setSkillsSpy).toHaveBeenCalledWith(STATE.skills.skills);
   });
 
   it.each(serializedDataProvider())(

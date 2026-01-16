@@ -43,39 +43,21 @@
   </div>
 </template>
 
-<script>
-import ActionsPane from "./components/ActionsPane";
-import CharactersPane from "./components/CharactersPane";
-import HeadingComponent from "./components/HeadingComponent";
-import PromptsPane from "./components/PromptsPane";
-import MarksPane from "./components/MarksPane";
-import MemoriesPane from "./components/MemoriesPane";
-import NotificationPane from "./components/NotificationPane";
-import ResourcesPane from "./components/ResourcesPane";
-import SlideDownPanelComponent from "./components/SlideDownPanelComponent";
-import SkillsPane from "./components/SkillsPane";
+<script setup>
+import { computed } from "vue";
+import ActionsPane from "./components/ActionsPane.vue";
+import CharactersPane from "./components/CharactersPane.vue";
+import HeadingComponent from "./components/HeadingComponent.vue";
+import PromptsPane from "./components/PromptsPane.vue";
+import MarksPane from "./components/MarksPane.vue";
+import MemoriesPane from "./components/MemoriesPane.vue";
+import NotificationPane from "./components/NotificationPane.vue";
+import ResourcesPane from "./components/ResourcesPane.vue";
+import SlideDownPanelComponent from "./components/SlideDownPanelComponent.vue";
+import SkillsPane from "./components/SkillsPane.vue";
 
-export default {
-  name: "App",
-  components: {
-    ActionsPane,
-    PromptsPane,
-    MarksPane,
-    SkillsPane,
-    ResourcesPane,
-    CharactersPane,
-    HeadingComponent,
-    MemoriesPane,
-    NotificationPane,
-    SlideDownPanelComponent,
-  },
-  computed: {
-    copyright() {
-      // Be a little defensive since we're trusting local clocks, but querying
-      // a remote API for the copyright year seemed a bit overkill.
-      const year = Math.max(2021, new Date().getUTCFullYear());
-      return `Copyright &copy; ${year} Robin Malburn`;
-    },
-  },
-};
+const copyright = computed(() => {
+  const year = Math.max(2021, new Date().getUTCFullYear());
+  return `Copyright &copy; ${year} Robin Malburn`;
+});
 </script>

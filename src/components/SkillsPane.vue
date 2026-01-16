@@ -1,16 +1,14 @@
 <template>
   <CardComponent id="skills">
     <HeadingComponent level="2">Skills</HeadingComponent>
-    <FormToggleComponent 
+    <FormToggleComponent
       @save="validatedAddSkill"
       @toggle="toggleAddingControls"
       :show-controls="showAddingControls"
     >
-      <template #button>
-        Add a new Skill?
-      </template>
+      <template #button> Add a new Skill? </template>
       <template #form>
-        <input 
+        <input
           type="text"
           placeholder="Description"
           class="shadow appearance-none border rounded w-full py-1 px-2 m-1 text-gray-700 leading-tight focus:outline-none focus:ring-2 ring-gray-200"
@@ -19,11 +17,11 @@
         />
         <label>
           <input
-              type="checkbox"
-              class="shadow border rounded py-2 px-2 m-1 text-gray-700 leading-tight focus:outline-none focus:ring-2 ring-gray-200"
-              v-model="newSkill.checked"
-              :true-value="true"
-              :false-value="false"
+            type="checkbox"
+            class="shadow border rounded py-2 px-2 m-1 text-gray-700 leading-tight focus:outline-none focus:ring-2 ring-gray-200"
+            v-model="newSkill.checked"
+            :true-value="true"
+            :false-value="false"
           />
           Checked?
         </label>
@@ -38,39 +36,39 @@
       v-show="showEditingControls"
       :buttons="[
         {
-            type: 'default',
-            event: 'save',
-            label: 'Save',
+          type: 'default',
+          event: 'save',
+          label: 'Save',
         },
         {
-            type: 'default',
-            event: 'cancel',
-            label: 'Cancel',
+          type: 'default',
+          event: 'cancel',
+          label: 'Cancel',
         },
         {
-            type: 'default',
-            event: 'remove',
-            label: 'Remove',
+          type: 'default',
+          event: 'remove',
+          label: 'Remove',
         },
       ]"
     >
-      <input 
-          type="text"
-          placeholder="Description"
-          class="shadow appearance-none border rounded w-full py-1 px-2 m-1 text-gray-700 leading-tight focus:outline-none focus:ring-2 ring-gray-200"
-          v-model="editSkill.name"
-          @keyup.enter="validatedUpdateSkill"
+      <input
+        type="text"
+        placeholder="Description"
+        class="shadow appearance-none border rounded w-full py-1 px-2 m-1 text-gray-700 leading-tight focus:outline-none focus:ring-2 ring-gray-200"
+        v-model="editSkill.name"
+        @keyup.enter="validatedUpdateSkill"
+      />
+      <label>
+        <input
+          type="checkbox"
+          class="shadow border rounded py-2 px-2 m-1 text-gray-700 leading-tight focus:outline-none focus:ring-2 ring-gray-200"
+          v-model="editSkill.checked"
+          :true-value="true"
+          :false-value="false"
         />
-        <label>
-          <input
-              type="checkbox"
-              class="shadow border rounded py-2 px-2 m-1 text-gray-700 leading-tight focus:outline-none focus:ring-2 ring-gray-200"
-              v-model="editSkill.checked"
-              :true-value="true"
-              :false-value="false"
-          />
-          Checked?
-        </label>
+        Checked?
+      </label>
     </FormComponent>
 
     <transition-group
@@ -78,136 +76,130 @@
       tag="ul"
       enter-active-class="transition-all duration-100 ease-out"
       leave-active-class="transition-all duration-100 ease-in"
-      enter-class="opacity-0"
+      enter-from-class="opacity-0"
       enter-to-class="opacity-100"
-      leave-class="opacity-100"
+      leave-from-class="opacity-100"
       leave-to-class="opacity-0"
       move-class="transition-transform duration-500 ease-in-out"
     >
       <li
-          class="select-none"
-          v-for="skill in skills"
-          :key="`skill-${skill.id}`"
+        class="select-none"
+        v-for="skill in skills"
+        :key="`skill-${skill.id}`"
       >
         <div class="grid grid-cols-6">
           <span class="col-span-5">
-            <span 
+            <span
               class="cursor-pointer hover:text-gray-400"
               @click="validatedToggleSkill(skill)"
             >
-              <span>{{skill.name}}</span>
-              <span v-if="skill.checked">
-                (x)
-              </span>
+              <span>{{ skill.name }}</span>
+              <span v-if="skill.checked"> (x) </span>
             </span>
           </span>
-          <span 
-              class="cursor-pointer select-none flex-initial text-right mx-2 hover:text-gray-400"
-              @click="startEdit(skill)"
-            >
+          <span
+            class="cursor-pointer select-none flex-initial text-right mx-2 hover:text-gray-400"
+            @click="startEdit(skill)"
+          >
             Edit
           </span>
-      </div>
+        </div>
       </li>
     </transition-group>
   </CardComponent>
 </template>
 
-<script>
-import CardComponent from 'Components/CardComponent';
-import HeadingComponent from 'Components/HeadingComponent';
-import FormComponent from 'Components/FormComponent';
-import FormToggleComponent from 'Components/FormToggleComponent';
-import { mapMutations, mapGetters, mapActions } from 'vuex';
-import entityFactory from 'Libs/entities/skills';
+<script setup>
+import CardComponent from "Components/CardComponent";
+import HeadingComponent from "Components/HeadingComponent";
+import FormComponent from "Components/FormComponent";
+import FormToggleComponent from "Components/FormToggleComponent";
+import entityFactory from "Libs/entities/skills";
+import { computed, ref } from "vue";
+import { useSkillsStore } from "Stores/skills";
+import { useNotificationsStore } from "Stores/notifications";
 
+const skillsStore = useSkillsStore();
 
-export default {
-  name: 'SkillsPane',
-  data: function() {
-      return {
-          showAddingControls: false,
-          showEditingControls: false,
-          newSkill: entityFactory(),
-          editSkill: entityFactory(),
-      }
-  },
-  components: {
-    CardComponent,
-    FormComponent,
-    FormToggleComponent,
-    HeadingComponent
-  },
-  computed: {
-    ...mapGetters('skills', ['skills']),
-  },
-  methods: {
-    ...mapMutations('notifications', {
-      hideNotification: 'hide'
-    }),
-    ...mapActions('notifications', ['showNotification']),
-    ...mapMutations('skills', [
-      'add',
-      'remove',
-      'toggle',
-      'update',
-    ]),
-    validatedAddSkill(){
-      if (this.newSkill.name === '') {
-        this.showNotification({message: 'You must provide a description.', type:'warning'});
-        return;
-      }
+const showAddingControls = ref(false);
+const showEditingControls = ref(false);
+const newSkill = ref(entityFactory());
+const editSkill = ref(entityFactory());
 
-      this.add(this.newSkill);
+const skills = computed(() => skillsStore.sortedSkills);
+const notificationStore = useNotificationsStore();
 
-      this.toggleAddingControls();
-    },
-    startEdit(skill) {
-      this.editSkill = entityFactory(skill);
-      this.showEditingControls = true;
-    },
-    validatedToggleSkill(skill) {
-      this.hideNotification();
+const startEdit = (skill) => {
+  notificationStore.hide();
+  editSkill.value = entityFactory(skill);
+  showEditingControls.value = true;
+};
 
-      if (this.editSkill.id === skill.id) {
-        this.showNotification({message: 'You cannot change this skill whilst it is being edited.', type:'warning'});
-        return;
-      }
+const toggleAddingControls = () => {
+  notificationStore.hide();
+  showAddingControls.value = !showAddingControls.value;
+  newSkill.value = entityFactory();
+};
 
-      this.toggle(skill);
-    },
-    validatedUpdateSkill() {
-      if (this.editSkill.name === '') {
-        this.showNotification({message: 'You must provide a description', type:'warning'});
-        return;
-      }
+const closeEditingControls = () => {
+  notificationStore.hide();
+  showEditingControls.value = false;
+  editSkill.value = entityFactory();
+};
 
-      this.update(this.editSkill);
-      this.closeEditingControls();
-    },
-    validatedRemoveSkill() {
-      let skillToRemove;
+const validatedAddSkill = () => {
+  if (newSkill.value.name === "") {
+    notificationStore.showNotification({
+      message: "You must provide a description.",
+      type: "warning",
+    });
+    return;
+  }
 
-      this.skills.some(skill => {
-        if (skill.id === this.editSkill.id) {
-          skillToRemove = skill;
-          return true;
-        }
-      });
+  skillsStore.add(newSkill.value);
 
-      this.remove(skillToRemove);
-      this.closeEditingControls();
-    },
-    toggleAddingControls() {
-      this.hideNotification();
-      this.showAddingControls = !this.showAddingControls;
-      this.newSkill = entityFactory();
-    },
-    closeEditingControls() {
-      this.hideNotification();
-      this.showEditingControls = false;
-      this.editSkill = entityFactory();
-    },
-  },
-}
+  toggleAddingControls();
+};
+
+const validatedToggleSkill = (skill) => {
+  notificationStore.hide();
+
+  if (editSkill.value.id === skill.id) {
+    notificationStore.showNotification({
+      message: "You cannot change this skill whilst it is being edited.",
+      type: "warning",
+    });
+    return;
+  }
+
+  skillsStore.toggle(skill);
+};
+
+const validatedUpdateSkill = () => {
+  if (editSkill.value.name === "") {
+    notificationStore.showNotification({
+      message: "You must provide a description.",
+      type: "warning",
+    });
+    return;
+  }
+
+  skillsStore.update(editSkill.value);
+  closeEditingControls();
+};
+
+const validatedRemoveSkill = () => {
+  let skillToRemove;
+
+  skills.value.some((skill) => {
+    if (skill.id === editSkill.value.id) {
+      skillToRemove = skill;
+      return true;
+    }
+  });
+
+  skillsStore.remove(skillToRemove);
+
+  closeEditingControls();
+};
 </script>

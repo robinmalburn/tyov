@@ -10,17 +10,17 @@
     "lint": "eslint --ext .js,.vue"
   },
   "dependencies": {
-    "jsdom": "^26.1.0",
-    "vue": "^2.7",
-    "vuex": "^3.4.0"
+    "jsdom": "^27.4.0",
+    "pinia": "^3.0.3",
+    "vue": "^3.5"
   },
   "devDependencies": {
     "@tailwindcss/vite": "^4.1.17",
-    "@vitejs/plugin-vue2": "^2.3.4",
-    "@vue/test-utils": "^1.3.6",
+    "@vitejs/plugin-vue": "^6.0.0",
+    "@vue/test-utils": "^2.4.0",
     "eslint": "^9.39.1",
     "eslint-plugin-vue": "^10.6.2",
-    "vite": "^6.0.0",
+    "vite": "^7.3.1",
     "vitest": "^3.2.4"
   },
   "eslintConfig": {

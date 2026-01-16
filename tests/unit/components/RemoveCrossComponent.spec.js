@@ -3,10 +3,6 @@ import RemoveCrossComponent from "Components/RemoveCrossComponent";
 import { shallowMount } from "@vue/test-utils";
 
 describe("components/RemoveCrossComponent.vue", () => {
-  it("Has the correct component name", () => {
-    expect(RemoveCrossComponent.name).toEqual("RemoveCrossComponent");
-  });
-
   it("Renders the correct content", () => {
     const wrapper = shallowMount(RemoveCrossComponent);
 
