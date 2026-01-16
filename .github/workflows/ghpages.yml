@@ -28,6 +28,9 @@ jobs:
           npm ci
           npm run build
 
+      - name: Stamp build
+        run: date -u +"%Y-%m-%dT%H:%M:%SZ" > dist/build.txt
+
       - name: Deploy
         uses: JamesIves/github-pages-deploy-action@v4.8.0
         with:
