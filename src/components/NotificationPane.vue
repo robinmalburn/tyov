@@ -22,7 +22,7 @@
 <script setup>
 import RemoveCrossComponent from "Components/RemoveCrossComponent";
 import { computed, watch } from "vue";
-import { useNotificationsStore } from "../store/notifications";
+import { useNotificationsStore } from "Stores/notifications";
 
 const notificationStore = useNotificationsStore();
 

@@ -31,7 +31,7 @@ import HeadingComponent from "./HeadingComponent.vue";
 import SaveMenuComponent from "./SaveMenuComponent.vue";
 import LoadMenuComponent from "./LoadMenuComponent.vue";
 import { storeToRefs } from "pinia";
-import { useActionsStore } from "../store/actions";
+import { useActionsStore } from "Stores/actions";
 
 const actionsStore = useActionsStore();
 const { lastRoll, currentRoll } = storeToRefs(actionsStore);

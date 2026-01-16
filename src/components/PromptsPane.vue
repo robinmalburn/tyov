@@ -122,8 +122,8 @@ import FormToggleComponent from "Components/FormToggleComponent";
 import HeadingComponent from "Components/HeadingComponent";
 import { ref, computed, watch } from "vue";
 import entityFactory from "Libs/entities/prompts";
-import { useActionsStore } from "../store/actions";
-import { useNotificationsStore } from "../store/notifications";
+import { useActionsStore } from "Stores/actions";
+import { useNotificationsStore } from "Stores/notifications";
 
 const store = useActionsStore();
 const notificationsStore = useNotificationsStore();
