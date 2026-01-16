@@ -32,3 +32,4 @@ jobs:
         uses: JamesIves/github-pages-deploy-action@v4.8.0
         with:
           folder: dist
+          clean: true
