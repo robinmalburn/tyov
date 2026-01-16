@@ -9,7 +9,7 @@
       <ButtonComponent
         class="w-full"
         @click="fromLocalStorage"
-        v-if="supportsLocalStorage"
+        v-if="doesSupportLocalStorage"
       >
         From Local Storage
       </ButtonComponent>
@@ -23,11 +23,13 @@ import SlideDownPanelComponent from "Components/SlideDownPanelComponent";
 import { restoreState, deserialize } from "Libs/gameState";
 import localStorage, { supportsLocalStorage } from "Libs/localStorage";
 import { useNotificationsStore } from "Stores/notifications";
-import { ref } from "vue";
+import { ref, computed } from "vue";
 
 const notificationsStore = useNotificationsStore();
 
 const loading = ref(false);
+
+const doesSupportLocalStorage = computed(() => supportsLocalStorage());
 
 const load = (evt) => {
   if (evt.target.files.length !== 1) {

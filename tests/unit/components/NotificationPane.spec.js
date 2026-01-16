@@ -1,10 +1,10 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import NotificationPane from "Components/NotificationPane";
-import { shallowMount, createLocalVue } from "@vue/test-utils";
-import Vuex from "vuex";
+import { shallowMount, mount } from "@vue/test-utils";
+import { createPinia, setActivePinia } from "pinia";
+import { useNotificationsStore } from "Stores/notifications";
 
-const localVue = createLocalVue();
-localVue.use(Vuex);
+vi.useFakeTimers();
 
 const TYPES = {
   default: ["border-indigo-400", "bg-indigo-100", "text-indigo-600"],
@@ -13,52 +13,33 @@ const TYPES = {
 };
 
 describe("NotificationPane", () => {
-  let store;
-  let state;
-  let mutations;
+  let notificationsStore;
 
   afterEach(() => {
+    vi.clearAllTimers();
     vi.resetAllMocks();
   });
 
   beforeEach(() => {
-    state = {
-      message: "",
-      visible: false,
-      type: "default",
-    };
-
-    mutations = {
-      hide: vi.fn(),
-    };
-
-    store = new Vuex.Store({
-      modules: {
-        notifications: {
-          state,
-          mutations,
-          namespaced: true,
-        },
-      },
-    });
-  });
-
-  it("Has the correct component name", () => {
-    expect(NotificationPane.name).toEqual("NotificationPane");
+    setActivePinia(createPinia());
+    notificationsStore = useNotificationsStore();
+    notificationsStore.message = "";
+    notificationsStore.visible = false;
+    notificationsStore.type = "default";
   });
 
   it("Displays the correct message", () => {
     const message = "Test message";
-    state.message = message;
-    const wrapper = shallowMount(NotificationPane, { store, localVue });
+    notificationsStore.message = message;
+    const wrapper = shallowMount(NotificationPane);
     expect(wrapper.text()).toContain(message);
   });
 
   it.each(Object.keys(TYPES))(
     "Displays the correct type of notification - %s",
     (type) => {
-      state.type = type;
-      const wrapper = shallowMount(NotificationPane, { store, localVue });
+      notificationsStore.type = type;
+      const wrapper = shallowMount(NotificationPane);
       const classes = TYPES[type];
       expect(wrapper.find("div").classes()).toEqual(
         expect.arrayContaining(classes)
@@ -67,26 +48,37 @@ describe("NotificationPane", () => {
   );
 
   it("Hides after a certain amount of time", async () => {
-    const wrapper = shallowMount(NotificationPane, {
-      store,
-      localVue,
-      data() {
-        return {
-          timeout: 100,
-        };
-      },
-    });
-    state.visible = true;
+    // Start with visible = false
+    notificationsStore.visible = false;
+
+    const wrapper = mount(NotificationPane);
+
+    // Wait for next tick to ensure watcher is registered
     await wrapper.vm.$nextTick();
-    const hideSpy = vi.spyOn(wrapper.vm, "hide");
-    await new Promise((resolve) => setTimeout(resolve, 100));
-    expect(hideSpy).toHaveBeenCalled();
+
+    // NOW set visible to true, which should trigger the watcher
+    notificationsStore.visible = true;
+
+    // Wait for watcher to react
+    await wrapper.vm.$nextTick();
+
+    // Verify it starts visible
+    expect(notificationsStore.visible).toBe(true);
+
+    // Advance timers by more than the timeout (5000ms)
+    await vi.advanceTimersByTimeAsync(5100);
+
+    // Check if hide was called by checking the visible state
+    // The hide action sets visible to false
+    expect(notificationsStore.visible).toBe(false);
   });
 
-  it("Emits a 'remove' event when the remove cross component is clicked", () => {
-    const wrapper = shallowMount(NotificationPane, { store, localVue });
+  it("Emits a 'remove' event when the remove cross component is clicked", async () => {
+    const hideSpy = vi.spyOn(notificationsStore, "hide");
+    const wrapper = mount(NotificationPane);
     const removeCross = wrapper.findComponent({ name: "RemoveCrossComponent" });
-    removeCross.vm.$emit("remove");
-    expect(mutations.hide).toHaveBeenCalled();
+    await removeCross.trigger("click");
+    await wrapper.vm.$nextTick();
+    expect(hideSpy).toHaveBeenCalled();
   });
 });

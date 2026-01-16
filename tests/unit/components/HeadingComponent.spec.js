@@ -18,10 +18,6 @@ const HEADING_STYLES = {
 };
 
 describe("components/HeadingComponent.vue", () => {
-  it("Has the correct component name", () => {
-    expect(HeadingComponent.name).toEqual("HeadingComponent");
-  });
-
   it("Renders without any props", () => {
     const wrapper = shallowMount(HeadingComponent, {
       slots: {
@@ -42,7 +38,7 @@ describe("components/HeadingComponent.vue", () => {
 
   it("Can set the default slot", () => {
     const wrapper = shallowMount(HeadingComponent, {
-      propsData: {
+      props: {
         level: "1",
       },
       slots: {
@@ -60,7 +56,7 @@ describe("components/HeadingComponent.vue", () => {
     "Adds the correct default classes to the heading tag",
     (lvl) => {
       const wrapper = shallowMount(HeadingComponent, {
-        propsData: {
+        props: {
           level: `${lvl}`,
         },
         slots: {
@@ -78,7 +74,7 @@ describe("components/HeadingComponent.vue", () => {
 
   it("Can add extra classes to the heading tag", () => {
     const wrapper = shallowMount(HeadingComponent, {
-      propsData: {
+      props: {
         level: "1",
       },
       slots: {
@@ -104,7 +100,7 @@ describe("components/HeadingComponent.vue", () => {
     "Only allows level prop values from 1 to 6 - convert $given to $replacement",
     ({ given, replacement }) => {
       const wrapper = shallowMount(HeadingComponent, {
-        propsData: {
+        props: {
           level: `${given}`,
         },
         slots: {
@@ -118,18 +114,14 @@ describe("components/HeadingComponent.vue", () => {
   );
 
   it("Adds both static and dynamic classes to the heading tag", () => {
-    const context = {
+    const wrapper = shallowMount(HeadingComponent, {
       props: {
         level: "1",
       },
       attrs: {
-        class: "text-red-500",
+        class: "text-red-500 text-green-500 text-grey-500",
       },
-      staticClass: "text-green-500",
-      class: { "text-grey-500": true },
-    };
-
-    const wrapper = shallowMount(HeadingComponent, { context });
+    });
 
     const heading = wrapper.find("h1");
 

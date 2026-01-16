@@ -24,10 +24,6 @@ const BUTTON_TYPES = {
 };
 
 describe("components/ButtonComponent.vue", () => {
-  it("Has the correct component name", () => {
-    expect(ButtonComponent.name).toEqual("ButtonComponent");
-  });
-
   it("Uses a default button style if no style is given.", () => {
     const classes = [...CLASSES, ...BUTTON_TYPES.default];
 
@@ -46,7 +42,7 @@ describe("components/ButtonComponent.vue", () => {
       const classes = [...CLASSES, ...typeClasses];
 
       const wrapper = shallowMount(ButtonComponent, {
-        propsData: {
+        props: {
           type,
         },
       });

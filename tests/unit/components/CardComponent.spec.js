@@ -14,10 +14,6 @@ const CLASSES = [
 ];
 
 describe("components/CardComponent.vue", () => {
-  it("Has the correct component name", () => {
-    expect(CardComponent.name).toEqual("CardComponent");
-  });
-
   it("Creates an element with the correct classes.", () => {
     const wrapper = shallowMount(CardComponent);
 
