@@ -100,7 +100,9 @@ describe("LoadMenuComponent", () => {
       onerror: null,
     };
 
-    vi.spyOn(global, "FileReader").mockImplementation(() => mockReader);
+    vi.spyOn(global, "FileReader").mockImplementation(function () {
+      return mockReader;
+    });
 
     const mockEvent = {
       target: {
@@ -141,7 +143,9 @@ describe("LoadMenuComponent", () => {
         onerror: null,
       };
 
-      vi.spyOn(global, "FileReader").mockImplementation(() => mockReader);
+      vi.spyOn(global, "FileReader").mockImplementation(function () {
+        return mockReader;
+      });
 
       const mockEvent = {
         target: {
@@ -178,7 +182,9 @@ describe("LoadMenuComponent", () => {
       onerror: null,
     };
 
-    vi.spyOn(global, "FileReader").mockImplementation(() => mockReader);
+    vi.spyOn(global, "FileReader").mockImplementation(function () {
+      return mockReader;
+    });
 
     const mockEvent = {
       target: {
