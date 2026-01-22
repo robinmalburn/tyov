@@ -1,1 +1,0 @@
-import{u as t}from"./index-CcEH6OaK.js";const e={description:"Adds ID to characters.",requiredSignature:1,migrate(r){return r.characters.forEach(i=>{i.id||(i.id=t("character"))}),r}};export{e as default};
