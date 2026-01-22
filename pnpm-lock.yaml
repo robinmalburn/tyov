@@ -8,22 +8,25 @@ importers:
 
   .:
     dependencies:
-      pinia:
-        specifier: ^3.0.4
-        version: 3.0.4(vue@3.5.27)
-      tailwindcss:
-        specifier: ^4.1.18
-        version: 4.1.18
-      vue:
-        specifier: ^3.5.27
-        version: 3.5.27
-    devDependencies:
       '@tailwindcss/vite':
         specifier: ^4.1.18
         version: 4.1.18(vite@7.3.1(jiti@2.6.1)(lightningcss@1.30.2))
       '@vitejs/plugin-vue':
         specifier: ^6.0.3
         version: 6.0.3(vite@7.3.1(jiti@2.6.1)(lightningcss@1.30.2))(vue@3.5.27)
+      pinia:
+        specifier: ^3.0.4
+        version: 3.0.4(vue@3.5.27)
+      tailwindcss:
+        specifier: ^4.1.18
+        version: 4.1.18
+      vite:
+        specifier: ^7.3.1
+        version: 7.3.1(jiti@2.6.1)(lightningcss@1.30.2)
+      vue:
+        specifier: ^3.5.27
+        version: 3.5.27
+    devDependencies:
       '@vue/test-utils':
         specifier: ^2.4.6
         version: 2.4.6
@@ -39,9 +42,6 @@ importers:
       jsdom:
         specifier: ^27.4.0
         version: 27.4.0
-      vite:
-        specifier: ^7.3.1
-        version: 7.3.1(jiti@2.6.1)(lightningcss@1.30.2)
       vitest:
         specifier: ^4.0.18
         version: 4.0.18(jiti@2.6.1)(jsdom@27.4.0)(lightningcss@1.30.2)
