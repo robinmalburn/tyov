@@ -28,7 +28,7 @@ jobs:
 
       - name: Install and Build
         run: |
-          pnpm install --frozen-lockfile
+          pnpm install --frozen-lockfile --production
           pnpm run build
 
       - name: Stamp build
