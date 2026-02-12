@@ -1,2 +1,4 @@
+useNodeVersion: "22.22.0"
+
 onlyBuiltDependencies:
   - esbuild
