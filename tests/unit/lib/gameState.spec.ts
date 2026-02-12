@@ -25,6 +25,8 @@ vi.mock("Migrations", () => {
   };
 });
 
+const migrateMock = vi.mocked(migrator.migrate);
+
 const STATE = {
   actions: {
     d6: NaN,
@@ -52,7 +54,7 @@ const STATE = {
   },
 };
 
-const serializedDataProvider = () => {
+const serializedDataProvider = (): Array<[unknown, string]> => {
   return [
     ["foo", "IgBmAG8AbwAiAA=="],
     [1, "MQA="],
@@ -64,7 +66,7 @@ const serializedDataProvider = () => {
 describe("lib/gameState.js", () => {
   beforeEach(() => {
     setActivePinia(createPinia());
-    migrator.migrate.mockImplementation((data) => data);
+    migrateMock.mockImplementation((data) => data);
   });
 
   afterEach(() => {
@@ -170,7 +172,7 @@ describe("lib/gameState.js", () => {
 
     await restoreState(data);
 
-    expect(migrator.migrate).toHaveBeenCalled();
+    expect(migrateMock).toHaveBeenCalled();
     expect(saveRollSpy).toHaveBeenCalledWith(STATE.actions.lastRoll);
     expect(setD6Spy).toHaveBeenCalledWith(STATE.actions.d6);
     expect(setD10Spy).toHaveBeenCalledWith(STATE.actions.d10);
@@ -224,7 +226,7 @@ describe("lib/gameState.js", () => {
 
     await restoreState(data);
 
-    expect(migrator.migrate).toHaveBeenCalled();
+    expect(migrateMock).toHaveBeenCalled();
     expect(saveRollSpy).toHaveBeenCalledWith(data.lastRoll);
     expect(setD6Spy).toHaveBeenCalledWith(data.d6);
     expect(setD10Spy).toHaveBeenCalledWith(data.d10);
@@ -239,7 +241,7 @@ describe("lib/gameState.js", () => {
     expect(setSkillsSpy).toHaveBeenCalledWith(STATE.skills.skills);
   });
 
-  it.each(serializedDataProvider())(
+  it.each<[unknown, string]>(serializedDataProvider())(
     "Can serialize data into base64.",
     (input, output) => {
       const spyStringify = vi.spyOn(JSON, "stringify");
@@ -270,7 +272,7 @@ describe("lib/gameState.js", () => {
     expect(spyBtoA).not.toHaveBeenCalled();
   });
 
-  it.each(serializedDataProvider())(
+  it.each<[unknown, string]>(serializedDataProvider())(
     "Can deserialize data from base64.",
     (output, input) => {
       const spyParse = vi.spyOn(JSON, "parse");

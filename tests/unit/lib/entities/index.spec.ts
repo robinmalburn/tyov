@@ -15,9 +15,11 @@ vi.mock("Libs/uuid", () => {
   };
 });
 
+const uuidMock = vi.mocked(uuid);
+
 describe("lib/entities/index.js", () => {
   beforeEach(() => {
-    uuid.mockImplementation((ns) => `uuid-${ns}`);
+    uuidMock.mockImplementation((ns) => `uuid-${ns}`);
   });
 
   afterEach(() => {
@@ -114,17 +116,21 @@ describe("lib/entities/index.js", () => {
 
       if (Array.isArray(data)) {
         expect(result).not.toBe(data);
-        result.forEach((item, idx) => {
-          expect(item).not.toBe(data[idx]);
-          expect(item).toEqual(data[idx]);
+        const resultArray = result as unknown[];
+        const dataArray = data as unknown[];
+        resultArray.forEach((item, idx) => {
+          expect(item).not.toBe(dataArray[idx]);
+          expect(item).toEqual(dataArray[idx]);
         });
       } else if (data !== null && typeof data === "object") {
         expect(result).not.toBe(data);
-        Object.keys(result).forEach((key) => {
-          if (typeof result[key] === "object") {
-            expect(result[key]).not.toBe(data[key]);
+        const resultObject = result as Record<string, unknown>;
+        const dataObject = data as Record<string, unknown>;
+        Object.keys(resultObject).forEach((key) => {
+          if (typeof resultObject[key] === "object") {
+            expect(resultObject[key]).not.toBe(dataObject[key]);
           }
-          expect(result[key]).toEqual(data[key]);
+          expect(resultObject[key]).toEqual(dataObject[key]);
         });
       }
     });

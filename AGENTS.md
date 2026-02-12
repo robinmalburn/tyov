@@ -4,7 +4,7 @@
 
 - `src/` contains the Vue 3 application code.
   - `src/components/` shared UI components.
-  - `src/lib/` utilities (storage, randomness, UUIDs, game state).
+  - `src/lib/` utilities (storage, randomness, UUIDs, game state) in TypeScript.
   - `src/store/` Pinia stores.
   - `src/migrations/` save-state migrations.
   - `src/assets/` static assets.
@@ -22,19 +22,20 @@ Use pnpm (preferred package manager in `package.json`).
 - `pnpm serve` preview the production build locally.
 - `pnpm test:unit` run Vitest unit tests.
 - `pnpm lint` run ESLint on `.js` and `.vue` files.
+- `pnpm typecheck` run `vue-tsc` for TypeScript/Vue type checking.
 
 ## Coding Style & Naming Conventions
 
 - Indentation: 2 spaces (match existing Vue component style).
 - File naming: Vue components use `PascalCase.vue` (e.g., `ButtonComponent.vue`).
-- Tests: `*.spec.js` colocated under `tests/unit/` with folder mirroring `src/`.
+- Tests: `*.spec.js` and `*.spec.ts` under `tests/unit/` with folder mirroring `src/`.
 - Linting: ESLint with `eslint-plugin-vue` (`eslint.config.mjs`). Run `pnpm lint` before opening a PR.
 - Tailwind CSS is enabled (see `tailwind.config.js`); prefer utility classes over ad-hoc CSS.
 
 ## Testing Guidelines
 
 - Framework: Vitest with `@vue/test-utils` and `jsdom`.
-- Naming: `Something.spec.js` (see `tests/unit/components/` and `tests/unit/lib/`).
+- Naming: `Something.spec.js` / `Something.spec.ts` (see `tests/unit/components/` and `tests/unit/lib/`).
 - Focus on unit coverage for components, lib utilities, and migrations. Update/extend tests alongside logic changes.
 
 ## Commit & Pull Request Guidelines
