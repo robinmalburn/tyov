@@ -1,62 +1,117 @@
 # Thousand Year Old Vampire Companion
-`tyov` is a [companion web app](https://robinmalburn.github.io/tyov/) for the excellent solo RPG [Thousand Year Old Vampire by Tim Hutchings](https://thousandyearoldvampire.com/).
+`tyov` is a [companion web app](https://robinmalburn.github.io/tyov/) for [Thousand Year Old Vampire by Tim Hutchings](https://thousandyearoldvampire.com/).
 
+## Current Functionality
+The app is a local-first play companion for tracking rolls, prompts, and game state.
 
-## Features
-The app provides a user friendly, but comprehensive interface for managing the game's mechanics, including:
+### Actions and Prompt Tracking
+- Roll flow for `d10 - d6`, with current and previous roll shown.
+- Automatic prompt progression after each roll.
+- Manual prompt management:
+  - Add prompts with visit count.
+  - Set current prompt.
+  - Increment/decrement visit count.
+  - Remove non-current prompts.
 
-### Save & Load
-Save your game to local storage or to a portable file at any point and load the save state back in whenever you like. 
+### Save and Load
+- Save state to:
+  - Downloadable file (`save-game`).
+  - Browser local storage (`save-game` key), when supported.
+- Load state from file or local storage.
+- Persisted state is serialized and versioned with migrations, so older saves can be upgraded to the current schema.
 
-### Prompts & Progress Tracking
-Manual or automated progress tracking, making it easier to keep track of what prompts you've already visited and what prompt you should currently be reading in the book.
+### Character, Skill, and Mark Management
+- Characters:
+  - Name, bio, immortal flag, dead/alive flag.
+  - Quick toggle for dead/alive.
+- Skills:
+  - Add/edit/remove.
+  - Quick toggle for checked/unchecked.
+- Marks:
+  - Add/edit/remove.
 
+### Resources, Diaries, Memories, and Events
+- Resources:
+  - Add/edit/remove.
+  - Track lost and stationary state.
+- Diaries:
+  - Add/edit/remove.
+  - Track lost state.
+  - Enforces one active (not lost) diary at a time.
+- Memories:
+  - Add/edit/remove.
+  - Toggle forgotten/recovered.
+  - Diarise/undiarise when an active diary exists.
+  - Split views for active, forgotten, and diary memories.
+- Events:
+  - Add/edit/remove events linked to memories.
 
-### Characters
-Supports and editing characters, including name and brief bio along with whether a character is deceased or immortal, and editing that state as required.
+### Rule-Aware Constraints Implemented in App Logic
+- Maximum of 5 active (non-forgotten, non-diarised) memories.
+- Maximum of 3 events per memory (via UI controls).
+- Active diary capacity of 4 memories.
+- Active diary cannot be marked lost while it still has active diary memories.
 
-Allows a quick toggle for killing/reviving a character in addition to full editor.
+### UX
+- Inline validation and warning/error notifications.
+- Responsive multi-pane layout for desktop and mobile usage.
 
-### Skills
-Supports adding and editing skills, including whether it's checked or not.  
+## Tech Stack
+- Vue 3 + TypeScript
+- Pinia for state management
+- Vite for build/dev tooling
+- Tailwind CSS 4 for styling
+- Vitest + `@vue/test-utils` + `jsdom` for unit tests
 
-Allows a quick toggle for checking skills in addition to full editor.
+## Requirements
+- Node.js `>=22 <23`
+- pnpm (project uses `pnpm` lockfile)
 
-#### Marks
-Supports adding and editing marks.
+## Development
+Install dependencies:
 
-### Resources & Diaries
-Supports adding & editing resources, including whether the resource is lost or stationary.
-
-Allows a quick toggle for marking resources as lost or found in addition to full editor.
-
-Supports adding & editing diaries, including their name and whether they're lost.  Provides an at a glance summary of how many memories are in the diary.
-
-Allows a quick toggle for marking diaries as lost or found in addition to full editor.
-
-### Memories & Events
-Supports adding & editing memories and events, including whether they're forgotten or diarised if a diary exists (inlcuding inline controls for quickly managing forgetting and diarising memories).
-
-
-## Project setup
+```sh
+pnpm install
 ```
-npm install
+
+Start local development server:
+
+```sh
+pnpm dev
 ```
 
-### Compiles and hot-reloads for development
-```
-npm run serve
+Build for production:
+
+```sh
+pnpm build
 ```
 
-### Compiles and minifies for production
-```
-npm run build
+Preview production build locally:
+
+```sh
+pnpm serve
 ```
 
-### Lints and fixes files
-```
-npm run lint
+Run unit tests:
+
+```sh
+pnpm test:unit
 ```
 
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
+Run formatting checks:
+
+```sh
+pnpm lint
+```
+
+Auto-fix formatting:
+
+```sh
+pnpm lint:fix
+```
+
+Run type checks:
+
+```sh
+pnpm typecheck
+```
