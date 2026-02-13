@@ -24,30 +24,30 @@
 </template>
 
 <script setup>
-import ButtonComponent from "Components/ButtonComponent";
-import SlideDownPanelComponent from "Components/SlideDownPanelComponent";
-import { getStateFromStore, serialize } from "Libs/gameState";
-import localStorage, { supportsLocalStorage } from "Libs/localStorage";
-import { ref, computed, useTemplateRef } from "vue";
+import ButtonComponent from 'Components/ButtonComponent'
+import SlideDownPanelComponent from 'Components/SlideDownPanelComponent'
+import { getStateFromStore, serialize } from 'Libs/gameState'
+import localStorage, { supportsLocalStorage } from 'Libs/localStorage'
+import { ref, computed, useTemplateRef } from 'vue'
 
-const download = useTemplateRef("download");
+const download = useTemplateRef('download')
 
-const saving = ref(false);
+const saving = ref(false)
 
-const doesSupportLocalStorage = computed(() => supportsLocalStorage());
+const doesSupportLocalStorage = computed(() => supportsLocalStorage())
 
 const toFile = () => {
-  const data = serialize(getStateFromStore());
+  const data = serialize(getStateFromStore())
   download.value.href = URL.createObjectURL(
-    new Blob([data], { type: "text/plain" })
-  );
-  download.value.click();
-  saving.value = false;
-};
+    new Blob([data], { type: 'text/plain' }),
+  )
+  download.value.click()
+  saving.value = false
+}
 
 const toLocalStorage = () => {
-  const data = serialize(getStateFromStore());
-  localStorage.set("save-game", data);
-  saving.loading = false;
-};
+  const data = serialize(getStateFromStore())
+  localStorage.set('save-game', data)
+  saving.loading = false
+}
 </script>

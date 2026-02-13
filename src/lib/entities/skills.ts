@@ -1,16 +1,16 @@
-import { baseEntityFactory, type EntityWithId } from "Libs/entities";
+import { baseEntityFactory, type EntityWithId } from 'Libs/entities'
 
-const NS = "skill";
+const NS = 'skill'
 
 export type Skill = EntityWithId<{
-  name: string;
-  checked: boolean;
-}>;
+  name: string
+  checked: boolean
+}>
 
 export default (data: Partial<Skill> = {}): Skill => {
   return {
-    name: "",
+    name: '',
     checked: false,
     ...baseEntityFactory(data, NS),
-  };
-};
+  }
+}

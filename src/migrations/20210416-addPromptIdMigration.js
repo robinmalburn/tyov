@@ -1,19 +1,19 @@
-import uuid from 'Libs/uuid';
+import uuid from 'Libs/uuid'
 
 export default {
-    description: 'Adds ID to prompts and removes name.',
-    requiredSignature: 1,
-    migrate(data) {
-        data.prompts.forEach((prompt) => {
-            if (!prompt.id) {
-                prompt.id = uuid('prompt');
-            }
+  description: 'Adds ID to prompts and removes name.',
+  requiredSignature: 1,
+  migrate(data) {
+    data.prompts.forEach((prompt) => {
+      if (!prompt.id) {
+        prompt.id = uuid('prompt')
+      }
 
-            if (prompt.name) {
-                delete prompt.name;
-            }
-        });
+      if (prompt.name) {
+        delete prompt.name
+      }
+    })
 
-        return data;
-    }
-};
+    return data
+  },
+}

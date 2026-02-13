@@ -117,104 +117,104 @@
 </template>
 
 <script setup>
-import CardComponent from "Components/CardComponent";
-import FormToggleComponent from "Components/FormToggleComponent";
-import HeadingComponent from "Components/HeadingComponent";
-import { ref, computed, watch } from "vue";
-import entityFactory from "Libs/entities/prompts";
-import { useActionsStore } from "Stores/actions";
-import { useNotificationsStore } from "Stores/notifications";
+import CardComponent from 'Components/CardComponent'
+import FormToggleComponent from 'Components/FormToggleComponent'
+import HeadingComponent from 'Components/HeadingComponent'
+import { ref, computed, watch } from 'vue'
+import entityFactory from 'Libs/entities/prompts'
+import { useActionsStore } from 'Stores/actions'
+import { useNotificationsStore } from 'Stores/notifications'
 
-const store = useActionsStore();
-const notificationsStore = useNotificationsStore();
+const store = useActionsStore()
+const notificationsStore = useNotificationsStore()
 
-const showControls = ref(false);
+const showControls = ref(false)
 const newPrompt = ref(
   entityFactory({
     page: 1,
     count: 1,
-  })
-);
-const makeCurrent = ref(false);
+  }),
+)
+const makeCurrent = ref(false)
 
 const tally = computed(() => {
   return (count) => {
-    let tally = "";
-    let char = "&omicron;";
+    let tally = ''
+    let char = '&omicron;'
     if (count >= 3) {
-      char = "&oslash;";
+      char = '&oslash;'
     }
 
     for (let i = 0; i < count; i++) {
-      tally += char;
+      tally += char
     }
 
-    return tally;
-  };
-});
+    return tally
+  }
+})
 const firstUnusedPrompt = computed(() => {
-  var unused = 1;
+  var unused = 1
 
   if (!store.sortedPrompts.length) {
-    return unused;
+    return unused
   }
 
-  const prompts = [...store.sortedPrompts];
-  prompts.sort((a, b) => (a.page > b.page ? 1 : -1));
+  const prompts = [...store.sortedPrompts]
+  prompts.sort((a, b) => (a.page > b.page ? 1 : -1))
 
   prompts.some((prompt) => {
-    let page = prompt.page;
+    let page = prompt.page
     if (page > unused) {
-      return true;
+      return true
     }
 
-    unused = page + 1;
+    unused = page + 1
 
-    return false;
-  });
+    return false
+  })
 
-  return unused;
-});
+  return unused
+})
 
 const validatedAddPrompt = () => {
   const promptExists = store.sortedPrompts.some((prompt) => {
-    return prompt.page === parseInt(newPrompt.value.page, 10);
-  });
+    return prompt.page === parseInt(newPrompt.value.page, 10)
+  })
 
   if (promptExists) {
     notificationsStore.showNotification({
-      message: "This prompt already exists, you cannot re-add it",
-      type: "warning",
-    });
-    return;
+      message: 'This prompt already exists, you cannot re-add it',
+      type: 'warning',
+    })
+    return
   }
 
   const prompt = {
     ...newPrompt.value,
-  };
-
-  prompt.page = parseInt(prompt.page, 10);
-
-  store.addPrompt(prompt);
-
-  if (makeCurrent.value) {
-    store.makePromptCurrent(prompt);
   }
 
-  toggleControls();
-};
+  prompt.page = parseInt(prompt.page, 10)
+
+  store.addPrompt(prompt)
+
+  if (makeCurrent.value) {
+    store.makePromptCurrent(prompt)
+  }
+
+  toggleControls()
+}
 
 const toggleControls = () => {
-  notificationsStore.hide();
+  notificationsStore.hide()
 
-  showControls.value = !showControls.value;
+  showControls.value = !showControls.value
 
   newPrompt.value = entityFactory({
     page: firstUnusedPrompt.value,
     count: 1,
-  });
+  })
 
   makeCurrent.value =
-    store.currentPrompt && store.currentPrompt.page ? false : true;
-};
+    store.currentPrompt && store.currentPrompt.page ? false : true
+}
 </script>

@@ -1,21 +1,21 @@
-import { defineConfig } from "vite";
-import vue from "@vitejs/plugin-vue";
-import tailwindcss from "@tailwindcss/vite";
+import { defineConfig } from 'vite'
+import vue from '@vitejs/plugin-vue'
+import tailwindcss from '@tailwindcss/vite'
 
 export default defineConfig({
-  base: "./",
+  base: './',
   plugins: [vue(), tailwindcss()],
   test: {
-    environment: "jsdom",
+    environment: 'jsdom',
     globals: true,
   },
   resolve: {
     alias: {
-      Libs: "/src/lib",
-      Components: "/src/components",
-      Migrations: "/src/migrations",
-      Stores: "/src/store",
+      Libs: '/src/lib',
+      Components: '/src/components',
+      Migrations: '/src/migrations',
+      Stores: '/src/store',
     },
-    extensions: [".mjs", ".js", ".ts", ".jsx", ".tsx", ".json", ".vue"],
+    extensions: ['.mjs', '.js', '.ts', '.jsx', '.tsx', '.json', '.vue'],
   },
-});
+})

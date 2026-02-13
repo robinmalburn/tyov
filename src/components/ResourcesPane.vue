@@ -244,208 +244,208 @@
 </template>
 
 <script setup>
-import CardComponent from "Components/CardComponent";
-import HeadingComponent from "Components/HeadingComponent";
-import FormComponent from "Components/FormComponent";
-import FormToggleComponent from "Components/FormToggleComponent";
+import CardComponent from 'Components/CardComponent'
+import HeadingComponent from 'Components/HeadingComponent'
+import FormComponent from 'Components/FormComponent'
+import FormToggleComponent from 'Components/FormToggleComponent'
 import {
   resourceEntityFactory,
   diaryEntityFactory,
-} from "Libs/entities/resources";
-import { useResourcesStore } from "Stores/resources";
-import { useNotificationsStore } from "Stores/notifications";
-import { ref, computed } from "vue";
+} from 'Libs/entities/resources'
+import { useResourcesStore } from 'Stores/resources'
+import { useNotificationsStore } from 'Stores/notifications'
+import { ref, computed } from 'vue'
 
-const resourcesStore = useResourcesStore();
-const notificationsStore = useNotificationsStore();
+const resourcesStore = useResourcesStore()
+const notificationsStore = useNotificationsStore()
 
-const showAddingResourceControls = ref(false);
-const showAddingDiaryControls = ref(false);
-const showEditingResourceControls = ref(false);
-const showEditingDiaryControls = ref(false);
-const newResource = ref(resourceEntityFactory());
-const newDiary = ref(diaryEntityFactory());
-const editResource = ref(resourceEntityFactory());
-const editDiary = ref(diaryEntityFactory());
+const showAddingResourceControls = ref(false)
+const showAddingDiaryControls = ref(false)
+const showEditingResourceControls = ref(false)
+const showEditingDiaryControls = ref(false)
+const newResource = ref(resourceEntityFactory())
+const newDiary = ref(diaryEntityFactory())
+const editResource = ref(resourceEntityFactory())
+const editDiary = ref(diaryEntityFactory())
 
-const diaries = computed(() => resourcesStore.sortedDiaries);
-const resources = computed(() => resourcesStore.sortedResources);
-const activeMemories = computed(() => resourcesStore.activeMemories);
-const hasDiary = computed(() => resourcesStore.hasDiary);
+const diaries = computed(() => resourcesStore.sortedDiaries)
+const resources = computed(() => resourcesStore.sortedResources)
+const activeMemories = computed(() => resourcesStore.activeMemories)
+const hasDiary = computed(() => resourcesStore.hasDiary)
 
 const toggleAddingResourceControls = () => {
-  notificationsStore.hide();
-  showAddingResourceControls.value = !showAddingResourceControls.value;
-  newResource.value = resourceEntityFactory();
-};
+  notificationsStore.hide()
+  showAddingResourceControls.value = !showAddingResourceControls.value
+  newResource.value = resourceEntityFactory()
+}
 
 const toggleAddingDiaryControls = () => {
-  notificationsStore.hide();
-  showAddingDiaryControls.value = !showAddingDiaryControls.value;
-  newDiary.value = diaryEntityFactory();
-};
+  notificationsStore.hide()
+  showAddingDiaryControls.value = !showAddingDiaryControls.value
+  newDiary.value = diaryEntityFactory()
+}
 
 const closeEditingResourceControls = () => {
-  notificationsStore.hide();
-  showEditingResourceControls.value = false;
-  editResource.value = resourceEntityFactory();
-};
+  notificationsStore.hide()
+  showEditingResourceControls.value = false
+  editResource.value = resourceEntityFactory()
+}
 
 const closeEditingDiaryControls = () => {
-  notificationsStore.hide();
-  showEditingDiaryControls.value = false;
-  editDiary.value = diaryEntityFactory();
-};
+  notificationsStore.hide()
+  showEditingDiaryControls.value = false
+  editDiary.value = diaryEntityFactory()
+}
 
 const validatedAddResource = () => {
-  if (newResource.value.name === "") {
+  if (newResource.value.name === '') {
     notificationsStore.showNotification({
-      message: "You must provide a description.",
-      type: "warning",
-    });
-    return;
+      message: 'You must provide a description.',
+      type: 'warning',
+    })
+    return
   }
 
-  resourcesStore.addResource(newResource.value);
-  toggleAddingResourceControls();
-};
+  resourcesStore.addResource(newResource.value)
+  toggleAddingResourceControls()
+}
 
 const validatedToggleResource = (resource) => {
-  notificationsStore.hide();
+  notificationsStore.hide()
 
   if (editResource.value.id === resource.id) {
     notificationsStore.showNotification({
-      message: "You cannot change this resource whilst it is being edited.",
-      type: "warning",
-    });
-    return;
+      message: 'You cannot change this resource whilst it is being edited.',
+      type: 'warning',
+    })
+    return
   }
 
-  resourcesStore.toggleResource(resource);
-};
+  resourcesStore.toggleResource(resource)
+}
 
 const validatedToggleDiary = (diary) => {
-  notificationsStore.hide();
+  notificationsStore.hide()
 
   if (editDiary.value.id === diary.id) {
     notificationsStore.showNotification({
-      message: "You cannot change this resource whilst it is being edited.",
-      type: "warning",
-    });
-    return;
+      message: 'You cannot change this resource whilst it is being edited.',
+      type: 'warning',
+    })
+    return
   }
 
   if (hasDiary.value) {
     if (diary.lost) {
       notificationsStore.showNotification({
-        message: "You may only have one active diary.",
-        type: "warning",
-      });
-      return;
+        message: 'You may only have one active diary.',
+        type: 'warning',
+      })
+      return
     } else if (activeMemories.value.length > 0) {
       notificationsStore.showNotification({
-        message: "Please cross out existing memories before losing the diary.",
-        type: "warning",
-      });
-      return;
+        message: 'Please cross out existing memories before losing the diary.',
+        type: 'warning',
+      })
+      return
     }
   }
 
-  resourcesStore.toggleDiary(diary);
-};
+  resourcesStore.toggleDiary(diary)
+}
 
 const validatedAddDiary = () => {
-  if (newDiary.value.name === "") {
+  if (newDiary.value.name === '') {
     notificationsStore.showNotification({
-      message: "You must provide a description.",
-      type: "warning",
-    });
-    return;
+      message: 'You must provide a description.',
+      type: 'warning',
+    })
+    return
   } else if (resourcesStore.hasDiary && !newDiary.value.lost) {
     notificationsStore.showNotification({
-      message: "You may only have one active diary.",
-      type: "warning",
-    });
-    return;
+      message: 'You may only have one active diary.',
+      type: 'warning',
+    })
+    return
   }
 
-  resourcesStore.addDiary(newDiary.value);
-  toggleAddingDiaryControls();
-};
+  resourcesStore.addDiary(newDiary.value)
+  toggleAddingDiaryControls()
+}
 
 const validatedUpdateResource = () => {
-  if (editResource.value.name === "") {
+  if (editResource.value.name === '') {
     notificationsStore.showNotification({
-      message: "You must provide a description.",
-      type: "warning",
-    });
-    return;
+      message: 'You must provide a description.',
+      type: 'warning',
+    })
+    return
   }
 
-  resourcesStore.updateResource(editResource.value);
+  resourcesStore.updateResource(editResource.value)
 
-  closeEditingResourceControls();
-};
+  closeEditingResourceControls()
+}
 
 const validatedUpdateDiary = () => {
-  if (editDiary.value.name === "") {
+  if (editDiary.value.name === '') {
     notificationsStore.showNotification({
-      message: "You must provide a description.",
-      type: "warning",
-    });
-    return;
+      message: 'You must provide a description.',
+      type: 'warning',
+    })
+    return
   } else if (
     resourcesStore.hasDiary &&
     editDiary.value.id !== resourcesStore.diary.id &&
     editDiary.value.lost === false
   ) {
     notificationsStore.showNotification({
-      message: "You may only have one active diary.",
-      type: "warning",
-    });
-    return;
+      message: 'You may only have one active diary.',
+      type: 'warning',
+    })
+    return
   }
 
-  resourcesStore.updateDiary(editDiary.value);
+  resourcesStore.updateDiary(editDiary.value)
 
-  closeEditingDiaryControls();
-};
+  closeEditingDiaryControls()
+}
 
 const validatedRemoveResource = () => {
-  let resourceToRemove;
+  let resourceToRemove
 
   resources.value.some((resource) => {
     if (resource.id === editResource.value.id) {
-      resourceToRemove = resource;
-      return true;
+      resourceToRemove = resource
+      return true
     }
-  });
+  })
 
-  resourcesStore.removeResource(resourceToRemove);
-  closeEditingResourceControls();
-};
+  resourcesStore.removeResource(resourceToRemove)
+  closeEditingResourceControls()
+}
 
 const validatedRemoveDiary = () => {
-  let diaryToRemove;
+  let diaryToRemove
 
   diaries.value.some((diary) => {
     if (diary.id === editDiary.value.id) {
-      diaryToRemove = diary;
-      return true;
+      diaryToRemove = diary
+      return true
     }
-  });
+  })
 
-  resourcesStore.removeDiary(diaryToRemove);
-  closeEditingDiaryControls();
-};
+  resourcesStore.removeDiary(diaryToRemove)
+  closeEditingDiaryControls()
+}
 
 const startEditResource = (resource) => {
-  editResource.value = resourceEntityFactory(resource);
-  showEditingResourceControls.value = true;
-};
+  editResource.value = resourceEntityFactory(resource)
+  showEditingResourceControls.value = true
+}
 
 const startEditDiary = (diary) => {
-  editDiary.value = diaryEntityFactory(diary);
-  showEditingDiaryControls.value = true;
-};
+  editDiary.value = diaryEntityFactory(diary)
+  showEditingDiaryControls.value = true
+}
 </script>

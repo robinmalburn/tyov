@@ -20,55 +20,55 @@
 </template>
 
 <script setup>
-import RemoveCrossComponent from "Components/RemoveCrossComponent";
-import { computed, watch } from "vue";
-import { useNotificationsStore } from "Stores/notifications";
+import RemoveCrossComponent from 'Components/RemoveCrossComponent'
+import { computed, watch } from 'vue'
+import { useNotificationsStore } from 'Stores/notifications'
 
-const notificationStore = useNotificationsStore();
+const notificationStore = useNotificationsStore()
 
 const TYPES = {
   default: {
-    "border-indigo-400": true,
-    "bg-indigo-100": true,
-    "text-indigo-600": true,
+    'border-indigo-400': true,
+    'bg-indigo-100': true,
+    'text-indigo-600': true,
   },
   danger: {
-    "border-red-600": true,
-    "bg-red-200": true,
-    "text-red-800": true,
+    'border-red-600': true,
+    'bg-red-200': true,
+    'text-red-800': true,
   },
   warning: {
-    "border-yellow-400": true,
-    "bg-yellow-100": true,
-    "text-yellow-600": true,
+    'border-yellow-400': true,
+    'bg-yellow-100': true,
+    'text-yellow-600': true,
   },
-};
+}
 
-var timer = null;
-const timeout = 5000;
+var timer = null
+const timeout = 5000
 
 const classes = computed(() => {
   return {
     sticky: true,
-    "inset-6": true,
+    'inset-6': true,
     border: true,
     rounded: true,
-    "p-2": true,
+    'p-2': true,
     flex: true,
     ...TYPES[notificationStore.type],
-  };
-});
+  }
+})
 
 watch(
   () => notificationStore.visible,
   (value) => {
-    clearTimeout(timer);
+    clearTimeout(timer)
 
     if (value) {
       timer = setTimeout(() => {
-        notificationStore.hide();
-      }, timeout);
+        notificationStore.hide()
+      }, timeout)
     }
-  }
-);
+  },
+)
 </script>

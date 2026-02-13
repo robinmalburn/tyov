@@ -110,96 +110,96 @@
 </template>
 
 <script setup>
-import CardComponent from "Components/CardComponent";
-import HeadingComponent from "Components/HeadingComponent";
-import FormComponent from "Components/FormComponent";
-import FormToggleComponent from "Components/FormToggleComponent";
-import entityFactory from "Libs/entities/skills";
-import { computed, ref } from "vue";
-import { useSkillsStore } from "Stores/skills";
-import { useNotificationsStore } from "Stores/notifications";
+import CardComponent from 'Components/CardComponent'
+import HeadingComponent from 'Components/HeadingComponent'
+import FormComponent from 'Components/FormComponent'
+import FormToggleComponent from 'Components/FormToggleComponent'
+import entityFactory from 'Libs/entities/skills'
+import { computed, ref } from 'vue'
+import { useSkillsStore } from 'Stores/skills'
+import { useNotificationsStore } from 'Stores/notifications'
 
-const skillsStore = useSkillsStore();
+const skillsStore = useSkillsStore()
 
-const showAddingControls = ref(false);
-const showEditingControls = ref(false);
-const newSkill = ref(entityFactory());
-const editSkill = ref(entityFactory());
+const showAddingControls = ref(false)
+const showEditingControls = ref(false)
+const newSkill = ref(entityFactory())
+const editSkill = ref(entityFactory())
 
-const skills = computed(() => skillsStore.sortedSkills);
-const notificationStore = useNotificationsStore();
+const skills = computed(() => skillsStore.sortedSkills)
+const notificationStore = useNotificationsStore()
 
 const startEdit = (skill) => {
-  notificationStore.hide();
-  editSkill.value = entityFactory(skill);
-  showEditingControls.value = true;
-};
+  notificationStore.hide()
+  editSkill.value = entityFactory(skill)
+  showEditingControls.value = true
+}
 
 const toggleAddingControls = () => {
-  notificationStore.hide();
-  showAddingControls.value = !showAddingControls.value;
-  newSkill.value = entityFactory();
-};
+  notificationStore.hide()
+  showAddingControls.value = !showAddingControls.value
+  newSkill.value = entityFactory()
+}
 
 const closeEditingControls = () => {
-  notificationStore.hide();
-  showEditingControls.value = false;
-  editSkill.value = entityFactory();
-};
+  notificationStore.hide()
+  showEditingControls.value = false
+  editSkill.value = entityFactory()
+}
 
 const validatedAddSkill = () => {
-  if (newSkill.value.name === "") {
+  if (newSkill.value.name === '') {
     notificationStore.showNotification({
-      message: "You must provide a description.",
-      type: "warning",
-    });
-    return;
+      message: 'You must provide a description.',
+      type: 'warning',
+    })
+    return
   }
 
-  skillsStore.add(newSkill.value);
+  skillsStore.add(newSkill.value)
 
-  toggleAddingControls();
-};
+  toggleAddingControls()
+}
 
 const validatedToggleSkill = (skill) => {
-  notificationStore.hide();
+  notificationStore.hide()
 
   if (editSkill.value.id === skill.id) {
     notificationStore.showNotification({
-      message: "You cannot change this skill whilst it is being edited.",
-      type: "warning",
-    });
-    return;
+      message: 'You cannot change this skill whilst it is being edited.',
+      type: 'warning',
+    })
+    return
   }
 
-  skillsStore.toggle(skill);
-};
+  skillsStore.toggle(skill)
+}
 
 const validatedUpdateSkill = () => {
-  if (editSkill.value.name === "") {
+  if (editSkill.value.name === '') {
     notificationStore.showNotification({
-      message: "You must provide a description.",
-      type: "warning",
-    });
-    return;
+      message: 'You must provide a description.',
+      type: 'warning',
+    })
+    return
   }
 
-  skillsStore.update(editSkill.value);
-  closeEditingControls();
-};
+  skillsStore.update(editSkill.value)
+  closeEditingControls()
+}
 
 const validatedRemoveSkill = () => {
-  let skillToRemove;
+  let skillToRemove
 
   skills.value.some((skill) => {
     if (skill.id === editSkill.value.id) {
-      skillToRemove = skill;
-      return true;
+      skillToRemove = skill
+      return true
     }
-  });
+  })
 
-  skillsStore.remove(skillToRemove);
+  skillsStore.remove(skillToRemove)
 
-  closeEditingControls();
-};
+  closeEditingControls()
+}
 </script>

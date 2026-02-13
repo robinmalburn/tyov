@@ -8,5 +8,5 @@
 </template>
 
 <script setup>
-const emit = defineEmits(["remove"]);
+const emit = defineEmits(['remove'])
 </script>

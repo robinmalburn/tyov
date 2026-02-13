@@ -1,81 +1,81 @@
-import uuid from "Libs/uuid";
+import uuid from 'Libs/uuid'
 
-export type EntityRecord = Record<string, any>;
+export type EntityRecord = Record<string, any>
 
-export type EntityWithId<T extends EntityRecord> = T & { id: string };
+export type EntityWithId<T extends EntityRecord> = T & { id: string }
 
 export const baseEntityFactory = <T extends EntityRecord>(
   data: T,
-  ns = "uuid"
+  ns = 'uuid',
 ): EntityWithId<T> => {
-  const entity = deepCopy(data);
+  const entity = deepCopy(data)
 
   if (!data.id) {
-    (entity as EntityWithId<T>).id = uuid(ns);
+    ;(entity as EntityWithId<T>).id = uuid(ns)
   }
 
-  return entity as EntityWithId<T>;
-};
+  return entity as EntityWithId<T>
+}
 
 export const shallowCopy = <T>(data: T): T => {
   if (data === null) {
-    return data;
+    return data
   }
 
   if (Array.isArray(data)) {
-    return Array.from(data) as T;
+    return Array.from(data) as T
   }
 
-  if (typeof data === "object") {
-    return { ...(data as Record<string, unknown>) } as T;
+  if (typeof data === 'object') {
+    return { ...(data as Record<string, unknown>) } as T
   }
 
-  return data;
-};
+  return data
+}
 
 export const deepCopy = <T>(data: T): T => {
   if (data === null) {
-    return data;
+    return data
   }
 
   try {
-    return JSON.parse(JSON.stringify(data));
+    return JSON.parse(JSON.stringify(data))
   } catch (err) {
     console.error(
-      `Error with deep data copy, falling back to shallow copy.  Error: ${err}`
-    );
+      `Error with deep data copy, falling back to shallow copy.  Error: ${err}`,
+    )
 
-    return shallowCopy(data);
+    return shallowCopy(data)
   }
-};
+}
 
 export const hasId = <T extends EntityRecord>(
   data: T[],
   value: unknown,
-  key = "id"
+  key = 'id',
 ): boolean => {
   return data.some((item) => {
-    return item[key] === value;
-  });
-};
+    return item[key] === value
+  })
+}
 
 export const findById = <T extends EntityRecord>(
   data: T[],
   value: unknown,
-  key = "id"
+  key = 'id',
 ): { entity: T | null; idx: number | null } => {
   let result: { entity: T | null; idx: number | null } = {
     entity: null,
     idx: null,
-  };
+  }
 
   data.some((item, idx) => {
     if (item[key] === value) {
-      result = { entity: item, idx };
-      return true;
+      result = { entity: item, idx }
+      return true
     }
-    return false;
-  });
+    return false
+  })
 
-  return result;
-};
+  return result
+}

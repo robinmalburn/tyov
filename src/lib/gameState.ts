@@ -1,20 +1,20 @@
-import migrator from "Migrations";
-import { useActionsStore } from "Stores/actions";
-import { useCharactersStore } from "Stores/characters";
-import { useMarksStore } from "Stores/marks";
-import { useMemoriesStore } from "Stores/memories";
-import { useResourcesStore } from "Stores/resources";
-import { useSkillsStore } from "Stores/skills";
+import migrator from 'Migrations'
+import { useActionsStore } from 'Stores/actions'
+import { useCharactersStore } from 'Stores/characters'
+import { useMarksStore } from 'Stores/marks'
+import { useMemoriesStore } from 'Stores/memories'
+import { useResourcesStore } from 'Stores/resources'
+import { useSkillsStore } from 'Stores/skills'
 
-export const SIGNATURE = 2;
+export const SIGNATURE = 2
 
 export const getStateFromStore = () => {
-  const actionsStore = useActionsStore();
-  const charactersStore = useCharactersStore();
-  const marksStore = useMarksStore();
-  const memoriesStore = useMemoriesStore();
-  const resourcesStore = useResourcesStore();
-  const skillsStore = useSkillsStore();
+  const actionsStore = useActionsStore()
+  const charactersStore = useCharactersStore()
+  const marksStore = useMarksStore()
+  const memoriesStore = useMemoriesStore()
+  const resourcesStore = useResourcesStore()
+  const skillsStore = useSkillsStore()
 
   return {
     d6: actionsStore.d6,
@@ -30,15 +30,15 @@ export const getStateFromStore = () => {
     diaries: resourcesStore.diaries,
     skills: skillsStore.skills,
     __SIGNATURE__: SIGNATURE,
-  };
-};
+  }
+}
 
 export const defaultGameState = (section?: string) => {
   const state: Record<string, Record<string, unknown>> = {
     actions: {
       d6: NaN,
       d10: NaN,
-      lastRoll: "?",
+      lastRoll: '?',
       currentPromptIdx: 0,
       prompts: [],
     },
@@ -59,12 +59,12 @@ export const defaultGameState = (section?: string) => {
       resources: [],
       diaries: [],
     },
-  };
+  }
 
   if (section) {
     return {
       ...(state[section] ?? {}),
-    };
+    }
   }
 
   return {
@@ -74,64 +74,62 @@ export const defaultGameState = (section?: string) => {
     ...state.memories,
     ...state.resources,
     ...state.skills,
-  };
-};
+  }
+}
 
 export const restoreState = async (data: Record<string, unknown>) => {
-  const actionsStore = useActionsStore();
-  const charactersStore = useCharactersStore();
-  const marksStore = useMarksStore();
-  const memoriesStore = useMemoriesStore();
-  const resourcesStore = useResourcesStore();
-  const skillsStore = useSkillsStore();
+  const actionsStore = useActionsStore()
+  const charactersStore = useCharactersStore()
+  const marksStore = useMarksStore()
+  const memoriesStore = useMemoriesStore()
+  const resourcesStore = useResourcesStore()
+  const skillsStore = useSkillsStore()
 
   let nextData: Record<string, unknown> = {
     ...defaultGameState(),
     ...data,
-  };
+  }
 
-  nextData = await migrator.migrate(nextData, SIGNATURE);
+  nextData = await migrator.migrate(nextData, SIGNATURE)
 
-  actionsStore.saveRoll((nextData.lastRoll as string) ?? "?");
+  actionsStore.saveRoll((nextData.lastRoll as string) ?? '?')
 
-  actionsStore.setD6((nextData.d6 as number) ?? NaN);
-  actionsStore.setD10((nextData.d10 as number) ?? NaN);
+  actionsStore.setD6((nextData.d6 as number) ?? NaN)
+  actionsStore.setD10((nextData.d10 as number) ?? NaN)
 
-  actionsStore.setCurrentPromptIdx((nextData.currentPromptIdx as number) ?? 0);
+  actionsStore.setCurrentPromptIdx((nextData.currentPromptIdx as number) ?? 0)
 
-  const prompts = Array.isArray(nextData.prompts) ? nextData.prompts : [];
+  const prompts = Array.isArray(nextData.prompts) ? nextData.prompts : []
 
   prompts.forEach((prompt) => {
-    prompt.page = parseInt(prompt.page, 10);
-    prompt.count = parseInt(prompt.count, 10);
-  });
+    prompt.page = parseInt(prompt.page, 10)
+    prompt.count = parseInt(prompt.count, 10)
+  })
 
-  actionsStore.setPrompts(prompts);
+  actionsStore.setPrompts(prompts)
 
   charactersStore.set(
     Array.isArray(nextData.characters) ? nextData.characters : [],
-  );
+  )
 
-  marksStore.set(Array.isArray(nextData.marks) ? nextData.marks : []);
+  marksStore.set(Array.isArray(nextData.marks) ? nextData.marks : [])
 
   memoriesStore.setMemories(
     Array.isArray(nextData.memories) ? nextData.memories : [],
-  );
+  )
 
-  memoriesStore.setEvents(
-    Array.isArray(nextData.events) ? nextData.events : [],
-  );
+  memoriesStore.setEvents(Array.isArray(nextData.events) ? nextData.events : [])
 
   resourcesStore.setResources(
     Array.isArray(nextData.resources) ? nextData.resources : [],
-  );
+  )
 
   resourcesStore.setDiaries(
     Array.isArray(nextData.diaries) ? nextData.diaries : [],
-  );
+  )
 
-  skillsStore.set(Array.isArray(nextData.skills) ? nextData.skills : []);
-};
+  skillsStore.set(Array.isArray(nextData.skills) ? nextData.skills : [])
+}
 
 /**
  * Serializes the data for saving.
@@ -141,23 +139,23 @@ export const restoreState = async (data: Record<string, unknown>) => {
  * @see https://developer.mozilla.org/en-US/docs/Web/API/WindowOrWorkerGlobalScope/btoa
  */
 export const serialize = (data: unknown): string => {
-  let raw: string;
+  let raw: string
 
   try {
-    raw = JSON.stringify(data);
+    raw = JSON.stringify(data)
   } catch (err) {
-    throw "Unable to serialize data structure.";
+    throw 'Unable to serialize data structure.'
   }
 
-  const dataLength = raw.length;
-  const codePoints = new Uint16Array(dataLength);
+  const dataLength = raw.length
+  const codePoints = new Uint16Array(dataLength)
 
   for (let i = 0; i < dataLength; i++) {
-    codePoints[i] = raw.charCodeAt(i);
+    codePoints[i] = raw.charCodeAt(i)
   }
 
-  return btoa(String.fromCharCode(...new Uint8Array(codePoints.buffer)));
-};
+  return btoa(String.fromCharCode(...new Uint8Array(codePoints.buffer)))
+}
 
 /**
  * Desirailizes the data for consumption.
@@ -167,19 +165,19 @@ export const serialize = (data: unknown): string => {
  * @see https://developer.mozilla.org/en-US/docs/Web/API/WindowOrWorkerGlobalScope/btoa
  */
 export const deserialize = (data: string): Record<string, unknown> => {
-  const raw = atob(data);
-  const dataLength = raw.length;
-  const codePoints = new Uint8Array(dataLength);
+  const raw = atob(data)
+  const dataLength = raw.length
+  const codePoints = new Uint8Array(dataLength)
 
   for (let i = 0; i < dataLength; i++) {
-    codePoints[i] = raw.charCodeAt(i);
+    codePoints[i] = raw.charCodeAt(i)
   }
 
   try {
     return JSON.parse(
       String.fromCharCode(...new Uint16Array(codePoints.buffer)),
-    );
+    )
   } catch (err) {
-    throw "Unable to parse deserialised data.";
+    throw 'Unable to parse deserialised data.'
   }
-};
+}

@@ -146,103 +146,103 @@
 </template>
 
 <script setup>
-import CardComponent from "Components/CardComponent";
-import HeadingComponent from "Components/HeadingComponent";
-import FormComponent from "Components/FormComponent";
-import FormToggleComponent from "Components/FormToggleComponent";
-import entityFactory from "Libs/entities/characters";
-import { useCharactersStore } from "Stores/characters";
-import { useNotificationsStore } from "Stores/notifications";
-import { ref, computed, nextTick, useTemplateRef } from "vue";
+import CardComponent from 'Components/CardComponent'
+import HeadingComponent from 'Components/HeadingComponent'
+import FormComponent from 'Components/FormComponent'
+import FormToggleComponent from 'Components/FormToggleComponent'
+import entityFactory from 'Libs/entities/characters'
+import { useCharactersStore } from 'Stores/characters'
+import { useNotificationsStore } from 'Stores/notifications'
+import { ref, computed, nextTick, useTemplateRef } from 'vue'
 
-const notificationsStore = useNotificationsStore();
-const charactersStore = useCharactersStore();
+const notificationsStore = useNotificationsStore()
+const charactersStore = useCharactersStore()
 
-const editForm = useTemplateRef("editForm");
+const editForm = useTemplateRef('editForm')
 
-const showAddingControls = ref(false);
-const showEditingControls = ref(false);
-const editCharacter = ref(entityFactory());
-const newCharacter = ref(entityFactory());
+const showAddingControls = ref(false)
+const showEditingControls = ref(false)
+const editCharacter = ref(entityFactory())
+const newCharacter = ref(entityFactory())
 
-const characters = computed(() => charactersStore.sortedCharacters);
+const characters = computed(() => charactersStore.sortedCharacters)
 
 const toggleAddingControls = () => {
-  notificationsStore.hide();
-  showAddingControls.value = !showAddingControls.value;
-  newCharacter.value = entityFactory();
-};
+  notificationsStore.hide()
+  showAddingControls.value = !showAddingControls.value
+  newCharacter.value = entityFactory()
+}
 
 const closeEditingControls = () => {
-  notificationsStore.hide();
-  showEditingControls.value = false;
-  editCharacter.value = entityFactory();
-};
+  notificationsStore.hide()
+  showEditingControls.value = false
+  editCharacter.value = entityFactory()
+}
 
 const validatedToggle = (character) => {
-  notificationsStore.hide();
+  notificationsStore.hide()
 
   if (editCharacter.value.id === character.id) {
     notificationsStore.showNotification({
-      message: "You cannot change this character whilst it is being edited.",
-      type: "warning",
-    });
-    return;
+      message: 'You cannot change this character whilst it is being edited.',
+      type: 'warning',
+    })
+    return
   }
 
-  charactersStore.toggle(character);
-};
+  charactersStore.toggle(character)
+}
 
 const validatedAdd = () => {
-  if (newCharacter.value.name === "" || newCharacter.value.bio === "") {
+  if (newCharacter.value.name === '' || newCharacter.value.bio === '') {
     notificationsStore.showNotification({
-      message: "You must provide a name & bio.",
-      type: "warning",
-    });
-    return;
+      message: 'You must provide a name & bio.',
+      type: 'warning',
+    })
+    return
   }
 
-  charactersStore.add(newCharacter.value);
+  charactersStore.add(newCharacter.value)
 
-  toggleAddingControls();
-};
+  toggleAddingControls()
+}
 
 const validatedRemove = () => {
-  let toRemove;
+  let toRemove
 
   characters.value.some((character) => {
     if (character.id === editCharacter.value.id) {
-      toRemove = character;
-      return true;
+      toRemove = character
+      return true
     }
-  });
+  })
 
-  charactersStore.remove(toRemove);
-  closeEditingControls();
-};
+  charactersStore.remove(toRemove)
+  closeEditingControls()
+}
 
 const validatedUpdate = () => {
-  if (editCharacter.value.name === "" || editCharacter.value.bio === "") {
+  if (editCharacter.value.name === '' || editCharacter.value.bio === '') {
     notificationsStore.showNotification({
-      message: "You must provide a name & bio.",
-      type: "warning",
-    });
-    return;
+      message: 'You must provide a name & bio.',
+      type: 'warning',
+    })
+    return
   }
 
-  charactersStore.update(editCharacter.value);
+  charactersStore.update(editCharacter.value)
 
-  closeEditingControls();
-};
+  closeEditingControls()
+}
 
 const startEdit = (character) => {
-  editCharacter.value = entityFactory(character);
-  showEditingControls.value = true;
+  editCharacter.value = entityFactory(character)
+  showEditingControls.value = true
 
   // Scroll the edit form in the next tick to allow the dom to be updated.
   nextTick(() => {
-    const rect = editForm.value.$el.getBoundingClientRect();
-    window.scrollTo({ top: rect.y + window.scrollY, behavior: "smooth" });
-  });
-};
+    const rect = editForm.value.$el.getBoundingClientRect()
+    window.scrollTo({ top: rect.y + window.scrollY, behavior: 'smooth' })
+  })
+}
 </script>

@@ -44,20 +44,20 @@
 </template>
 
 <script setup>
-import { computed } from "vue";
-import ActionsPane from "./components/ActionsPane.vue";
-import CharactersPane from "./components/CharactersPane.vue";
-import HeadingComponent from "./components/HeadingComponent.vue";
-import PromptsPane from "./components/PromptsPane.vue";
-import MarksPane from "./components/MarksPane.vue";
-import MemoriesPane from "./components/MemoriesPane.vue";
-import NotificationPane from "./components/NotificationPane.vue";
-import ResourcesPane from "./components/ResourcesPane.vue";
-import SlideDownPanelComponent from "./components/SlideDownPanelComponent.vue";
-import SkillsPane from "./components/SkillsPane.vue";
+import { computed } from 'vue'
+import ActionsPane from './components/ActionsPane.vue'
+import CharactersPane from './components/CharactersPane.vue'
+import HeadingComponent from './components/HeadingComponent.vue'
+import PromptsPane from './components/PromptsPane.vue'
+import MarksPane from './components/MarksPane.vue'
+import MemoriesPane from './components/MemoriesPane.vue'
+import NotificationPane from './components/NotificationPane.vue'
+import ResourcesPane from './components/ResourcesPane.vue'
+import SlideDownPanelComponent from './components/SlideDownPanelComponent.vue'
+import SkillsPane from './components/SkillsPane.vue'
 
 const copyright = computed(() => {
-  const year = Math.max(2021, new Date().getUTCFullYear());
-  return `Copyright &copy; ${year} Robin Malburn`;
-});
+  const year = Math.max(2021, new Date().getUTCFullYear())
+  return `Copyright &copy; ${year} Robin Malburn`
+})
 </script>

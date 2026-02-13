@@ -16,37 +16,37 @@
 </template>
 
 <script setup>
-import ButtonComponent from "Components/ButtonComponent";
+import ButtonComponent from 'Components/ButtonComponent'
 
 const props = defineProps({
   buttons: {
     type: Array,
     default: () => [
       {
-        type: "default",
-        event: "save",
-        label: "Save",
+        type: 'default',
+        event: 'save',
+        label: 'Save',
       },
       {
-        type: "default",
-        event: "cancel",
-        label: "Cancel",
+        type: 'default',
+        event: 'cancel',
+        label: 'Cancel',
       },
     ],
     validator: (values) =>
       values.every((btn) => {
-        if (typeof btn !== "object") {
-          return false;
+        if (typeof btn !== 'object') {
+          return false
         }
 
-        const keys = Object.keys(btn);
+        const keys = Object.keys(btn)
 
         return (
-          keys.includes("type") &&
-          keys.includes("event") &&
-          keys.includes("label")
-        );
+          keys.includes('type') &&
+          keys.includes('event') &&
+          keys.includes('label')
+        )
       }),
   },
-});
+})
 </script>

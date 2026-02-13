@@ -20,8 +20,8 @@
 </template>
 
 <script setup>
-import ButtonComponent from "Components/ButtonComponent";
-import FormComponent from "Components/FormComponent";
+import ButtonComponent from 'Components/ButtonComponent'
+import FormComponent from 'Components/FormComponent'
 
 const props = defineProps({
   showControls: {
@@ -30,10 +30,10 @@ const props = defineProps({
   },
   type: {
     type: String,
-    default: "default",
-    validator: (value) => ["default", "primary", "secondary"].includes(value),
+    default: 'default',
+    validator: (value) => ['default', 'primary', 'secondary'].includes(value),
   },
-});
+})
 
-const emit = defineEmits(["toggle", "save"]);
+const emit = defineEmits(['toggle', 'save'])
 </script>

@@ -200,139 +200,136 @@
 </template>
 
 <script setup>
-import CardComponent from "Components/CardComponent";
-import HeadingComponent from "Components/HeadingComponent";
-import FormComponent from "Components/FormComponent";
-import FormToggleComponent from "Components/FormToggleComponent";
-import MemoryComponent from "Components/MemoryComponent";
-import SlideDownPanelComponent from "Components/SlideDownPanelComponent";
-import {
-  memoryEntityFactory,
-  eventEntityFactory,
-} from "Libs/entities/memories";
-import { computed, ref, nextTick, useTemplateRef } from "vue";
-import { useMemoriesStore } from "Stores/memories";
-import { useResourcesStore } from "Stores/resources";
-import { useNotificationsStore } from "Stores/notifications";
+import CardComponent from 'Components/CardComponent'
+import HeadingComponent from 'Components/HeadingComponent'
+import FormComponent from 'Components/FormComponent'
+import FormToggleComponent from 'Components/FormToggleComponent'
+import MemoryComponent from 'Components/MemoryComponent'
+import SlideDownPanelComponent from 'Components/SlideDownPanelComponent'
+import { memoryEntityFactory, eventEntityFactory } from 'Libs/entities/memories'
+import { computed, ref, nextTick, useTemplateRef } from 'vue'
+import { useMemoriesStore } from 'Stores/memories'
+import { useResourcesStore } from 'Stores/resources'
+import { useNotificationsStore } from 'Stores/notifications'
 
-const showAddingControls = ref(false);
-const showEditingControls = ref(false);
-const editMemory = ref(memoryEntityFactory());
-const editEvents = ref([]);
-const newMemory = ref(memoryEntityFactory());
+const showAddingControls = ref(false)
+const showEditingControls = ref(false)
+const editMemory = ref(memoryEntityFactory())
+const editEvents = ref([])
+const newMemory = ref(memoryEntityFactory())
 
-const memoriesStore = useMemoriesStore();
-const resourcesStore = useResourcesStore();
-const notificationStore = useNotificationsStore();
+const memoriesStore = useMemoriesStore()
+const resourcesStore = useResourcesStore()
+const notificationStore = useNotificationsStore()
 
-const editForm = useTemplateRef("editForm");
+const editForm = useTemplateRef('editForm')
 
-const canAddMemories = computed(() => memoriesStore.canAddMemories);
-const forgottenMemories = computed(() => memoriesStore.forgottenMemories);
-const activeMemories = computed(() => memoriesStore.activeMemories);
-const diary = computed(() => resourcesStore.diary);
-const hasDiary = computed(() => resourcesStore.hasDiary);
-const isDiaryFull = computed(() => resourcesStore.isDiaryFull);
-const diaryMemories = computed(() => resourcesStore.memories);
+const canAddMemories = computed(() => memoriesStore.canAddMemories)
+const forgottenMemories = computed(() => memoriesStore.forgottenMemories)
+const activeMemories = computed(() => memoriesStore.activeMemories)
+const diary = computed(() => resourcesStore.diary)
+const hasDiary = computed(() => resourcesStore.hasDiary)
+const isDiaryFull = computed(() => resourcesStore.isDiaryFull)
+const diaryMemories = computed(() => resourcesStore.memories)
 
-const events = (memory) => memoriesStore.sortedEvents(memory);
-const hasEvents = (memory) => memoriesStore.hasEvents(memory);
+const events = (memory) => memoriesStore.sortedEvents(memory)
+const hasEvents = (memory) => memoriesStore.hasEvents(memory)
 
 const toggleAddingControls = () => {
-  notificationStore.hide();
-  showAddingControls.value = !showAddingControls.value;
-  newMemory.value = memoryEntityFactory();
-};
+  notificationStore.hide()
+  showAddingControls.value = !showAddingControls.value
+  newMemory.value = memoryEntityFactory()
+}
 
 const closeEditingControls = () => {
-  notificationStore.hide();
-  showEditingControls.value = false;
-  editMemory.value = memoryEntityFactory();
-  editEvents.value = [];
-};
+  notificationStore.hide()
+  showEditingControls.value = false
+  editMemory.value = memoryEntityFactory()
+  editEvents.value = []
+}
 
 const validatedAddMemory = () => {
-  notificationStore.hide();
-  if (newMemory.value.description === "") {
+  notificationStore.hide()
+  if (newMemory.value.description === '') {
     notificationStore.showNotification({
-      message: "You must provide a description.",
-      type: "warning",
-    });
-    return;
+      message: 'You must provide a description.',
+      type: 'warning',
+    })
+    return
   }
 
-  const memory = memoryEntityFactory(newMemory.value);
+  const memory = memoryEntityFactory(newMemory.value)
 
-  memoriesStore.addMemory(memory);
+  memoriesStore.addMemory(memory)
 
-  toggleAddingControls();
-};
+  toggleAddingControls()
+}
 
 const validatedRemoveMemory = () => {
-  notificationStore.hide();
+  notificationStore.hide()
   if (hasEvents(editMemory.value)) {
     events(editMemory.value).forEach((event) => {
-      memoriesStore.removeEvent(event);
-    });
+      memoriesStore.removeEvent(event)
+    })
   }
 
-  memoriesStore.removeMemory(editMemory.value);
+  memoriesStore.removeMemory(editMemory.value)
 
-  closeEditingControls();
-};
+  closeEditingControls()
+}
 
 const validatedRemoveEvent = (event) => {
-  notificationStore.hide();
+  notificationStore.hide()
   if (event.memory === editMemory.value.id) {
     notificationStore.showNotification({
-      message: "You cannot alter this memory whilst it is being edited.",
-      type: "warning",
-    });
-    return;
+      message: 'You cannot alter this memory whilst it is being edited.',
+      type: 'warning',
+    })
+    return
   }
 
-  memoriesStore.removeEvent(event);
-};
+  memoriesStore.removeEvent(event)
+}
 
 const validatedUpdateMemory = () => {
-  notificationStore.hide();
-  memoriesStore.updateMemory(editMemory.value);
+  notificationStore.hide()
+  memoriesStore.updateMemory(editMemory.value)
 
   if (hasEvents(editMemory.value)) {
-    editEvents.value.forEach((event) => memoriesStore.updateEvent(event));
+    editEvents.value.forEach((event) => memoriesStore.updateEvent(event))
   }
 
-  closeEditingControls();
-};
+  closeEditingControls()
+}
 
 const diariseMemory = (memory) => {
-  memoriesStore.diarise({ diary: diary.value, memory });
-};
+  memoriesStore.diarise({ diary: diary.value, memory })
+}
 
 const undiariseMemory = (memory) => {
-  memoriesStore.undiarise(memory);
-};
+  memoriesStore.undiarise(memory)
+}
 
 const addEvent = (memory) => {
-  memoriesStore.addEvent(memory);
-};
+  memoriesStore.addEvent(memory)
+}
 
 const toggleMemory = (memory) => {
-  memoriesStore.toggleMemory(memory);
-};
+  memoriesStore.toggleMemory(memory)
+}
 
 const startEdit = (memory) => {
-  notificationStore.hide();
-  editMemory.value = memoryEntityFactory(memory);
+  notificationStore.hide()
+  editMemory.value = memoryEntityFactory(memory)
   editEvents.value = events(editMemory.value).map((event) =>
-    eventEntityFactory(event)
-  );
-  showEditingControls.value = true;
+    eventEntityFactory(event),
+  )
+  showEditingControls.value = true
 
   // Scroll the edit form in the next tick to allow the dom to be updated.
   nextTick(() => {
-    const rect = editForm.value.$el.getBoundingClientRect();
-    window.scrollTo({ top: rect.y + window.scrollY, behavior: "smooth" });
-  });
-};
+    const rect = editForm.value.$el.getBoundingClientRect()
+    window.scrollTo({ top: rect.y + window.scrollY, behavior: 'smooth' })
+  })
+}
 </script>

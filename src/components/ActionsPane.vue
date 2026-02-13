@@ -25,14 +25,14 @@
 </template>
 
 <script setup>
-import CardComponent from "./CardComponent.vue";
-import ButtonComponent from "./ButtonComponent.vue";
-import HeadingComponent from "./HeadingComponent.vue";
-import SaveMenuComponent from "./SaveMenuComponent.vue";
-import LoadMenuComponent from "./LoadMenuComponent.vue";
-import { storeToRefs } from "pinia";
-import { useActionsStore } from "Stores/actions";
+import CardComponent from './CardComponent.vue'
+import ButtonComponent from './ButtonComponent.vue'
+import HeadingComponent from './HeadingComponent.vue'
+import SaveMenuComponent from './SaveMenuComponent.vue'
+import LoadMenuComponent from './LoadMenuComponent.vue'
+import { storeToRefs } from 'pinia'
+import { useActionsStore } from 'Stores/actions'
 
-const actionsStore = useActionsStore();
-const { lastRoll, currentRoll } = storeToRefs(actionsStore);
+const actionsStore = useActionsStore()
+const { lastRoll, currentRoll } = storeToRefs(actionsStore)
 </script>

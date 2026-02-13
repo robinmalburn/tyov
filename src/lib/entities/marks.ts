@@ -1,14 +1,14 @@
-import { baseEntityFactory, type EntityWithId } from "Libs/entities";
+import { baseEntityFactory, type EntityWithId } from 'Libs/entities'
 
-const NS = "mark";
+const NS = 'mark'
 
 export type Mark = EntityWithId<{
-  description: string;
-}>;
+  description: string
+}>
 
 export default (data: Partial<Mark> = {}): Mark => {
   return {
-    description: "",
+    description: '',
     ...baseEntityFactory(data, NS),
-  };
-};
+  }
+}

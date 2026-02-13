@@ -91,32 +91,32 @@
 </template>
 
 <script setup>
-import CardComponent from "Components/CardComponent";
-import ButtonComponent from "Components/ButtonComponent";
-import FormToggleComponent from "Components/FormToggleComponent";
-import HeadingComponent from "Components/HeadingComponent";
-import RemoveCrossComponent from "Components/RemoveCrossComponent";
-import { eventEntityFactory } from "Libs/entities/memories";
-import { useMemoriesStore } from "Stores/memories";
-import { useResourcesStore } from "Stores/resources";
-import { useNotificationsStore } from "Stores/notifications";
-import { computed, ref } from "vue";
+import CardComponent from 'Components/CardComponent'
+import ButtonComponent from 'Components/ButtonComponent'
+import FormToggleComponent from 'Components/FormToggleComponent'
+import HeadingComponent from 'Components/HeadingComponent'
+import RemoveCrossComponent from 'Components/RemoveCrossComponent'
+import { eventEntityFactory } from 'Libs/entities/memories'
+import { useMemoriesStore } from 'Stores/memories'
+import { useResourcesStore } from 'Stores/resources'
+import { useNotificationsStore } from 'Stores/notifications'
+import { computed, ref } from 'vue'
 
 const emit = defineEmits([
-  "edit-memory",
-  "toggle-memory",
-  "diarise-memory",
-  "undiarise-memory",
-  "add-event",
-  "remove-event",
-]);
+  'edit-memory',
+  'toggle-memory',
+  'diarise-memory',
+  'undiarise-memory',
+  'add-event',
+  'remove-event',
+])
 
 const props = defineProps({
   memory: {
     type: Object,
     required: true,
     validator: (memory) =>
-      "string" === typeof memory.diary && "boolean" === typeof memory.forgotten,
+      'string' === typeof memory.diary && 'boolean' === typeof memory.forgotten,
   },
   canAddMemories: {
     type: Boolean,
@@ -134,36 +134,36 @@ const props = defineProps({
     type: Boolean,
     required: true,
   },
-});
+})
 
-const memorysStore = useMemoriesStore();
-const resourcesStore = useResourcesStore();
-const notificationsStore = useNotificationsStore();
+const memorysStore = useMemoriesStore()
+const resourcesStore = useResourcesStore()
+const notificationsStore = useNotificationsStore()
 
-const showControls = ref(false);
-const newEvent = ref(eventEntityFactory({ memory: props.memory.id }));
+const showControls = ref(false)
+const newEvent = ref(eventEntityFactory({ memory: props.memory.id }))
 
-const events = computed(() => memorysStore.sortedEvents);
-const isDiaryFull = computed(() => resourcesStore.isDiaryFull);
+const events = computed(() => memorysStore.sortedEvents)
+const isDiaryFull = computed(() => resourcesStore.isDiaryFull)
 
 const toggleControls = () => {
-  notificationsStore.hide();
-  showControls.value = !showControls.value;
-  newEvent.value = eventEntityFactory({ memory: props.memory.id });
-};
+  notificationsStore.hide()
+  showControls.value = !showControls.value
+  newEvent.value = eventEntityFactory({ memory: props.memory.id })
+}
 
 const add = () => {
-  if (newEvent.value.description === "") {
+  if (newEvent.value.description === '') {
     notificationsStore.showNotification({
-      message: "You must provide a description",
-      type: "warning",
-    });
-    return;
+      message: 'You must provide a description',
+      type: 'warning',
+    })
+    return
   }
 
-  const event = eventEntityFactory(newEvent.value);
+  const event = eventEntityFactory(newEvent.value)
 
-  emit("add-event", event);
-  toggleControls();
-};
+  emit('add-event', event)
+  toggleControls()
+}
 </script>

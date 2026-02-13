@@ -78,82 +78,82 @@
 </template>
 
 <script setup>
-import CardComponent from "Components/CardComponent";
-import FormComponent from "Components/FormComponent";
-import FormToggleComponent from "Components/FormToggleComponent";
-import HeadingComponent from "Components/HeadingComponent";
-import entityFactory from "Libs/entities/marks";
-import { useMarksStore } from "Stores/marks";
-import { useNotificationsStore } from "Stores/notifications";
-import { storeToRefs } from "pinia";
-import { ref, computed } from "vue";
+import CardComponent from 'Components/CardComponent'
+import FormComponent from 'Components/FormComponent'
+import FormToggleComponent from 'Components/FormToggleComponent'
+import HeadingComponent from 'Components/HeadingComponent'
+import entityFactory from 'Libs/entities/marks'
+import { useMarksStore } from 'Stores/marks'
+import { useNotificationsStore } from 'Stores/notifications'
+import { storeToRefs } from 'pinia'
+import { ref, computed } from 'vue'
 
-const marksStore = useMarksStore();
-const notificationStore = useNotificationsStore();
+const marksStore = useMarksStore()
+const notificationStore = useNotificationsStore()
 
-const newMark = ref(entityFactory());
-const editMark = ref(entityFactory());
-const showAddingControls = ref(false);
-const showEditingControls = ref(false);
+const newMark = ref(entityFactory())
+const editMark = ref(entityFactory())
+const showAddingControls = ref(false)
+const showEditingControls = ref(false)
 
-const marks = computed(() => marksStore.marks);
+const marks = computed(() => marksStore.marks)
 
 const toggleAddingControls = () => {
-  notificationStore.hide();
-  showAddingControls.value = !showAddingControls.value;
-  newMark.value = entityFactory();
-};
+  notificationStore.hide()
+  showAddingControls.value = !showAddingControls.value
+  newMark.value = entityFactory()
+}
 
 const closeEditingControls = () => {
-  notificationStore.hide();
-  showEditingControls.value = false;
-  editMark.value = entityFactory();
-};
+  notificationStore.hide()
+  showEditingControls.value = false
+  editMark.value = entityFactory()
+}
 
 const validatedAddMark = () => {
-  if (newMark.value.description === "") {
+  if (newMark.value.description === '') {
     notificationStore.showNotification({
-      message: "You must provide a description",
-      type: "warning",
-    });
-    return;
+      message: 'You must provide a description',
+      type: 'warning',
+    })
+    return
   }
 
-  marksStore.add(newMark.value);
+  marksStore.add(newMark.value)
 
-  toggleAddingControls();
-};
+  toggleAddingControls()
+}
 
 const validatedRemoveMark = () => {
-  let markToRemove;
+  let markToRemove
 
   marks.value.some((mark) => {
     if (mark.id === editMark.value.id) {
-      markToRemove = mark;
-      return true;
+      markToRemove = mark
+      return true
     }
-  });
+  })
 
-  marksStore.remove(markToRemove);
+  marksStore.remove(markToRemove)
 
-  closeEditingControls();
-};
+  closeEditingControls()
+}
 
 const validatedUpdateMark = () => {
-  if (editMark.value.description === "") {
+  if (editMark.value.description === '') {
     notificationStore.showNotification({
-      message: "You must provide a description",
-      type: "warning",
-    });
-    return;
+      message: 'You must provide a description',
+      type: 'warning',
+    })
+    return
   }
 
-  marksStore.update(editMark.value);
-  closeEditingControls();
-};
+  marksStore.update(editMark.value)
+  closeEditingControls()
+}
 
 const startEdit = (mark) => {
-  editMark.value = entityFactory(mark);
-  showEditingControls.value = true;
-};
+  editMark.value = entityFactory(mark)
+  showEditingControls.value = true
+}
 </script>
