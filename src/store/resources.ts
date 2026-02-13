@@ -3,16 +3,22 @@ import { defaultGameState } from 'Libs/gameState'
 import {
   resourceEntityFactory,
   diaryEntityFactory,
+  type Diary,
+  type Resource,
 } from 'Libs/entities/resources'
 import { findById } from 'Libs/entities'
+import type { Memory } from 'Libs/entities/memories'
 import { useMemoriesStore } from 'Stores/memories'
 
+type ResourcesState = {
+  resources: Resource[]
+  diaries: Diary[]
+}
+
 export const useResourcesStore = defineStore('resources', {
-  state: () => ({
-    ...defaultGameState('resources'),
-  }),
+  state: (): ResourcesState => defaultGameState('resources') as ResourcesState,
   getters: {
-    sortedResources(state) {
+    sortedResources(state: ResourcesState): Resource[] {
       return [...state.resources].sort((a, b) => {
         // If a is not lost, move it up the array.
         if (a.lost && !b.lost) {
@@ -26,7 +32,7 @@ export const useResourcesStore = defineStore('resources', {
         return a.name.localeCompare(b.name)
       })
     },
-    sortedDiaries(state) {
+    sortedDiaries(state: ResourcesState): Diary[] {
       return [...state.diaries].sort((a, b) => {
         // If a is not lost, move it up the array.
         if (a.lost && !b.lost) {
@@ -40,31 +46,31 @@ export const useResourcesStore = defineStore('resources', {
         return a.name.localeCompare(b.name)
       })
     },
-    diary(state) {
+    diary(state: ResourcesState): Diary | null {
       return state.diaries.filter((diary) => !diary.lost)[0] || null
     },
-    lostDiaries(state) {
+    lostDiaries(state: ResourcesState): Diary[] {
       return state.diaries.filter((diary) => diary.lost)
     },
-    hasDiary(state) {
+    hasDiary(state: ResourcesState): boolean {
       return state.diaries.some((diary) => !diary.lost)
     },
-    memories() {
+    memories(): Memory[] {
       const memoriesStore = useMemoriesStore()
       return memoriesStore.memories.filter((memory) => {
         return memory.diary === this.diary?.id
       })
     },
-    activeMemories() {
+    activeMemories(): Memory[] {
       return this.memories.filter((memory) => !memory.forgotten)
     },
-    forgottenMemories() {
+    forgottenMemories(): Memory[] {
       return this.memories.filter((memory) => memory.forgotten)
     },
-    isDiaryFull() {
+    isDiaryFull(): boolean {
       let count = 0
       return this.memories.some((memory) => {
-        if (!memory.lost) {
+        if (!(memory as { lost?: boolean }).lost) {
           count += 1
         }
         return count >= 4
@@ -72,39 +78,39 @@ export const useResourcesStore = defineStore('resources', {
     },
   },
   actions: {
-    addResource(resource) {
+    addResource(resource: Partial<Resource>) {
       this.resources.push(resourceEntityFactory(resource))
     },
-    setResources(resources) {
+    setResources(resources: Resource[]) {
       this.resources = resources
     },
-    updateResource(updated) {
+    updateResource(updated: Partial<Resource> & { id: string }) {
       const found = findById(this.resources, updated.id)
       this.resources[found.idx] = resourceEntityFactory(updated)
     },
-    removeResource(resource) {
+    removeResource(resource: Resource) {
       const found = findById(this.resources, resource.id)
       this.resources.splice(found.idx, 1)
     },
-    toggleResource(resource) {
+    toggleResource(resource: Resource) {
       const found = findById(this.resources, resource.id)
       this.resources[found.idx].lost = !this.resources[found.idx].lost
     },
-    addDiary(diary) {
+    addDiary(diary: Partial<Diary>) {
       this.diaries.push(diaryEntityFactory(diary))
     },
-    updateDiary(updated) {
+    updateDiary(updated: Partial<Diary> & { id: string }) {
       const found = findById(this.diaries, updated.id)
       this.diaries[found.idx] = diaryEntityFactory(updated)
     },
-    setDiaries(diaries) {
+    setDiaries(diaries: Diary[]) {
       this.diaries = diaries
     },
-    removeDiary(diary) {
+    removeDiary(diary: Diary) {
       const found = findById(this.diaries, diary.id)
       this.diaries.splice(found.idx, 1)
     },
-    toggleDiary(diary) {
+    toggleDiary(diary: Diary) {
       const found = findById(this.diaries, diary.id)
       this.diaries[found.idx].lost = !this.diaries[found.idx].lost
     },

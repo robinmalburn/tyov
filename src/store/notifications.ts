@@ -1,7 +1,15 @@
 import { defineStore } from 'pinia'
 
+type NotificationType = 'default' | string
+
+type NotificationsState = {
+  message: string
+  visible: boolean
+  type: NotificationType
+}
+
 export const useNotificationsStore = defineStore('notifications', {
-  state: () => ({
+  state: (): NotificationsState => ({
     message: '',
     visible: false,
     type: 'default',
@@ -16,13 +24,19 @@ export const useNotificationsStore = defineStore('notifications', {
     show() {
       this.visible = true
     },
-    setMessage(msg) {
+    setMessage(msg: string) {
       this.message = msg
     },
-    setType(type) {
+    setType(type: NotificationType) {
       this.type = type
     },
-    showNotification({ message, type }) {
+    showNotification({
+      message,
+      type,
+    }: {
+      message: string
+      type: NotificationType
+    }) {
       this.hide()
       this.setMessage(message)
       this.setType(type)

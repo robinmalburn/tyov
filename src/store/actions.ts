@@ -1,54 +1,62 @@
 import { defineStore } from 'pinia'
 import { randomRange } from '../lib/random'
 import { defaultGameState } from '../lib/gameState'
-import entityFactory from '../lib/entities/prompts'
+import entityFactory, { type Prompt } from '../lib/entities/prompts'
 import { findById } from '../lib/entities'
+
+type ActionsState = {
+  d6: number
+  d10: number
+  lastRoll: string
+  currentPromptIdx: number
+  prompts: Prompt[]
+}
+
 export const useActionsStore = defineStore('actions', {
-  state: () => ({
-    ...defaultGameState('actions'),
-  }),
+  state: (): ActionsState => defaultGameState('actions') as ActionsState,
   getters: {
-    die: (state) => state.d10 - state.d6,
-    currentRoll: (state) => {
+    die: (state: ActionsState): number => state.d10 - state.d6,
+    currentRoll: (state: ActionsState): string => {
       const die = state.d10 - state.d6
       if (isNaN(die)) {
         return '?'
       }
       return `${die} (+${state.d10}, -${state.d6})`
     },
-    sortedPrompts: (state) => {
+    sortedPrompts: (state: ActionsState): Prompt[] => {
       const prompts = [...state.prompts]
       prompts.sort((a, b) => (a.page > b.page ? -1 : 1))
       return prompts
     },
-    currentPrompt: (state) => state.prompts[state.currentPromptIdx] ?? {},
+    currentPrompt: (state: ActionsState): Partial<Prompt> =>
+      state.prompts[state.currentPromptIdx] ?? {},
   },
   actions: {
     rollD6() {
       this.d6 = randomRange(1, 6)
     },
-    setD6(value) {
+    setD6(value: number) {
       this.d6 = value
     },
-    setD10(value) {
+    setD10(value: number) {
       this.d10 = value
     },
     rollD10() {
       this.d10 = randomRange(1, 10)
     },
-    saveRoll(roll) {
+    saveRoll(roll: string) {
       this.lastRoll = roll
     },
-    makePrompt(prompt) {
+    makePrompt(prompt: number) {
       this.prompts.push(entityFactory({ page: prompt, count: 0 }))
     },
-    addPrompt(prompt) {
+    addPrompt(prompt: Partial<Prompt>) {
       this.prompts.push(entityFactory(prompt))
     },
-    setPrompts(prompts) {
+    setPrompts(prompts: Prompt[]) {
       this.prompts = prompts
     },
-    removePrompt(prompt) {
+    removePrompt(prompt: Prompt) {
       const found = findById(this.prompts, prompt.id)
 
       const current = this.currentPrompt
@@ -59,19 +67,19 @@ export const useActionsStore = defineStore('actions', {
 
       this.currentPromptIdx = currentFound.idx
     },
-    incrementPrompt(prompt) {
+    incrementPrompt(prompt: Prompt) {
       const found = findById(this.prompts, prompt.id)
       if (found && found.entity) {
         found.entity.count = (found.entity.count || 0) + 1
       }
     },
-    decrementPrompt(prompt) {
+    decrementPrompt(prompt: Prompt) {
       const found = findById(this.prompts, prompt.id)
       if (found && found.entity) {
         found.entity.count = (found.entity.count || 0) - 1
       }
     },
-    setCurrentPromptIdx(idx) {
+    setCurrentPromptIdx(idx: number) {
       this.currentPromptIdx = idx
     },
     roll() {
@@ -107,7 +115,7 @@ export const useActionsStore = defineStore('actions', {
       this.incrementPrompt(prompt)
       this.setCurrentPromptIdx(promptIdx)
     },
-    makePromptCurrent(prompt) {
+    makePromptCurrent(prompt: Prompt) {
       const found = findById(this.prompts, prompt.id)
       this.setCurrentPromptIdx(found.idx)
     },

@@ -1,14 +1,17 @@
 import { defineStore } from 'pinia'
 import { defaultGameState } from 'Libs/gameState'
-import entityFactory from 'Libs/entities/characters'
+import entityFactory, { type Character } from 'Libs/entities/characters'
 import { findById } from 'Libs/entities'
 
+type CharactersState = {
+  characters: Character[]
+}
+
 export const useCharactersStore = defineStore('characters', {
-  state: () => ({
-    ...defaultGameState('characters'),
-  }),
+  state: (): CharactersState =>
+    defaultGameState('characters') as CharactersState,
   getters: {
-    sortedCharacters: (state) =>
+    sortedCharacters: (state: CharactersState): Character[] =>
       [...state.characters].sort((a, b) => {
         if (a.dead && !b.dead) {
           return 1
@@ -22,21 +25,21 @@ export const useCharactersStore = defineStore('characters', {
       }),
   },
   actions: {
-    add(character) {
+    add(character: Partial<Character>) {
       this.characters.push(entityFactory(character))
     },
-    update(update) {
+    update(update: Partial<Character> & { id: string }) {
       const found = findById(this.characters, update.id)
       this.characters[found.idx] = entityFactory(update)
     },
-    set(characters) {
+    set(characters: Character[]) {
       this.characters = characters
     },
-    remove(character) {
+    remove(character: Character) {
       const found = findById(this.characters, character.id)
       this.characters.splice(found.idx, 1)
     },
-    toggle(character) {
+    toggle(character: Character) {
       const found = findById(this.characters, character.id)
       found.entity.dead = !found.entity.dead
     },
