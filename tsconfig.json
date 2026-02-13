@@ -15,7 +15,7 @@
     "paths": {
       "Libs/*": ["src/lib/*"],
       "Components/*": ["src/components/*"],
-      "Migrations": ["src/migrations/index.js"],
+      "Migrations": ["src/migrations/index.ts"],
       "Migrations/*": ["src/migrations/*"],
       "Stores/*": ["src/store/*"]
     }

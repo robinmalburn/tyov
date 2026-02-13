@@ -11,10 +11,15 @@ vi.mock('Libs/gameState')
 vi.mock('Libs/localStorage')
 
 describe('SaveMenuComponent', () => {
+  const mockedGetStateFromStore = vi.mocked(getStateFromStore)
+  const mockedSerialize = vi.mocked(serialize)
+  const mockedSupportsLocalStorage = vi.mocked(supportsLocalStorage)
+  const mockedLocalStorageSet = vi.mocked(localStorage.set)
+
   beforeEach(() => {
-    getStateFromStore.mockImplementation(() => ({ test: 'data' }))
-    serialize.mockImplementation(() => 'serialized')
-    supportsLocalStorage.mockImplementation(() => true)
+    mockedGetStateFromStore.mockImplementation(() => ({ test: 'data' } as any))
+    mockedSerialize.mockImplementation(() => 'serialized')
+    mockedSupportsLocalStorage.mockImplementation(() => true)
   })
 
   afterEach(() => {
@@ -46,7 +51,7 @@ describe('SaveMenuComponent', () => {
   })
 
   it("Does not render the 'To Local Storage' button if local storage is not supported", async () => {
-    supportsLocalStorage.mockImplementation(() => false)
+    mockedSupportsLocalStorage.mockImplementation(() => false)
 
     const wrapper = mount(SaveMenuComponent)
 
@@ -81,8 +86,8 @@ describe('SaveMenuComponent', () => {
     button.vm.$emit('click')
     await wrapper.vm.$nextTick()
 
-    expect(getStateFromStore).toHaveBeenCalled()
-    expect(serialize).toHaveBeenCalledWith({ test: 'data' })
+    expect(mockedGetStateFromStore).toHaveBeenCalled()
+    expect(mockedSerialize).toHaveBeenCalledWith({ test: 'data' })
     expect(global.URL.createObjectURL).toHaveBeenCalled()
   })
 
@@ -104,8 +109,11 @@ describe('SaveMenuComponent', () => {
     button.vm.$emit('click')
     await wrapper.vm.$nextTick()
 
-    expect(getStateFromStore).toHaveBeenCalled()
-    expect(serialize).toHaveBeenCalledWith({ test: 'data' })
-    expect(localStorage.set).toHaveBeenCalledWith('save-game', 'serialized')
+    expect(mockedGetStateFromStore).toHaveBeenCalled()
+    expect(mockedSerialize).toHaveBeenCalledWith({ test: 'data' })
+    expect(mockedLocalStorageSet).toHaveBeenCalledWith(
+      'save-game',
+      'serialized',
+    )
   })
 })

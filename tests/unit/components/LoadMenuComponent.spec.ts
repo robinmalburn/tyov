@@ -23,17 +23,21 @@ import localStorage, { supportsLocalStorage } from 'Libs/localStorage'
 
 describe('LoadMenuComponent', () => {
   let notificationsStore
+  const mockedDeserialize = vi.mocked(deserialize)
+  const mockedSupportsLocalStorage = vi.mocked(supportsLocalStorage)
+  const mockedRestoreState = vi.mocked(restoreState)
+  const mockedLocalStorageGet = vi.mocked(localStorage.get)
 
   beforeEach(() => {
     setActivePinia(createPinia())
     notificationsStore = useNotificationsStore()
 
-    deserialize.mockImplementation(() => ({
+    mockedDeserialize.mockImplementation(() => ({
       test: 'data',
     }))
 
-    supportsLocalStorage.mockImplementation(() => true)
-    localStorage.get.mockImplementation(() => 'save-content')
+    mockedSupportsLocalStorage.mockImplementation(() => true)
+    mockedLocalStorageGet.mockImplementation(() => 'save-content')
   })
 
   afterEach(() => {
@@ -65,7 +69,7 @@ describe('LoadMenuComponent', () => {
   })
 
   it("Does not render the 'From Local Storage' button if local storage is not supported", async () => {
-    supportsLocalStorage.mockReturnValue(false)
+    mockedSupportsLocalStorage.mockReturnValue(false)
 
     const wrapper = mount(LoadMenuComponent)
     await wrapper.vm.$nextTick()
@@ -110,14 +114,14 @@ describe('LoadMenuComponent', () => {
       },
     }
 
-    wrapper.vm.load(mockEvent)
+    ;(wrapper.vm as any).load(mockEvent)
 
     expect(mockReadAsText).toHaveBeenCalled()
     expect(hideSpy).toHaveBeenCalled()
 
     mockReader.onload()
 
-    expect(restoreState).toHaveBeenCalledWith({ test: 'data' })
+    expect(mockedRestoreState).toHaveBeenCalledWith({ test: 'data' })
   })
 
   it.each([[[]], [['file1', 'file2']]])(
@@ -153,11 +157,11 @@ describe('LoadMenuComponent', () => {
         },
       }
 
-      wrapper.vm.load(mockEvent)
+      ;(wrapper.vm as any).load(mockEvent)
 
       expect(showNotificationSpy).toHaveBeenCalled()
       expect(mockReadAsText).not.toHaveBeenCalled()
-      expect(restoreState).not.toHaveBeenCalled()
+      expect(mockedRestoreState).not.toHaveBeenCalled()
     },
   )
 
@@ -189,14 +193,14 @@ describe('LoadMenuComponent', () => {
       },
     }
 
-    wrapper.vm.load(mockEvent)
+    ;(wrapper.vm as any).load(mockEvent)
 
     expect(mockReadAsText).toHaveBeenCalled()
     expect(hideSpy).toHaveBeenCalled()
 
     mockReader.onerror()
 
-    expect(restoreState).not.toHaveBeenCalled()
+    expect(mockedRestoreState).not.toHaveBeenCalled()
     expect(showNotificationSpy).toHaveBeenCalled()
   })
 
@@ -221,8 +225,8 @@ describe('LoadMenuComponent', () => {
     await wrapper.vm.$nextTick()
 
     expect(hideSpy).toHaveBeenCalled()
-    expect(localStorage.get).toHaveBeenCalledWith('save-game')
-    expect(deserialize).toHaveBeenCalledWith('save-content')
-    expect(restoreState).toHaveBeenCalledWith({ test: 'data' })
+    expect(mockedLocalStorageGet).toHaveBeenCalledWith('save-game')
+    expect(mockedDeserialize).toHaveBeenCalledWith('save-content')
+    expect(mockedRestoreState).toHaveBeenCalledWith({ test: 'data' })
   })
 })

@@ -43,7 +43,7 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { computed } from 'vue'
 import ActionsPane from './components/ActionsPane.vue'
 import CharactersPane from './components/CharactersPane.vue'

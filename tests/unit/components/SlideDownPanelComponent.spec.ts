@@ -6,7 +6,7 @@ describe('components/SlideDownPanelComponent.vue', () => {
   it('Renders the panel closed by default', () => {
     const wrapper = mount(SlideDownPanelComponent)
     const button = wrapper.findComponent({ name: 'ButtonComponent' })
-    expect(wrapper.vm.isOpen).toBe(false)
+    expect((wrapper.vm as any).isOpen).toBe(false)
     expect(button.text()).toBe('Show')
   })
 
@@ -20,7 +20,7 @@ describe('components/SlideDownPanelComponent.vue', () => {
     expect(wrapper.emitted().change).toBeTruthy()
     expect(button.text()).toEqual('Close')
     expect(wrapper.emitted().change[0][0]).toEqual(true)
-    expect(wrapper.vm.isOpen).toBe(true)
+    expect((wrapper.vm as any).isOpen).toBe(true)
 
     button.vm.$emit('click')
     await wrapper.vm.$nextTick()
@@ -28,7 +28,7 @@ describe('components/SlideDownPanelComponent.vue', () => {
     expect(wrapper.emitted().change).toBeTruthy()
     expect(button.text()).toEqual('Show')
     expect(wrapper.emitted().change[1][0]).toEqual(false)
-    expect(wrapper.vm.isOpen).toBe(false)
+    expect((wrapper.vm as any).isOpen).toBe(false)
   })
 
   it('Displays the correct heading slot when the panel is open or closed', async () => {
