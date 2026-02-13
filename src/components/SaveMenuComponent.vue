@@ -23,14 +23,14 @@
   </SlideDownPanelComponent>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import ButtonComponent from 'Components/ButtonComponent'
 import SlideDownPanelComponent from 'Components/SlideDownPanelComponent'
 import { getStateFromStore, serialize } from 'Libs/gameState'
 import localStorage, { supportsLocalStorage } from 'Libs/localStorage'
 import { ref, computed, useTemplateRef } from 'vue'
 
-const download = useTemplateRef('download')
+const download = useTemplateRef<HTMLAnchorElement>('download')
 
 const saving = ref(false)
 
@@ -38,6 +38,11 @@ const doesSupportLocalStorage = computed(() => supportsLocalStorage())
 
 const toFile = () => {
   const data = serialize(getStateFromStore())
+
+  if (!download.value) {
+    return
+  }
+
   download.value.href = URL.createObjectURL(
     new Blob([data], { type: 'text/plain' }),
   )
@@ -48,6 +53,6 @@ const toFile = () => {
 const toLocalStorage = () => {
   const data = serialize(getStateFromStore())
   localStorage.set('save-game', data)
-  saving.loading = false
+  saving.value = false
 }
 </script>

@@ -90,69 +90,56 @@
   </CardComponent>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import CardComponent from 'Components/CardComponent'
 import ButtonComponent from 'Components/ButtonComponent'
 import FormToggleComponent from 'Components/FormToggleComponent'
 import HeadingComponent from 'Components/HeadingComponent'
 import RemoveCrossComponent from 'Components/RemoveCrossComponent'
-import { eventEntityFactory } from 'Libs/entities/memories'
+import {
+  eventEntityFactory,
+  type Event,
+  type Memory,
+} from 'Libs/entities/memories'
 import { useMemoriesStore } from 'Stores/memories'
 import { useResourcesStore } from 'Stores/resources'
 import { useNotificationsStore } from 'Stores/notifications'
 import { computed, ref } from 'vue'
 
-const emit = defineEmits([
-  'edit-memory',
-  'toggle-memory',
-  'diarise-memory',
-  'undiarise-memory',
-  'add-event',
-  'remove-event',
-])
+const emit = defineEmits<{
+  'edit-memory': [memory: Memory]
+  'toggle-memory': [memory: Memory]
+  'diarise-memory': [memory: Memory]
+  'undiarise-memory': [memory: Memory]
+  'add-event': [event: Event]
+  'remove-event': [event: Event]
+}>()
 
-const props = defineProps({
-  memory: {
-    type: Object,
-    required: true,
-    validator: (memory) =>
-      'string' === typeof memory.diary && 'boolean' === typeof memory.forgotten,
-  },
-  canAddMemories: {
-    type: Boolean,
-    required: true,
-  },
-  canAddEvents: {
-    type: Boolean,
-    required: true,
-  },
-  canDiarise: {
-    type: Boolean,
-    required: true,
-  },
-  canToggle: {
-    type: Boolean,
-    required: true,
-  },
-})
+const props = defineProps<{
+  memory: Memory
+  canAddMemories: boolean
+  canAddEvents: boolean
+  canDiarise: boolean
+  canToggle: boolean
+}>()
 
 const memorysStore = useMemoriesStore()
 const resourcesStore = useResourcesStore()
 const notificationsStore = useNotificationsStore()
 
-const showControls = ref(false)
-const newEvent = ref(eventEntityFactory({ memory: props.memory.id }))
+const showControls = ref<boolean>(false)
+const newEvent = ref<Event>(eventEntityFactory({ memory: props.memory.id }))
 
-const events = computed(() => memorysStore.sortedEvents)
+const events = (memory: Memory): Event[] => memorysStore.sortedEvents(memory)
 const isDiaryFull = computed(() => resourcesStore.isDiaryFull)
 
-const toggleControls = () => {
+const toggleControls = (): void => {
   notificationsStore.hide()
   showControls.value = !showControls.value
   newEvent.value = eventEntityFactory({ memory: props.memory.id })
 }
 
-const add = () => {
+const add = (): void => {
   if (newEvent.value.description === '') {
     notificationsStore.showNotification({
       message: 'You must provide a description',

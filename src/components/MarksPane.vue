@@ -77,22 +77,21 @@
   </CardComponent>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import CardComponent from 'Components/CardComponent'
 import FormComponent from 'Components/FormComponent'
 import FormToggleComponent from 'Components/FormToggleComponent'
 import HeadingComponent from 'Components/HeadingComponent'
-import entityFactory from 'Libs/entities/marks'
+import entityFactory, { type Mark } from 'Libs/entities/marks'
 import { useMarksStore } from 'Stores/marks'
 import { useNotificationsStore } from 'Stores/notifications'
-import { storeToRefs } from 'pinia'
 import { ref, computed } from 'vue'
 
 const marksStore = useMarksStore()
 const notificationStore = useNotificationsStore()
 
-const newMark = ref(entityFactory())
-const editMark = ref(entityFactory())
+const newMark = ref<Mark>(entityFactory())
+const editMark = ref<Mark>(entityFactory())
 const showAddingControls = ref(false)
 const showEditingControls = ref(false)
 
@@ -124,22 +123,18 @@ const validatedAddMark = () => {
   toggleAddingControls()
 }
 
-const validatedRemoveMark = () => {
-  let markToRemove
-
-  marks.value.some((mark) => {
-    if (mark.id === editMark.value.id) {
-      markToRemove = mark
-      return true
-    }
-  })
+const validatedRemoveMark = (): void => {
+  const markToRemove = marks.value.find((mark) => mark.id === editMark.value.id)
+  if (!markToRemove) {
+    return
+  }
 
   marksStore.remove(markToRemove)
 
   closeEditingControls()
 }
 
-const validatedUpdateMark = () => {
+const validatedUpdateMark = (): void => {
   if (editMark.value.description === '') {
     notificationStore.showNotification({
       message: 'You must provide a description',
@@ -152,7 +147,7 @@ const validatedUpdateMark = () => {
   closeEditingControls()
 }
 
-const startEdit = (mark) => {
+const startEdit = (mark: Mark): void => {
   editMark.value = entityFactory(mark)
   showEditingControls.value = true
 }

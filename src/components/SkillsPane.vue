@@ -109,12 +109,12 @@
   </CardComponent>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import CardComponent from 'Components/CardComponent'
 import HeadingComponent from 'Components/HeadingComponent'
 import FormComponent from 'Components/FormComponent'
 import FormToggleComponent from 'Components/FormToggleComponent'
-import entityFactory from 'Libs/entities/skills'
+import entityFactory, { type Skill } from 'Libs/entities/skills'
 import { computed, ref } from 'vue'
 import { useSkillsStore } from 'Stores/skills'
 import { useNotificationsStore } from 'Stores/notifications'
@@ -123,13 +123,13 @@ const skillsStore = useSkillsStore()
 
 const showAddingControls = ref(false)
 const showEditingControls = ref(false)
-const newSkill = ref(entityFactory())
-const editSkill = ref(entityFactory())
+const newSkill = ref<Skill>(entityFactory())
+const editSkill = ref<Skill>(entityFactory())
 
 const skills = computed(() => skillsStore.sortedSkills)
 const notificationStore = useNotificationsStore()
 
-const startEdit = (skill) => {
+const startEdit = (skill: Skill): void => {
   notificationStore.hide()
   editSkill.value = entityFactory(skill)
   showEditingControls.value = true
@@ -161,7 +161,7 @@ const validatedAddSkill = () => {
   toggleAddingControls()
 }
 
-const validatedToggleSkill = (skill) => {
+const validatedToggleSkill = (skill: Skill): void => {
   notificationStore.hide()
 
   if (editSkill.value.id === skill.id) {
@@ -188,15 +188,13 @@ const validatedUpdateSkill = () => {
   closeEditingControls()
 }
 
-const validatedRemoveSkill = () => {
-  let skillToRemove
-
-  skills.value.some((skill) => {
-    if (skill.id === editSkill.value.id) {
-      skillToRemove = skill
-      return true
-    }
-  })
+const validatedRemoveSkill = (): void => {
+  const skillToRemove = skills.value.find(
+    (skill) => skill.id === editSkill.value.id,
+  )
+  if (!skillToRemove) {
+    return
+  }
 
   skillsStore.remove(skillToRemove)
 

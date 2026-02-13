@@ -24,7 +24,7 @@
   </CardComponent>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import CardComponent from './CardComponent.vue'
 import ButtonComponent from './ButtonComponent.vue'
 import HeadingComponent from './HeadingComponent.vue'

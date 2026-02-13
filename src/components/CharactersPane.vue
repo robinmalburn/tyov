@@ -74,7 +74,7 @@
         placeholder="Name"
         class="shadow appearance-none border rounded w-full py-1 px-2 m-1 text-gray-700 leading-tight focus:outline-none focus:ring-2 ring-gray-200"
         v-model="editCharacter.name"
-        @keyup.enter="add"
+        @keyup.enter="validatedUpdate"
       />
       <textarea
         placeholder="Bio"
@@ -145,12 +145,12 @@
   </CardComponent>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import CardComponent from 'Components/CardComponent'
 import HeadingComponent from 'Components/HeadingComponent'
 import FormComponent from 'Components/FormComponent'
 import FormToggleComponent from 'Components/FormToggleComponent'
-import entityFactory from 'Libs/entities/characters'
+import entityFactory, { type Character } from 'Libs/entities/characters'
 import { useCharactersStore } from 'Stores/characters'
 import { useNotificationsStore } from 'Stores/notifications'
 import { ref, computed, nextTick, useTemplateRef } from 'vue'
@@ -158,12 +158,12 @@ import { ref, computed, nextTick, useTemplateRef } from 'vue'
 const notificationsStore = useNotificationsStore()
 const charactersStore = useCharactersStore()
 
-const editForm = useTemplateRef('editForm')
+const editForm = useTemplateRef<{ $el: HTMLElement }>('editForm')
 
 const showAddingControls = ref(false)
 const showEditingControls = ref(false)
-const editCharacter = ref(entityFactory())
-const newCharacter = ref(entityFactory())
+const editCharacter = ref<Character>(entityFactory())
+const newCharacter = ref<Character>(entityFactory())
 
 const characters = computed(() => charactersStore.sortedCharacters)
 
@@ -179,7 +179,7 @@ const closeEditingControls = () => {
   editCharacter.value = entityFactory()
 }
 
-const validatedToggle = (character) => {
+const validatedToggle = (character: Character): void => {
   notificationsStore.hide()
 
   if (editCharacter.value.id === character.id) {
@@ -207,15 +207,14 @@ const validatedAdd = () => {
   toggleAddingControls()
 }
 
-const validatedRemove = () => {
-  let toRemove
+const validatedRemove = (): void => {
+  const toRemove = characters.value.find(
+    (character) => character.id === editCharacter.value.id,
+  )
 
-  characters.value.some((character) => {
-    if (character.id === editCharacter.value.id) {
-      toRemove = character
-      return true
-    }
-  })
+  if (!toRemove) {
+    return
+  }
 
   charactersStore.remove(toRemove)
   closeEditingControls()
@@ -235,13 +234,16 @@ const validatedUpdate = () => {
   closeEditingControls()
 }
 
-const startEdit = (character) => {
+const startEdit = (character: Character): void => {
   editCharacter.value = entityFactory(character)
   showEditingControls.value = true
 
   // Scroll the edit form in the next tick to allow the dom to be updated.
   nextTick(() => {
-    const rect = editForm.value.$el.getBoundingClientRect()
+    const rect = editForm.value?.$el.getBoundingClientRect()
+    if (!rect) {
+      return
+    }
     window.scrollTo({ top: rect.y + window.scrollY, behavior: 'smooth' })
   })
 }

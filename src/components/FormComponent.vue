@@ -15,13 +15,21 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import ButtonComponent from 'Components/ButtonComponent'
 
-const props = defineProps({
-  buttons: {
-    type: Array,
-    default: () => [
+type FormButton = {
+  type: string
+  event: string
+  label: string
+}
+
+const props = withDefaults(
+  defineProps<{
+    buttons?: FormButton[]
+  }>(),
+  {
+    buttons: () => [
       {
         type: 'default',
         event: 'save',
@@ -33,20 +41,8 @@ const props = defineProps({
         label: 'Cancel',
       },
     ],
-    validator: (values) =>
-      values.every((btn) => {
-        if (typeof btn !== 'object') {
-          return false
-        }
-
-        const keys = Object.keys(btn)
-
-        return (
-          keys.includes('type') &&
-          keys.includes('event') &&
-          keys.includes('label')
-        )
-      }),
   },
-})
+)
+
+defineEmits<(event: string) => void>()
 </script>

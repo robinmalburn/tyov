@@ -199,14 +199,19 @@
   </CardComponent>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import CardComponent from 'Components/CardComponent'
 import HeadingComponent from 'Components/HeadingComponent'
 import FormComponent from 'Components/FormComponent'
 import FormToggleComponent from 'Components/FormToggleComponent'
 import MemoryComponent from 'Components/MemoryComponent'
 import SlideDownPanelComponent from 'Components/SlideDownPanelComponent'
-import { memoryEntityFactory, eventEntityFactory } from 'Libs/entities/memories'
+import {
+  memoryEntityFactory,
+  eventEntityFactory,
+  type Event,
+  type Memory,
+} from 'Libs/entities/memories'
 import { computed, ref, nextTick, useTemplateRef } from 'vue'
 import { useMemoriesStore } from 'Stores/memories'
 import { useResourcesStore } from 'Stores/resources'
@@ -214,15 +219,15 @@ import { useNotificationsStore } from 'Stores/notifications'
 
 const showAddingControls = ref(false)
 const showEditingControls = ref(false)
-const editMemory = ref(memoryEntityFactory())
-const editEvents = ref([])
-const newMemory = ref(memoryEntityFactory())
+const editMemory = ref<Memory>(memoryEntityFactory())
+const editEvents = ref<Event[]>([])
+const newMemory = ref<Memory>(memoryEntityFactory())
 
 const memoriesStore = useMemoriesStore()
 const resourcesStore = useResourcesStore()
 const notificationStore = useNotificationsStore()
 
-const editForm = useTemplateRef('editForm')
+const editForm = useTemplateRef<{ $el: HTMLElement }>('editForm')
 
 const canAddMemories = computed(() => memoriesStore.canAddMemories)
 const forgottenMemories = computed(() => memoriesStore.forgottenMemories)
@@ -232,8 +237,8 @@ const hasDiary = computed(() => resourcesStore.hasDiary)
 const isDiaryFull = computed(() => resourcesStore.isDiaryFull)
 const diaryMemories = computed(() => resourcesStore.memories)
 
-const events = (memory) => memoriesStore.sortedEvents(memory)
-const hasEvents = (memory) => memoriesStore.hasEvents(memory)
+const events = (memory: Memory): Event[] => memoriesStore.sortedEvents(memory)
+const hasEvents = (memory: Memory): boolean => memoriesStore.hasEvents(memory)
 
 const toggleAddingControls = () => {
   notificationStore.hide()
@@ -278,7 +283,7 @@ const validatedRemoveMemory = () => {
   closeEditingControls()
 }
 
-const validatedRemoveEvent = (event) => {
+const validatedRemoveEvent = (event: Event): void => {
   notificationStore.hide()
   if (event.memory === editMemory.value.id) {
     notificationStore.showNotification({
@@ -302,23 +307,26 @@ const validatedUpdateMemory = () => {
   closeEditingControls()
 }
 
-const diariseMemory = (memory) => {
+const diariseMemory = (memory: Memory): void => {
+  if (!diary.value) {
+    return
+  }
   memoriesStore.diarise({ diary: diary.value, memory })
 }
 
-const undiariseMemory = (memory) => {
+const undiariseMemory = (memory: Memory): void => {
   memoriesStore.undiarise(memory)
 }
 
-const addEvent = (memory) => {
-  memoriesStore.addEvent(memory)
+const addEvent = (event: Event): void => {
+  memoriesStore.addEvent(event)
 }
 
-const toggleMemory = (memory) => {
+const toggleMemory = (memory: Memory): void => {
   memoriesStore.toggleMemory(memory)
 }
 
-const startEdit = (memory) => {
+const startEdit = (memory: Memory): void => {
   notificationStore.hide()
   editMemory.value = memoryEntityFactory(memory)
   editEvents.value = events(editMemory.value).map((event) =>
@@ -328,7 +336,10 @@ const startEdit = (memory) => {
 
   // Scroll the edit form in the next tick to allow the dom to be updated.
   nextTick(() => {
-    const rect = editForm.value.$el.getBoundingClientRect()
+    const rect = editForm.value?.$el.getBoundingClientRect()
+    if (!rect) {
+      return
+    }
     window.scrollTo({ top: rect.y + window.scrollY, behavior: 'smooth' })
   })
 }

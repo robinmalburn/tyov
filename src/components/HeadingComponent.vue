@@ -1,5 +1,5 @@
-<script setup>
-import { computed, useAttrs } from 'vue'
+<script setup lang="ts">
+import { computed, useAttrs, type HTMLAttributes } from 'vue'
 
 const HEADING_STYLES = [
   {
@@ -26,7 +26,8 @@ const props = defineProps({
   level: {
     type: String,
     default: '1',
-    validator: (level) => ['1', '2', '3', '4', '5', '6'].includes(level),
+    validator: (level: string) =>
+      ['1', '2', '3', '4', '5', '6'].includes(level),
   },
 })
 
@@ -37,17 +38,28 @@ const headingTag = computed(() => {
 })
 
 const headingClasses = computed(() => {
-  const extraClasses = {}
+  const extraClasses: Record<string, boolean> = {}
+  const attrClass = attrs.class as HTMLAttributes['class']
 
   // Handle class from attrs
-  if (attrs.class) {
-    if (typeof attrs.class === 'string') {
-      const classes = attrs.class.split(' ')
+  if (attrClass) {
+    if (typeof attrClass === 'string') {
+      const classes = attrClass.split(' ')
       for (const cls of classes) {
         extraClasses[cls] = true
       }
-    } else if (typeof attrs.class === 'object') {
-      Object.assign(extraClasses, attrs.class)
+    } else if (Array.isArray(attrClass)) {
+      attrClass
+        .filter((value): value is string => typeof value === 'string')
+        .forEach((value) => {
+          extraClasses[value] = true
+        })
+    } else if (typeof attrClass === 'object') {
+      Object.entries(attrClass).forEach(([key, value]) => {
+        if (Boolean(value)) {
+          extraClasses[key] = true
+        }
+      })
     }
   }
 

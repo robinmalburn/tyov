@@ -52,7 +52,7 @@
           placeholder="Name"
           class="shadow appearance-none border rounded w-full py-1 px-2 m-1 text-gray-700 leading-tight focus:outline-none focus:ring-2 ring-gray-200"
           v-model="newDiary.name"
-          @keyup.enter="addDiary"
+          @keyup.enter="validatedAddDiary"
         />
         <label>
           <input
@@ -243,7 +243,7 @@
   </CardComponent>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import CardComponent from 'Components/CardComponent'
 import HeadingComponent from 'Components/HeadingComponent'
 import FormComponent from 'Components/FormComponent'
@@ -251,6 +251,8 @@ import FormToggleComponent from 'Components/FormToggleComponent'
 import {
   resourceEntityFactory,
   diaryEntityFactory,
+  type Diary,
+  type Resource,
 } from 'Libs/entities/resources'
 import { useResourcesStore } from 'Stores/resources'
 import { useNotificationsStore } from 'Stores/notifications'
@@ -263,10 +265,10 @@ const showAddingResourceControls = ref(false)
 const showAddingDiaryControls = ref(false)
 const showEditingResourceControls = ref(false)
 const showEditingDiaryControls = ref(false)
-const newResource = ref(resourceEntityFactory())
-const newDiary = ref(diaryEntityFactory())
-const editResource = ref(resourceEntityFactory())
-const editDiary = ref(diaryEntityFactory())
+const newResource = ref<Resource>(resourceEntityFactory())
+const newDiary = ref<Diary>(diaryEntityFactory())
+const editResource = ref<Resource>(resourceEntityFactory())
+const editDiary = ref<Diary>(diaryEntityFactory())
 
 const diaries = computed(() => resourcesStore.sortedDiaries)
 const resources = computed(() => resourcesStore.sortedResources)
@@ -310,7 +312,7 @@ const validatedAddResource = () => {
   toggleAddingResourceControls()
 }
 
-const validatedToggleResource = (resource) => {
+const validatedToggleResource = (resource: Resource): void => {
   notificationsStore.hide()
 
   if (editResource.value.id === resource.id) {
@@ -324,7 +326,7 @@ const validatedToggleResource = (resource) => {
   resourcesStore.toggleResource(resource)
 }
 
-const validatedToggleDiary = (diary) => {
+const validatedToggleDiary = (diary: Diary): void => {
   notificationsStore.hide()
 
   if (editDiary.value.id === diary.id) {
@@ -411,40 +413,36 @@ const validatedUpdateDiary = () => {
   closeEditingDiaryControls()
 }
 
-const validatedRemoveResource = () => {
-  let resourceToRemove
-
-  resources.value.some((resource) => {
-    if (resource.id === editResource.value.id) {
-      resourceToRemove = resource
-      return true
-    }
-  })
+const validatedRemoveResource = (): void => {
+  const resourceToRemove = resources.value.find(
+    (resource) => resource.id === editResource.value.id,
+  )
+  if (!resourceToRemove) {
+    return
+  }
 
   resourcesStore.removeResource(resourceToRemove)
   closeEditingResourceControls()
 }
 
-const validatedRemoveDiary = () => {
-  let diaryToRemove
-
-  diaries.value.some((diary) => {
-    if (diary.id === editDiary.value.id) {
-      diaryToRemove = diary
-      return true
-    }
-  })
+const validatedRemoveDiary = (): void => {
+  const diaryToRemove = diaries.value.find(
+    (diary) => diary.id === editDiary.value.id,
+  )
+  if (!diaryToRemove) {
+    return
+  }
 
   resourcesStore.removeDiary(diaryToRemove)
   closeEditingDiaryControls()
 }
 
-const startEditResource = (resource) => {
+const startEditResource = (resource: Resource): void => {
   editResource.value = resourceEntityFactory(resource)
   showEditingResourceControls.value = true
 }
 
-const startEditDiary = (diary) => {
+const startEditDiary = (diary: Diary): void => {
   editDiary.value = diaryEntityFactory(diary)
   showEditingDiaryControls.value = true
 }

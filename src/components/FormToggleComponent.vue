@@ -19,7 +19,7 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import ButtonComponent from 'Components/ButtonComponent'
 import FormComponent from 'Components/FormComponent'
 
@@ -31,9 +31,18 @@ const props = defineProps({
   type: {
     type: String,
     default: 'default',
-    validator: (value) => ['default', 'primary', 'secondary'].includes(value),
+    validator: (value: string) =>
+      ['default', 'primary', 'secondary'].includes(value),
   },
 })
 
-const emit = defineEmits(['toggle', 'save'])
+const emit = defineEmits<{
+  toggle: [showControls: boolean]
+  save: []
+}>()
+
+defineSlots<{
+  button?: () => unknown
+  form?: () => unknown
+}>()
 </script>

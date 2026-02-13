@@ -7,6 +7,8 @@
   />
 </template>
 
-<script setup>
-const emit = defineEmits(['remove'])
+<script setup lang="ts">
+const emit = defineEmits<{
+  remove: []
+}>()
 </script>

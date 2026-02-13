@@ -19,7 +19,7 @@
   </transition>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import RemoveCrossComponent from 'Components/RemoveCrossComponent'
 import { computed, watch } from 'vue'
 import { useNotificationsStore } from 'Stores/notifications'
@@ -44,7 +44,7 @@ const TYPES = {
   },
 }
 
-var timer = null
+let timer: ReturnType<typeof setTimeout> | null = null
 const timeout = 5000
 
 const classes = computed(() => {
@@ -62,7 +62,9 @@ const classes = computed(() => {
 watch(
   () => notificationStore.visible,
   (value) => {
-    clearTimeout(timer)
+    if (timer) {
+      clearTimeout(timer)
+    }
 
     if (value) {
       timer = setTimeout(() => {

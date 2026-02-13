@@ -7,7 +7,7 @@
   </button>
 </template>
 
-<script>
+<script lang="ts">
 const BUTTON_TYPES = {
   default: {
     'bg-gray-200': true,
@@ -29,16 +29,18 @@ const BUTTON_TYPES = {
 }
 </script>
 
-<script setup>
+<script setup lang="ts">
 import { computed } from 'vue'
+
+type ButtonType = keyof typeof BUTTON_TYPES
 
 const props = defineProps({
   type: {
     type: String,
     default: 'default',
-    validator: (type) => Object.keys(BUTTON_TYPES).includes(type),
+    validator: (type: string) => Object.keys(BUTTON_TYPES).includes(type),
   },
 })
 
-const typeClasses = computed(() => BUTTON_TYPES[props.type])
+const typeClasses = computed(() => BUTTON_TYPES[props.type as ButtonType])
 </script>

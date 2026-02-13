@@ -9,7 +9,7 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { ref, watch, computed } from 'vue'
 import ButtonComponent from './ButtonComponent.vue'
 
@@ -19,7 +19,15 @@ const props = defineProps({
     default: false,
   },
 })
-const emit = defineEmits(['change'])
+const emit = defineEmits<{
+  change: [value: boolean]
+}>()
+
+defineSlots<{
+  'closed-heading'?: () => unknown
+  'open-heading'?: () => unknown
+  default?: () => unknown
+}>()
 
 const isOpen = ref(props.open)
 watch(

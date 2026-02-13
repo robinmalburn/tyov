@@ -116,12 +116,12 @@
   </CardComponent>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import CardComponent from 'Components/CardComponent'
 import FormToggleComponent from 'Components/FormToggleComponent'
 import HeadingComponent from 'Components/HeadingComponent'
 import { ref, computed, watch } from 'vue'
-import entityFactory from 'Libs/entities/prompts'
+import entityFactory, { type Prompt } from 'Libs/entities/prompts'
 import { useActionsStore } from 'Stores/actions'
 import { useNotificationsStore } from 'Stores/notifications'
 
@@ -129,7 +129,7 @@ const store = useActionsStore()
 const notificationsStore = useNotificationsStore()
 
 const showControls = ref(false)
-const newPrompt = ref(
+const newPrompt = ref<Prompt>(
   entityFactory({
     page: 1,
     count: 1,
@@ -138,7 +138,7 @@ const newPrompt = ref(
 const makeCurrent = ref(false)
 
 const tally = computed(() => {
-  return (count) => {
+  return (count: number): string => {
     let tally = ''
     let char = '&omicron;'
     if (count >= 3) {
@@ -153,7 +153,7 @@ const tally = computed(() => {
   }
 })
 const firstUnusedPrompt = computed(() => {
-  var unused = 1
+  let unused = 1
 
   if (!store.sortedPrompts.length) {
     return unused
@@ -176,9 +176,9 @@ const firstUnusedPrompt = computed(() => {
   return unused
 })
 
-const validatedAddPrompt = () => {
+const validatedAddPrompt = (): void => {
   const promptExists = store.sortedPrompts.some((prompt) => {
-    return prompt.page === parseInt(newPrompt.value.page, 10)
+    return prompt.page === Number(newPrompt.value.page)
   })
 
   if (promptExists) {
@@ -193,7 +193,7 @@ const validatedAddPrompt = () => {
     ...newPrompt.value,
   }
 
-  prompt.page = parseInt(prompt.page, 10)
+  prompt.page = Number(prompt.page)
 
   store.addPrompt(prompt)
 
@@ -204,7 +204,7 @@ const validatedAddPrompt = () => {
   toggleControls()
 }
 
-const toggleControls = () => {
+const toggleControls = (): void => {
   notificationsStore.hide()
 
   showControls.value = !showControls.value
