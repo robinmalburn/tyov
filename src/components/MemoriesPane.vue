@@ -200,12 +200,12 @@
 </template>
 
 <script setup lang="ts">
-import CardComponent from 'Components/CardComponent'
-import HeadingComponent from 'Components/HeadingComponent'
-import FormComponent from 'Components/FormComponent'
-import FormToggleComponent from 'Components/FormToggleComponent'
-import MemoryComponent from 'Components/MemoryComponent'
-import SlideDownPanelComponent from 'Components/SlideDownPanelComponent'
+import CardComponent from 'Components/CardComponent.vue'
+import HeadingComponent from 'Components/HeadingComponent.vue'
+import FormComponent from 'Components/FormComponent.vue'
+import FormToggleComponent from 'Components/FormToggleComponent.vue'
+import MemoryComponent from 'Components/MemoryComponent.vue'
+import SlideDownPanelComponent from 'Components/SlideDownPanelComponent.vue'
 import {
   memoryEntityFactory,
   eventEntityFactory,

@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import RemoveCrossComponent from 'Components/RemoveCrossComponent'
+import RemoveCrossComponent from 'Components/RemoveCrossComponent.vue'
 import { shallowMount } from '@vue/test-utils'
 
 describe('components/RemoveCrossComponent.vue', () => {

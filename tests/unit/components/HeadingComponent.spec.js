@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import HeadingComponent from 'Components/HeadingComponent'
+import HeadingComponent from 'Components/HeadingComponent.vue'
 import { shallowMount } from '@vue/test-utils'
 
 const HEADING_STYLES = {

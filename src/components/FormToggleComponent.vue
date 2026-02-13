@@ -20,8 +20,8 @@
 </template>
 
 <script setup lang="ts">
-import ButtonComponent from 'Components/ButtonComponent'
-import FormComponent from 'Components/FormComponent'
+import ButtonComponent from 'Components/ButtonComponent.vue'
+import FormComponent from 'Components/FormComponent.vue'
 
 const props = defineProps({
   showControls: {

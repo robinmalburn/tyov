@@ -117,9 +117,9 @@
 </template>
 
 <script setup lang="ts">
-import CardComponent from 'Components/CardComponent'
-import FormToggleComponent from 'Components/FormToggleComponent'
-import HeadingComponent from 'Components/HeadingComponent'
+import CardComponent from 'Components/CardComponent.vue'
+import FormToggleComponent from 'Components/FormToggleComponent.vue'
+import HeadingComponent from 'Components/HeadingComponent.vue'
 import { ref, computed, watch } from 'vue'
 import entityFactory, { type Prompt } from 'Libs/entities/prompts'
 import { useActionsStore } from 'Stores/actions'

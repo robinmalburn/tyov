@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import ButtonComponent from 'Components/ButtonComponent'
+import ButtonComponent from 'Components/ButtonComponent.vue'
 import { shallowMount } from '@vue/test-utils'
 
 const CLASSES = [

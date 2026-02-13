@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import CardComponent from 'Components/CardComponent'
+import CardComponent from 'Components/CardComponent.vue'
 import { shallowMount } from '@vue/test-utils'
 
 const CLASSES = [

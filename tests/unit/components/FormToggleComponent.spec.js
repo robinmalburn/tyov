@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import FormToggleComponent from 'Components/FormToggleComponent'
+import FormToggleComponent from 'Components/FormToggleComponent.vue'
 import { shallowMount, mount } from '@vue/test-utils'
 
 describe('components/FormToggleComponent.vue', () => {

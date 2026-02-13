@@ -14,9 +14,9 @@ vi.mock('Libs/localStorage', () => ({
 }))
 
 // Now import components and dependencies
-import LoadMenuComponent from 'Components/LoadMenuComponent'
-import SlideDownPanelComponent from 'Components/SlideDownPanelComponent'
-import ButtonComponent from 'Components/ButtonComponent'
+import LoadMenuComponent from 'Components/LoadMenuComponent.vue'
+import SlideDownPanelComponent from 'Components/SlideDownPanelComponent.vue'
+import ButtonComponent from 'Components/ButtonComponent.vue'
 import { useNotificationsStore } from 'Stores/notifications'
 import { restoreState, deserialize } from 'Libs/gameState'
 import localStorage, { supportsLocalStorage } from 'Libs/localStorage'

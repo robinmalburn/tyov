@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import SlideDownPanelComponent from 'Components/SlideDownPanelComponent'
+import SlideDownPanelComponent from 'Components/SlideDownPanelComponent.vue'
 import { mount, shallowMount } from '@vue/test-utils'
 
 describe('components/SlideDownPanelComponent.vue', () => {

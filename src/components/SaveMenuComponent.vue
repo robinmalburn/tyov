@@ -24,8 +24,8 @@
 </template>
 
 <script setup lang="ts">
-import ButtonComponent from 'Components/ButtonComponent'
-import SlideDownPanelComponent from 'Components/SlideDownPanelComponent'
+import ButtonComponent from 'Components/ButtonComponent.vue'
+import SlideDownPanelComponent from 'Components/SlideDownPanelComponent.vue'
 import { getStateFromStore, serialize } from 'Libs/gameState'
 import localStorage, { supportsLocalStorage } from 'Libs/localStorage'
 import { ref, computed, useTemplateRef } from 'vue'

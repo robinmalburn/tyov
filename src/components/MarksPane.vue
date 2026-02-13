@@ -78,10 +78,10 @@
 </template>
 
 <script setup lang="ts">
-import CardComponent from 'Components/CardComponent'
-import FormComponent from 'Components/FormComponent'
-import FormToggleComponent from 'Components/FormToggleComponent'
-import HeadingComponent from 'Components/HeadingComponent'
+import CardComponent from 'Components/CardComponent.vue'
+import FormComponent from 'Components/FormComponent.vue'
+import FormToggleComponent from 'Components/FormToggleComponent.vue'
+import HeadingComponent from 'Components/HeadingComponent.vue'
 import entityFactory, { type Mark } from 'Libs/entities/marks'
 import { useMarksStore } from 'Stores/marks'
 import { useNotificationsStore } from 'Stores/notifications'

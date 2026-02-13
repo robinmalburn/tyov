@@ -19,7 +19,7 @@
 
 <script setup lang="ts">
 import ButtonComponent from './ButtonComponent.vue'
-import SlideDownPanelComponent from 'Components/SlideDownPanelComponent'
+import SlideDownPanelComponent from 'Components/SlideDownPanelComponent.vue'
 import { restoreState, deserialize } from 'Libs/gameState'
 import localStorage, { supportsLocalStorage } from 'Libs/localStorage'
 import { useNotificationsStore } from 'Stores/notifications'

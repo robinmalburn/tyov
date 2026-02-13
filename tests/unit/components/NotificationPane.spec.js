@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
-import NotificationPane from 'Components/NotificationPane'
+import NotificationPane from 'Components/NotificationPane.vue'
 import { shallowMount, mount } from '@vue/test-utils'
 import { createPinia, setActivePinia } from 'pinia'
 import { useNotificationsStore } from 'Stores/notifications'

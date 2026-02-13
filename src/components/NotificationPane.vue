@@ -20,7 +20,7 @@
 </template>
 
 <script setup lang="ts">
-import RemoveCrossComponent from 'Components/RemoveCrossComponent'
+import RemoveCrossComponent from 'Components/RemoveCrossComponent.vue'
 import { computed, watch } from 'vue'
 import { useNotificationsStore } from 'Stores/notifications'
 

@@ -8,6 +8,7 @@
   - `src/store/` Pinia stores.
   - `src/migrations/` save-state migrations.
   - `src/assets/` static assets.
+  - `src/types/` global and ambient TypeScript declarations (e.g. Vue module shims).
 - `tests/unit/` contains Vitest unit tests.
 - `dist/` is the production build output (generated).
 - Root config files include `vite.config.mjs`, `tailwind.config.js`, and `eslint.config.mjs`.
@@ -29,6 +30,7 @@ Use pnpm (preferred package manager in `package.json`).
 
 - Indentation: 2 spaces (match existing Vue component style).
 - File naming: Vue components use `PascalCase.vue` (e.g., `ButtonComponent.vue`).
+- Imports: use explicit `.vue` file extensions when importing Vue single-file components.
 - Tests: `*.spec.js` and `*.spec.ts` under `tests/unit/` with folder mirroring `src/`.
 - Linting: ESLint with `eslint-plugin-vue` (`eslint.config.mjs`). Run `pnpm lint` before opening a PR.
 - Tailwind CSS is enabled (see `tailwind.config.js`); prefer utility classes over ad-hoc CSS.

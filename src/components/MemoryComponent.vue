@@ -91,11 +91,11 @@
 </template>
 
 <script setup lang="ts">
-import CardComponent from 'Components/CardComponent'
-import ButtonComponent from 'Components/ButtonComponent'
-import FormToggleComponent from 'Components/FormToggleComponent'
-import HeadingComponent from 'Components/HeadingComponent'
-import RemoveCrossComponent from 'Components/RemoveCrossComponent'
+import CardComponent from 'Components/CardComponent.vue'
+import ButtonComponent from 'Components/ButtonComponent.vue'
+import FormToggleComponent from 'Components/FormToggleComponent.vue'
+import HeadingComponent from 'Components/HeadingComponent.vue'
+import RemoveCrossComponent from 'Components/RemoveCrossComponent.vue'
 import {
   eventEntityFactory,
   type Event,

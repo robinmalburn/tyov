@@ -16,7 +16,7 @@
 </template>
 
 <script setup lang="ts">
-import ButtonComponent from 'Components/ButtonComponent'
+import ButtonComponent from 'Components/ButtonComponent.vue'
 
 type FormButton = {
   type: string

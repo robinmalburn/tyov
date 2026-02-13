@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import FormComponent from 'Components/FormComponent'
+import FormComponent from 'Components/FormComponent.vue'
 import { shallowMount, mount } from '@vue/test-utils'
 
 const CONTAINER_CLASSES = ['my-1', 'flex', 'flex-col', 'md:flex-row']
