@@ -1,0 +1,1 @@
+import{u as e}from"./index-CMbUE4AI.js";const o={description:"Adds ID to resources and diaries.",requiredSignature:1,migrate(r){return r.resources.forEach(i=>{i.id||(i.id=e("resource"))}),r.diaries.forEach(i=>{i.id||(i.id=e("diary"))}),r}};export{o as default};

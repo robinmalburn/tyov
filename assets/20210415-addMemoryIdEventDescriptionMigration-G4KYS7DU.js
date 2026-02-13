@@ -1,0 +1,1 @@
+import{u as t}from"./index-CMbUE4AI.js";const n={description:"Adds ID to memories and events.",requiredSignature:1,migrate(e){return e.memories.forEach(i=>{i.id||(i.id=t("memory")),i.events.forEach((r,o,s)=>{typeof r=="string"&&(s[o]={description:r,id:t("event")})})}),e}};export{n as default};
