@@ -66,7 +66,7 @@ const serializedDataProvider = (): Array<[unknown, string]> => {
 describe('lib/gameState.js', () => {
   beforeEach(() => {
     setActivePinia(createPinia())
-    migrateMock.mockImplementation((data) => data)
+    migrateMock.mockImplementation(async (data) => data)
   })
 
   afterEach(() => {

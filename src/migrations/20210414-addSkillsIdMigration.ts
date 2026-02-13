@@ -1,6 +1,11 @@
 import uuid from 'Libs/uuid'
+import type { Migration, MigrationData } from './types'
 
-export default {
+type SkillsMigrationData = MigrationData & {
+  skills: Array<{ id?: string }>
+}
+
+const migration: Migration<SkillsMigrationData> = {
   description: 'Adds ID to skills.',
   requiredSignature: 1,
   migrate(data) {
@@ -13,3 +18,5 @@ export default {
     return data
   },
 }
+
+export default migration

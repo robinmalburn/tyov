@@ -1,11 +1,32 @@
-export default {
+import type { Migration, MigrationData } from './types'
+
+type MigratingMemory = {
+  id: string
+  diary?: string
+  diarised?: boolean
+  events: Array<{ memory?: string }>
+}
+
+type MigratingDiary = {
+  id: string
+  lost: boolean
+  memories?: Array<{ id: string }>
+}
+
+type DecoupledMemoryDiaryData = MigrationData & {
+  memories: MigratingMemory[]
+  diaries: MigratingDiary[]
+  events?: Array<{ memory?: string }>
+}
+
+const migration: Migration<DecoupledMemoryDiaryData> = {
   description: 'Decouples the nested state of memories, events and diaries.',
   requiredSignature: 2,
   migrate(data) {
-    const memoryMap = {}
+    const memoryMap: Record<string, DecoupledMemoryDiaryData['diaries']> = {}
 
     data.diaries.forEach((diary) => {
-      diary.memories.forEach((memory) => {
+      ;(diary.memories ?? []).forEach((memory) => {
         if (memoryMap[memory.id] === undefined) {
           memoryMap[memory.id] = []
         }
@@ -20,7 +41,7 @@ export default {
       data.events = []
     }
 
-    let len = data.events
+    let len = data.events.length
 
     data.memories.forEach((memory) => {
       if (memory.diarised !== undefined) {
@@ -34,11 +55,13 @@ export default {
       if (memoryMap[memory.id] !== undefined) {
         let diary = memoryMap[memory.id][0]
 
-        if (memoryMap[memory.id].length > 1 && diary === false) {
+        if (memoryMap[memory.id].length > 1 && diary.lost === true) {
           memoryMap[memory.id].some((d) => {
             if (d.lost === false) {
               diary = d
+              return true
             }
+            return false
           })
         }
 
@@ -54,3 +77,5 @@ export default {
     return data
   },
 }
+
+export default migration

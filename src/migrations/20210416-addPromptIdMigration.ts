@@ -1,6 +1,11 @@
 import uuid from 'Libs/uuid'
+import type { Migration, MigrationData } from './types'
 
-export default {
+type PromptsMigrationData = MigrationData & {
+  prompts: Array<{ id?: string; name?: string }>
+}
+
+const migration: Migration<PromptsMigrationData> = {
   description: 'Adds ID to prompts and removes name.',
   requiredSignature: 1,
   migrate(data) {
@@ -17,3 +22,5 @@ export default {
     return data
   },
 }
+
+export default migration

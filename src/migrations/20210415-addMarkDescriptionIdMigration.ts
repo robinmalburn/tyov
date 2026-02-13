@@ -1,6 +1,11 @@
 import uuid from 'Libs/uuid'
+import type { Migration, MigrationData } from './types'
 
-export default {
+type MarksMigrationData = MigrationData & {
+  marks: Array<string | { id?: string; description: string }>
+}
+
+const migration: Migration<MarksMigrationData> = {
   description: 'Adds ID & Description to marks.',
   requiredSignature: 1,
   migrate(data) {
@@ -16,3 +21,5 @@ export default {
     return data
   },
 }
+
+export default migration

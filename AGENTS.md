@@ -40,6 +40,9 @@ Use pnpm (preferred package manager in `package.json`).
 - Prefer explicit types for public functions and store state.
 - Avoid `any`; use `unknown` if necessary.
 - Reuse existing types and interfaces before introducing new ones.
+- For module-scoped helper types used by a single file, co-locate and keep them local to that file.
+- For types shared across multiple files in a feature folder, place them in a local `types.ts` within that folder (e.g. `src/migrations/types.ts`).
+- Reserve `src/types/` for global or ambient declarations (e.g. module shims), not routine feature-module contracts.
 
 ## State Management (Pinia)
 

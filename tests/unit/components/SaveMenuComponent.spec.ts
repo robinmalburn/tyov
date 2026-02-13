@@ -17,7 +17,7 @@ describe('SaveMenuComponent', () => {
   const mockedLocalStorageSet = vi.mocked(localStorage.set)
 
   beforeEach(() => {
-    mockedGetStateFromStore.mockImplementation(() => ({ test: 'data' } as any))
+    mockedGetStateFromStore.mockImplementation(() => ({ test: 'data' }) as any)
     mockedSerialize.mockImplementation(() => 'serialized')
     mockedSupportsLocalStorage.mockImplementation(() => true)
   })

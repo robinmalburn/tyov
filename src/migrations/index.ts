@@ -1,13 +1,20 @@
-class Migrator {
-  migrations = []
+import type {
+  Migration,
+  MigrationData,
+  MigrationLoader,
+  MigrationModule,
+} from './types'
 
-  async gatherMigrations(signature) {
-    const migrations = []
+class Migrator {
+  migrations: MigrationLoader[] = []
+
+  async gatherMigrations(signature: number): Promise<Migration[]> {
+    const migrations: Migration[] = []
     const len = this.migrations.length
 
     for (let i = 0; i < len; i++) {
       const cb = this.migrations[i]
-      const module = await cb(signature)
+      const module = (await cb(signature)) as MigrationModule | false | null
       if (module) {
         migrations.push(module.default)
       }
@@ -16,7 +23,10 @@ class Migrator {
     return migrations
   }
 
-  async migrate(data, signature) {
+  async migrate<T extends MigrationData>(
+    data: T,
+    signature: number,
+  ): Promise<T> {
     if (data.__SIGNATURE__ === signature) {
       return data
     }
@@ -62,19 +72,19 @@ class Migrator {
       }
 
       console.info(`Running Migration: ${migration.description}`)
-      data = migration.migrate(data)
+      data = migration.migrate(data) as T
     })
 
     return data
   }
 
-  register(...migrations) {
+  register(...migrations: MigrationLoader[]): void {
     migrations.forEach((migration) => {
       this.migrations.push(migration)
     })
   }
 
-  unregister(...migrations) {
+  unregister(...migrations: MigrationLoader[]): void {
     migrations.forEach((migration) => {
       const idx = this.migrations.indexOf(migration)
       this.migrations.splice(idx, 1)
