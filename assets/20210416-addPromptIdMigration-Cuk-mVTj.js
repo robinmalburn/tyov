@@ -1,1 +1,0 @@
-import{u as r}from"./index-CsYMA2Ny.js";const a={description:"Adds ID to prompts and removes name.",requiredSignature:1,migrate(i){return i.prompts.forEach(e=>{e.id||(e.id=r("prompt")),e.name&&delete e.name}),i}};export{a as default};

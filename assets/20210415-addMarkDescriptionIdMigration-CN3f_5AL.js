@@ -1,0 +1,1 @@
+import{t as e}from"./index-BbpEvlzO.js";var t={description:`Adds ID & Description to marks.`,requiredSignature:1,migrate(t){return t.marks.forEach((t,n,r)=>{typeof t==`string`&&(r[n]={id:e(`mark`),description:t})}),t}};export{t as default};
