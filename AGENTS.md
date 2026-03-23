@@ -13,6 +13,14 @@
 - `dist/` is the production build output (generated).
 - Root config files include `vite.config.mjs`, `tailwind.config.js`, and `eslint.config.mjs`.
 
+### Path Aliases
+
+Vite is configured with the following path aliases — use these in imports rather than relative paths:
+
+- `Components/` → `src/components/`
+- `Stores/` → `src/store/`
+- `Libs/` → `src/lib/`
+
 ## Build, Test, and Development Commands
 
 Use pnpm (preferred package manager in `package.json`).
@@ -35,6 +43,16 @@ Use pnpm (preferred package manager in `package.json`).
 - Linting: ESLint with `eslint-plugin-vue` (`eslint.config.mjs`). Run `pnpm lint` before opening a PR.
 - Tailwind CSS is enabled (see `tailwind.config.js`); prefer utility classes over ad-hoc CSS.
 
+### Component Naming Conventions
+
+Vue components use `PascalCase.vue`. Existing components follow a descriptive suffix pattern:
+
+- Layout/container components: `*Pane` (e.g. `CharactersPane.vue`)
+- Reusable UI primitives: `*Component` (e.g. `CardComponent.vue`)
+
+Follow this pattern when creating new components.
+
+
 ## TypeScript Guidelines
 
 - Prefer explicit types for public functions and store state.
@@ -51,6 +69,14 @@ Use pnpm (preferred package manager in `package.json`).
 - Keep stores focused on state and pure logic; UI concerns belong in components.
 - Avoid side effects in getters wherever possible.
 - Always ensure that state and getters do not shadow each others names, especially when derefencing state from entity factories. Where naming collisions occur, prefer renaming getters to semantically explain how they differe, e.g. `sortedPrompts` for the getter and `prompts` for state.
+
+## Tailwind CSS
+
+Tailwind CSS v4 is in use. This uses a CSS-first configuration approach — do not use `tailwind.config.js` patterns from v3. Prefer utility classes over ad-hoc CSS.
+
+## Routing
+
+This is a single-page application with no Vue Router. Do not suggest or introduce routing-based solutions.
 
 ## Testing Guidelines
 
@@ -110,3 +136,7 @@ When given a task, follow these steps in order:
 
 - If requirements are ambiguous, ask for clarification before coding.
 - Do not guess intended behaviour.
+
+## Out-of-Scope Files
+
+Do not modify `dist/`, root config files (`vite.config.mjs`, `tailwind.config.js`, `eslint.config.mjs`), or CI/CD workflows unless explicitly instructed to do so.
