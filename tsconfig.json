@@ -11,14 +11,14 @@
     "noEmit": true,
     "isolatedModules": true,
     "skipLibCheck": true,
-    "baseUrl": ".",
     "paths": {
-      "Libs/*": ["src/lib/*"],
-      "Components/*": ["src/components/*"],
-      "Migrations": ["src/migrations/index.ts"],
-      "Migrations/*": ["src/migrations/*"],
-      "Stores/*": ["src/store/*"]
-    }
+      "Libs/*": ["./src/lib/*"],
+      "Components/*": ["./src/components/*"],
+      "Migrations": ["./src/migrations/index.ts"],
+      "Migrations/*": ["./src/migrations/*"],
+      "Stores/*": ["./src/store/*"]
+    },
+    "types": ["vitest", "node"]
   },
-  "include": ["src/**/*.ts", "src/**/*.d.ts", "src/**/*.vue", "tests/**/*.ts"]
+  "include": ["./src/**/*.ts", "./src/**/*.d.ts", "./src/**/*.vue", "./tests/**/*.ts"]
 }
