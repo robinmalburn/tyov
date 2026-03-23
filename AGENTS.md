@@ -1,5 +1,13 @@
 # Repository Guidelines
 
+## Environment Setup
+
+On first use or after a clean checkout, run:
+
+- `pnpm install` — installs dependencies and rebuilds native bindings via postinstall
+
+Always run commands from the correct worktree/project directory. Before running pnpm install, build, or test commands, verify you are in the correct working directory (not the root if using git worktrees).
+
 ## Project Structure & Module Organization
 
 - `src/` contains the Vue 3 application code.
