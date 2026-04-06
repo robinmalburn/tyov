@@ -1,1 +1,0 @@
-import{t as e}from"./index-BbpEvlzO.js";var t={description:`Adds ID to resources and diaries.`,requiredSignature:1,migrate(t){return t.resources.forEach(t=>{t.id||=e(`resource`)}),t.diaries.forEach(t=>{t.id||=e(`diary`)}),t}};export{t as default};

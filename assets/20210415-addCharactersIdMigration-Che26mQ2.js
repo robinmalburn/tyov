@@ -1,0 +1,1 @@
+import{t as e}from"./index-ZHFt3zG7.js";var t={description:`Adds ID to characters.`,requiredSignature:1,migrate(t){return t.characters.forEach(t=>{t.id||=e(`character`)}),t}};export{t as default};

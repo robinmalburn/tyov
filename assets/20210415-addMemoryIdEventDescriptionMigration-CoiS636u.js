@@ -1,0 +1,1 @@
+import{t as e}from"./index-ZHFt3zG7.js";var t={description:`Adds ID to memories and events.`,requiredSignature:1,migrate(t){return t.memories.forEach(t=>{t.id||=e(`memory`),t.events.forEach((t,n,r)=>{typeof t==`string`&&(r[n]={description:t,id:e(`event`)})})}),t}};export{t as default};
