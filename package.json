@@ -37,5 +37,10 @@
     "node": ">=22 <23"
   },
   "license": "MIT",
-  "packageManager": "pnpm@10.33.0"
+  "packageManager": "pnpm@10.33.0",
+  "pnpm": {
+    "overrides": {
+      "lru-cache": "11.2.7"
+    }
+  }
 }
