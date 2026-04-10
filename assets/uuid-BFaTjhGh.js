@@ -1,0 +1,1 @@
+var e=Date.now(),t=(t=`uuid`)=>(++e,`${t}-${e}-${Date.now()}`);export{t};

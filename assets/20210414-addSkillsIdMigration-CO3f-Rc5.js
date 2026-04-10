@@ -1,1 +1,0 @@
-import{t as e}from"./index-ZHFt3zG7.js";var t={description:`Adds ID to skills.`,requiredSignature:1,migrate(t){return t.skills.forEach(t=>{t.id||=e(`skill`)}),t}};export{t as default};
