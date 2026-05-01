@@ -1,0 +1,1 @@
+import{t as e}from"./index-CLPGsQ5T.js";var t={description:`Adds ID to skills.`,requiredSignature:1,migrate(t){return t.skills.forEach(t=>{t.id||=e(`skill`)}),t}};export{t as default};
