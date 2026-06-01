@@ -33,6 +33,13 @@
     "last 2 versions",
     "not dead"
   ],
+  "engines": {
+    "runtime": {
+      "name": "node",
+      "version": "^24.16.0",
+      "onFail": "download"
+    }
+  },
   "devEngines": {
     "runtime": {
       "name": "node",
