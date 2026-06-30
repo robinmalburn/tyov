@@ -2,8 +2,7 @@ import uuid from 'Libs/uuid'
 import type { Migration, MigrationData } from './types'
 
 type LegacyEvent =
-  | string
-  | { id?: string; description: string; memory?: string }
+  string | { id?: string; description: string; memory?: string }
 
 type MemoryEventMigrationData = MigrationData & {
   memories: Array<{
