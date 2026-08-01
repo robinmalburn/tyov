@@ -13,7 +13,7 @@
   },
   "dependencies": {
     "@tailwindcss/vite": "^4.3.2",
-    "@vitejs/plugin-vue": "^6.0.7",
+    "@vitejs/plugin-vue": "^6.0.8",
     "pinia": "^3.0.4",
     "tailwindcss": "^4.3.2",
     "vite": "^8.1.3",
