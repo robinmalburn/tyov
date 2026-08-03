@@ -1,0 +1,1 @@
+import{t as e}from"./index-BHD62v4m.js";var t={description:`Adds ID to characters.`,requiredSignature:1,migrate(t){return t.characters.forEach(t=>{t.id||=e(`character`)}),t}};export{t as default};
