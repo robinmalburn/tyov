@@ -14,7 +14,7 @@
   "dependencies": {
     "@tailwindcss/vite": "^4.3.3",
     "@vitejs/plugin-vue": "^6.0.8",
-    "pinia": "^3.0.4",
+    "pinia": "^4.0.2",
     "tailwindcss": "^4.3.3",
     "vite": "^8.2.0",
     "vue": "^3.5.40"
@@ -22,7 +22,7 @@
   "devDependencies": {
     "@types/node": "^26.1.2",
     "@vue/test-utils": "^2.4.11",
-    "jsdom": "^29.1.1",
+    "jsdom": "^30.0.1",
     "prettier": "^3.9.6",
     "typescript": "^6.0.3",
     "vitest": "^4.1.10",
