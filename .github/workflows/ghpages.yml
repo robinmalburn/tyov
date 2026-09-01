@@ -35,7 +35,7 @@ jobs:
         run: date -u +"%Y-%m-%dT%H:%M:%SZ" > dist/build.txt
 
       - name: Deploy
-        uses: JamesIves/github-pages-deploy-action@v4.8.0
+        uses: JamesIves/github-pages-deploy-action@v4.9.0
         with:
           folder: dist
           clean: true
