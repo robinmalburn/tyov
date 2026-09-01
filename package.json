@@ -14,19 +14,19 @@
   "dependencies": {
     "@tailwindcss/vite": "^4.3.3",
     "@vitejs/plugin-vue": "^6.0.8",
-    "pinia": "^4.0.2",
+    "pinia": "^4.0.3",
     "tailwindcss": "^4.3.3",
-    "vite": "^8.2.0",
-    "vue": "^3.5.40"
+    "vite": "^8.2.2",
+    "vue": "^3.5.42"
   },
   "devDependencies": {
-    "@types/node": "^26.1.2",
-    "@vue/test-utils": "^2.4.11",
+    "@types/node": "^26.4.0",
+    "@vue/test-utils": "^2.5.0",
     "jsdom": "^30.0.1",
     "prettier": "^3.9.6",
     "typescript": "^6.0.3",
-    "vitest": "^4.1.10",
-    "vue-tsc": "^3.3.9"
+    "vitest": "^4.1.11",
+    "vue-tsc": "^3.3.11"
   },
   "browserslist": [
     "> 1%",
@@ -36,7 +36,7 @@
   "engines": {
     "runtime": {
       "name": "node",
-      "version": "^24.19.0",
+      "version": "^24.20.0",
       "onFail": "download"
     }
   },
@@ -48,7 +48,7 @@
     },
     "packageManager": {
       "name": "pnpm",
-      "version": "11.19.0",
+      "version": "11.25.0",
       "onFail": "warn"
     }
   },
